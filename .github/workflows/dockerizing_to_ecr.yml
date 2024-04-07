@@ -47,7 +47,8 @@ jobs:
       with:
         host: ${{ secrets.EC2_HOST_IP }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        username: ubuntu
+        username: ${{ secrets.EC2_USER_NAME }}
+        port: ${{ secrets.EC2_PORT }}
         script: | 
           ~/app &&
           sudo docker-compose up -d &&
