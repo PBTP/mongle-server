@@ -50,7 +50,7 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
 
-        working-directory: /home/ubuntu/application
+        working-directory: /home/ubuntu/app
         command: sudo docker-compose up -d && sudo echo 'y' | sudo docker system prune
         comment: Server restart!
     # - name: EC2 server deploy
