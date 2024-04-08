@@ -41,15 +41,26 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
-    - name: EC2 server deploy
-      uses: appleboy/ssh-action@master
+    - name: AWS SSM Send-Command
+      uses: peterkimzz/aws-ssm-send-command@master
+      id: ssm
       with:
-        host: ${{ secrets.EC2_HOST_IP }}
-        key: ${{ secrets.EC2_SSH_KEY }}
-        username: ${{ secrets.EC2_USER_NAME }}
-        port: ${{ secrets.EC2_PORT }}
-        script: | 
-          ~/app &&
-          sudo docker-compose up -d &&
-          sudo echo 'y' | sudo docker system prune
+        aws-region: ${{ secrets.AWS_REGION }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
+
+        working-directory: /home/ubuntu/application
+        command: sudo docker-compose up -d && sudo echo 'y' | sudo docker system prune
+        comment: Server restart!
+    # - name: EC2 server deploy
+    #   uses: appleboy/ssh-action@master
+    #   with:
+    #     host: ${{ secrets.EC2_HOST_IP }}
+    #     key: ${{ secrets.EC2_SSH_KEY }}
+    #     username: ${{ secrets.EC2_USER_NAME }}
+    #     port: ${{ secrets.EC2_PORT }}
+    #     script: | 
+    #       ~/app &&
+    #       sudo docker-compose up -d &&
+    #       sudo echo 'y' | sudo docker system prune
