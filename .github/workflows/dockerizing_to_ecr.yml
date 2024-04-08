@@ -51,7 +51,7 @@ jobs:
         instance-ids: ${{ secrets.EC2_INSTANCE_ID }}
 
         working-directory: /home/ubuntu/app
-        command: sudo docker-compose pull api && sudo echo 'y' | sudo docker container prune && sudo docker-compose up -d && sudo echo 'y' | sudo docker system prune
+        command: sudo -s && sudo docker-compose pull api && sudo echo 'y' | sudo docker container prune && sudo docker-compose up -d && sudo echo 'y' | sudo docker system prune
         comment: Server restart!
     # - name: EC2 server deploy
     #   uses: appleboy/ssh-action@master
