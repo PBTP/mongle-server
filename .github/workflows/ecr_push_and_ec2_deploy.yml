@@ -1,4 +1,4 @@
-name: ECR posting and EC2 deploy
+name: ECR Push and EC2 Deploy
 on:
   push:       # 트리거
     branches:
