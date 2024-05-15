@@ -24,9 +24,6 @@ export default class SSMConfigService {
 
     this.ssmClient = new SSMClient(this.ssmClientConfig);
   }
-  async getConfig(): Promise<SSMClientConfig> {
-    return this.ssmClientConfig;
-  }
 
   async getParameter(parameterName: string): Promise<string> {
     const params = {
