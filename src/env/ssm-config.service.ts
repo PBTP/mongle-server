@@ -1,10 +1,12 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import {
   GetParameterCommand,
+  GetParametersByPathCommand,
   SSMClient,
   SSMClientConfig,
 } from '@aws-sdk/client-ssm';
 import { ConfigService } from '@nestjs/config';
+import * as process from 'node:process';
 
 @Injectable()
 export default class SSMConfigService {
@@ -25,7 +27,29 @@ export default class SSMConfigService {
     this.ssmClient = new SSMClient(this.ssmClientConfig);
   }
 
+  async initEnvironmentValues(): Promise<void> {
+    const parameters = await this.ssmClient
+      .send(
+        new GetParametersByPathCommand({
+          Path: this.prefix,
+        }),
+      )
+      .then((v) => {
+        return v.Parameters;
+      });
+
+    for (const parameter of parameters) {
+      const split: string[] = parameter.Name.split('/');
+      this.configService.set(split[split.length - 1], parameter.Value);
+    }
+  }
+
   async getParameter(parameterName: string): Promise<string> {
+    const value = this.configService.get(parameterName);
+    if (value) {
+      return value;
+    }
+
     const params = {
       Name: `${this.prefix}${parameterName}`,
       WithDecryption: true,
@@ -47,3 +71,24 @@ export default class SSMConfigService {
       });
   }
 }
+
+export const loadParameterStoreValue = async () => {
+  return new SSMClient({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_IAM_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_IAM_SECRET_ACCESS_KEY,
+    },
+  })
+    .send(
+      new GetParametersByPathCommand({
+        Path: `/mgmg/${process.env.NODE_ENV}/`,
+      }),
+    )
+    .then((v) => {
+      for (const parameter of v.Parameters) {
+        const split: string[] = parameter.Name.split('/');
+        process.env[split[split.length - 1]] = parameter.Value;
+      }
+    });
+};
