@@ -4,6 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { loadParameterStoreValue } from './env/ssm-config.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CustomerModule } from './customer/customer.module';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 @Module({
   imports: [
@@ -25,10 +27,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
           database: datasource.database,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           synchronize: false,
+          namingStrategy: new SnakeNamingStrategy(),
         };
       },
       inject: [ConfigService],
     }),
+    CustomerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
