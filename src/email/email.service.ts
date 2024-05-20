@@ -28,7 +28,7 @@ export class EmailService {
     html: string,
   ): Promise<void> {
     await this.transporter.sendMail({
-      from: this.configService.get<string>('EMAIL_DEFAULT_SENDER'),
+      from: this.configService.get<string>('email_default_sender'),
       to,
       subject,
       text,
