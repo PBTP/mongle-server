@@ -15,6 +15,6 @@ export class AuthService {
     let customer: Customer = await this.customerService.findOne(dto);
     customer = customer ?? (await this.customerService.create(dto));
 
-    return this.jwtService.sign(customer);
+    return this.jwtService.sign(customer.uuid);
   }
 }

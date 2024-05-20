@@ -6,7 +6,7 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { CustomerService } from 'src/customer/customer.service';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy, 'access') {
   constructor(
     private readonly configService: ConfigService,
     private readonly customerService: CustomerService,
@@ -17,10 +17,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(tokenClaim: any): Promise<any> {
-    if (!tokenClaim) {
+  async validate(uuid: any): Promise<any> {
+    if (!uuid) {
       throw new UnauthorizedException();
     }
-    return this.customerService.findOne(tokenClaim);
+
+    return await this.customerService.findOne(uuid);
   }
 }

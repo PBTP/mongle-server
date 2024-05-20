@@ -6,6 +6,7 @@ import { loadParameterStoreValue } from './env/ssm-config.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomerModule } from './customer/customer.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
       inject: [ConfigService],
     }),
     CustomerModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
