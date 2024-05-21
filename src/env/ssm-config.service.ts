@@ -73,25 +73,40 @@ export default class SSMConfigService {
 }
 
 export const loadParameterStoreValue = async () => {
-  const prefix: string = `/mgmg/${process.env.NODE_ENV}/`;
+  const regex = /mgmg\/.+?\//;
 
   return new SSMClient({
     region: process.env.AWS_REGION,
     credentials: {
       accessKeyId: process.env.AWS_IAM_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_IAM_SECRET_ACCESS_KEY,
-    },
+      secretAccessKey: process.env.AWS_IAM_SECRET_ACCESS_KEY
+    }
   })
     .send(
       new GetParametersByPathCommand({
-        Path: prefix,
-        Recursive: true,
-      }),
+        Path: '/mgmg/',
+        Recursive: true
+      })
     )
     .then((v) => {
-      for (const parameter of v.Parameters) {
-        const key = parameter.Name.replace(prefix, '');
-        process.env[key] = parameter.Value;
+
+      const parameters = v.Parameters.sort((a, b) => {
+        // 환경에 따라 다른 가중치를 반환하는 함수
+        const getWeight = (env) => {
+          if (env === 'prod') return env === process.env.NODE_ENV ? 1 : 3;
+          if (env === 'dev') return env === process.env.NODE_ENV ? 1 : 2;
+          return 0;
+        };
+
+        const envA = a.Name.match(regex)[1];
+        const envB = b.Name.match(regex)[1];
+        return getWeight(envB) - getWeight(envA);
+      });
+
+      for (const parameter of parameters) {
+        let name = parameter.Name;
+        const key = name.replace(regex, '');
+        key.indexOf('/') === 0 ? process.env[key.substring(1)] = parameter.Value : process.env[key] = parameter.Value;
       }
     });
 };
