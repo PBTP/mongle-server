@@ -4,6 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { loadParameterStoreValue } from './env/ssm-config.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PreRegistrationServeyModule } from './pre-registration-servey/pre-registration-servey.module';
+import { EmailModule } from './email/email.module';
 import { CustomerModule } from './customer/customer.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AuthModule } from './auth/auth.module';
@@ -45,6 +47,8 @@ import { CacheModule } from "./common/cache/cache.module";
       },
       inject: [ConfigService],
     }),
+    EmailModule,
+    PreRegistrationServeyModule,
     CacheModule,
     CustomerModule,
     AuthModule,
