@@ -4,6 +4,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { loadParameterStoreValue } from './env/ssm-config.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { PreRegistrationServeyModule } from './pre-registration-servey/pre-registration-servey.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       },
       inject: [ConfigService],
     }),
+    EmailModule,
+    PreRegistrationServeyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
