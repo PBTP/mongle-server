@@ -1,4 +1,4 @@
-import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { PreRegistrationSurveyBody } from './pre-registration-survey-body';
@@ -13,9 +13,7 @@ export class PreRegistrationSurveyController {
   ) {}
 
   @Post()
-  async register(
-    @Body(new ValidationPipe()) body: PreRegistrationSurveyBody,
-  ): Promise<void> {
+  async register(@Body() body: PreRegistrationSurveyBody): Promise<void> {
     const request: PreRegistrationSurveyRequest = {
       name: body.name,
       email: body.email,
