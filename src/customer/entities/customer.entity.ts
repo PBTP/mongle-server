@@ -18,7 +18,7 @@ export class Customer {
   @PrimaryGeneratedColumn()
   customerId: number;
 
-  @Column({ type: 'char', length: 20, unique: true, nullable: false })
+  @Column({ type: 'varchar', length: 20, unique: true, nullable: false })
   uuid: string;
 
   @Column({ length: 30, nullable: false })
@@ -46,4 +46,7 @@ export class Customer {
 
   @DeleteDateColumn({ nullable: true })
   deletedAt: Date;
+
+  @Column({ length: 20, unique: true, nullable: true })
+  refreshToken: string;
 }

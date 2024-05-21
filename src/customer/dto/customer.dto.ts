@@ -18,4 +18,7 @@ export class CustomerDto {
   @IsNotEmpty()
   @IsEnum(AuthProvider)
   authProvider: AuthProvider;
+
+  @IsOptional()
+  refreshToken: string;
 }

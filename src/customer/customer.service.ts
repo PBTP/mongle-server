@@ -16,9 +16,32 @@ export class CustomerService {
     return await this.customerRepository.save(newCustomer);
   }
 
-  async findOne(dto: CustomerDto): Promise<Customer> {
+  async findOne(dto: Partial<CustomerDto>): Promise<Customer> {
+    const where = [];
+
+    for (const key in dto) {
+      if (dto[key] !== undefined || dto[key] !== null) {
+        where.push({ [key]: dto[key] });
+      }
+    }
+
     return await this.customerRepository.findOne({
-      where: { ...dto },
+      where: where,
+    });
+  }
+
+  async update(dto: CustomerDto): Promise<Customer> {
+    return this.findOne(dto).then(async (customer) => {
+      if (customer) {
+        customer.customerLocation =
+          dto.customerLocation ?? customer.customerLocation;
+        customer.customerName = dto.customerName ?? customer.customerName;
+        customer.customerPhoneNumber =
+          dto.customerPhoneNumber ?? customer.customerPhoneNumber;
+        customer.refreshToken = dto.refreshToken ?? customer.refreshToken;
+
+        return await this.customerRepository.save(customer);
+      }
     });
   }
 }

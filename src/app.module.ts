@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomerModule } from './customer/customer.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AuthModule } from './auth/auth.module';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
 
 @Module({
   imports: [
@@ -31,6 +32,19 @@ import { AuthModule } from './auth/auth.module';
           namingStrategy: new SnakeNamingStrategy(),
         };
       },
+      inject: [ConfigService],
+    }),
+    RedisModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => ({
+        config: {
+          host: 'localhost',
+          port: 6379,
+        },
+        readyLog: true,
+        commonOptions: {
+          keyPrefix: `nest:${configService.get<string>('NODE_ENV')}:`,
+        },
+      }),
       inject: [ConfigService],
     }),
     CustomerModule,

@@ -73,6 +73,8 @@ export default class SSMConfigService {
 }
 
 export const loadParameterStoreValue = async () => {
+  const prefix: string = `/mgmg/${process.env.NODE_ENV}/`;
+
   return new SSMClient({
     region: process.env.AWS_REGION,
     credentials: {
@@ -82,13 +84,14 @@ export const loadParameterStoreValue = async () => {
   })
     .send(
       new GetParametersByPathCommand({
-        Path: `/mgmg/${process.env.NODE_ENV}/`,
+        Path: prefix,
+        Recursive: true,
       }),
     )
     .then((v) => {
       for (const parameter of v.Parameters) {
-        const split: string[] = parameter.Name.split('/');
-        process.env[split[split.length - 1]] = parameter.Value;
+        const key = parameter.Name.replace(prefix, '');
+        process.env[key] = parameter.Value;
       }
     });
 };
