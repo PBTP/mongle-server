@@ -13,7 +13,7 @@ export default class SSMConfigService {
   private readonly ssmClient: SSMClient;
   private readonly ssmClientConfig: SSMClientConfig;
   private readonly logger = new Logger(SSMConfigService.name);
-  prefix = `/mgmg/${process.env.NODE_ENV}/`;
+  private readonly prefix:string = `/mgmg/${process.env.NODE_ENV}/`;
 
   constructor(private readonly configService: ConfigService) {
     this.ssmClientConfig = {

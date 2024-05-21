@@ -4,43 +4,43 @@ import { CustomerService } from 'src/customer/customer.service';
 import { Customer } from 'src/customer/entities/customer.entity';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { InjectRedis } from '@liaoliaots/nestjs-redis';
-import Redis from 'ioredis';
+import { CacheService } from "../common/cache/cache.service";
 
 @Injectable()
 export class AuthService {
+
+  private readonly accessTokenOption: JwtSignOptions = {
+    expiresIn: '1h',
+  }
+
+  private readonly refreshTokenOption: JwtSignOptions = {
+    expiresIn: '14d',
+  };
+
   constructor(
-    @InjectRedis()
-    private readonly redis: Redis,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly cacheService:CacheService,
     private readonly customerService: CustomerService,
-  ) {}
+  ) {
+    this.accessTokenOption.secret =this.configService.get<string>('jwtSecretKey/access');
+    this.refreshTokenOption.secret =this.configService.get<string>('jwtSecretKey/refresh');
+  }
 
   async login(dto: AuthDto): Promise<AuthDto> {
     let customer: Customer = await this.customerService.findOne(dto);
     customer = customer ?? (await this.customerService.create(dto));
 
-    const accessOption: JwtSignOptions = {
-      secret: this.configService.get<string>('jwtSecretKey/access'),
-      expiresIn: '1h',
-    };
-
     const accessToken = this.jwtService.sign(
       { tokenType: 'access', subject: customer.uuid },
-      accessOption,
+      this.accessTokenOption,
     );
 
-    this.redis.set(accessToken, JSON.stringify(customer), 'EX', 3600);
-
-    const refreshOption: JwtSignOptions = {
-      secret: this.configService.get<string>('jwtSecretKey/refresh'),
-      expiresIn: '14d',
-    };
+    await this.cacheService.set(accessToken, JSON.stringify(customer), 3600);
 
     const refreshToken = this.jwtService.sign(
       { tokenType: 'refresh', subject: customer.uuid },
-      refreshOption,
+      this.refreshTokenOption,
     );
 
     await this.customerService.update({
@@ -54,4 +54,35 @@ export class AuthService {
       refreshToken: refreshToken,
     };
   }
+
+  async tokenRefresh(request: Request): Promise<AuthDto> {
+    const token = request.headers['authorization'].replace('Bearer ', '');
+
+    let payload = this.jwtService.decode(token);
+
+    const customer = await this.customerService.findOne({ uuid: payload.subject });
+
+
+    const accessToken = this.jwtService.sign(
+      { tokenType: 'access', subject: customer.uuid },
+      this.accessTokenOption,
+    );
+
+    const refreshToken = this.jwtService.sign(
+      { tokenType: 'refresh', subject: customer.uuid },
+      this.refreshTokenOption,
+    );
+
+    await this.customerService.update({
+      ...customer,
+      refreshToken: refreshToken,
+    });
+
+    return {
+      ...customer,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+    };
+  }
+
 }

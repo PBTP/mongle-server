@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { JwtAccessStrategy } from './jwt-access.strategy';
 import { JwtRefreshStrategy } from './jwt-refresh.strategy';
 import { PassportModule } from '@nestjs/passport';
+import { CacheModule } from '../common/cache/cache.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { PassportModule } from '@nestjs/passport';
       inject: [ConfigService],
     }),
     PassportModule.register({ defaultStrategy: 'access' }),
+    CacheModule,
     CustomerModule,
   ],
   controllers: [AuthController],

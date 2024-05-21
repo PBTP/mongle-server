@@ -10,13 +10,12 @@ import { AuthService } from './auth.service';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
 import { Customer } from '../customer/entities/customer.entity';
+import { CacheService } from "../common/cache/cache.service";
 
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
   constructor(
-    @InjectRedis()
-    private readonly redis: Redis,
-    private readonly authService: AuthService,
+    private readonly cacheService: CacheService,
     private readonly configService: ConfigService,
   ) {
     super({
@@ -36,6 +35,6 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
     }
 
     const token = req.headers['authorization'].replace('Bearer ', '');
-    return JSON.parse(await this.redis.get(token)) as Customer;
+    return JSON.parse(await this.cacheService.get(token)) as Customer;
   }
 }

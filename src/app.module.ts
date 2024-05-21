@@ -8,6 +8,7 @@ import { CustomerModule } from './customer/customer.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { CacheModule } from "./common/cache/cache.module";
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
     }),
     TypeOrmModule.forRootAsync({
       useFactory: async (configService: ConfigService) => {
-        const datasource = JSON.parse(configService.get('datasource'));
+        const datasource = JSON.parse(configService.get('datasource/db'));
 
         return {
           type: 'postgres',
@@ -35,18 +36,16 @@ import { RedisModule } from '@liaoliaots/nestjs-redis';
       inject: [ConfigService],
     }),
     RedisModule.forRootAsync({
-      useFactory: async (configService: ConfigService) => ({
-        config: {
-          host: 'localhost',
-          port: 6379,
-        },
-        readyLog: true,
-        commonOptions: {
-          keyPrefix: `nest:${configService.get<string>('NODE_ENV')}:`,
-        },
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const datasource = JSON.parse(configService.get('datasource/redis'));
+        return{
+          config: datasource,
+          readyLog: true
+        };
+      },
       inject: [ConfigService],
     }),
+    CacheModule,
     CustomerModule,
     AuthModule,
   ],
