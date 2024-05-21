@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { AuthDto } from './dto/auth.dto';
-import { CustomerService } from 'src/customer/customer.service';
+import { AuthDto } from '../presentation/auth.dto';
+import { CustomerService } from 'src/customer/application/customer.service';
 import { Customer } from 'src/customer/entities/customer.entity';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { CacheService } from "../common/cache/cache.service";
+import { CacheService } from "../../common/cache/cache.service";
 
 @Injectable()
 export class AuthService {

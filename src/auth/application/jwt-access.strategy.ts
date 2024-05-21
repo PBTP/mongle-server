@@ -9,8 +9,8 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthService } from './auth.service';
 import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
-import { Customer } from '../customer/entities/customer.entity';
-import { CacheService } from "../common/cache/cache.service";
+import { Customer } from '../../customer/entities/customer.entity';
+import { CacheService } from "../../common/cache/cache.service";
 
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
