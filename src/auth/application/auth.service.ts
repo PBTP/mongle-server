@@ -10,6 +10,7 @@ import { CacheService } from '../../common/cache/cache.service';
 export class AuthService {
   private readonly accessTokenOption: JwtSignOptions;
   private readonly refreshTokenOption: JwtSignOptions;
+  private readonly accessTokenStrategy: string;
 
   constructor(
     private readonly jwtService: JwtService,
@@ -26,6 +27,10 @@ export class AuthService {
       secret: this.configService.get<string>('jwt/refresh/secret'),
       expiresIn: this.configService.get<number>('jwt/refresh/expire'),
     };
+
+    this.accessTokenStrategy = this.configService.get<string>(
+      'jwt/access/strategy',
+    );
   }
 
   async login(dto: AuthDto): Promise<AuthDto> {
@@ -33,21 +38,14 @@ export class AuthService {
     customer = customer ?? (await this.customerService.create(dto));
 
     const accessToken = this.jwtService.sign(
-      { tokenType: 'access', subject: customer.uuid },
+      { tokenType: 'access', subject: customer.customerId },
       this.accessTokenOption,
     );
 
-    await this.cacheService.set(
-      accessToken,
-      JSON.stringify({
-        ...customer,
-        refreshToken: undefined,
-      }),
-      (this.accessTokenOption.expiresIn as number) / 1000,
-    );
+    await this.makeAccessToken(customer, accessToken);
 
     const refreshToken = this.jwtService.sign(
-      { tokenType: 'refresh', subject: customer.uuid },
+      { tokenType: 'refresh', subject: customer.customerId },
       this.refreshTokenOption,
     );
 
@@ -69,18 +67,20 @@ export class AuthService {
     const payload = this.jwtService.decode(token);
 
     const customer: Customer = await this.customerService.findOne({
-      uuid: payload.subject,
+      customerId: payload.subject,
     });
 
     const accessToken = this.jwtService.sign(
-      { tokenType: 'access', subject: customer.uuid },
+      { tokenType: 'access', subject: customer.customerId },
       this.accessTokenOption,
     );
 
     const refreshToken = this.jwtService.sign(
-      { tokenType: 'refresh', subject: customer.uuid },
+      { tokenType: 'refresh', subject: customer.customerId },
       this.refreshTokenOption,
     );
+
+    await this.makeAccessToken(customer, accessToken);
 
     await this.customerService.update({
       ...customer,
@@ -92,5 +92,32 @@ export class AuthService {
       accessToken: accessToken,
       refreshToken: refreshToken,
     };
+  }
+
+  private async makeAccessToken(customer: Customer, accessToken: string) {
+    const key = `customer:${customer.customerId}:accessToken`;
+
+    if (this.accessTokenStrategy.toLowerCase() === 'unique') {
+      this.cacheService.get(key).then((v) => {
+        if (v) {
+          this.cacheService.del(v);
+        }
+      });
+
+      await this.cacheService.set(
+        key,
+        accessToken,
+        (this.accessTokenOption.expiresIn as number) / 1000,
+      );
+    }
+
+    await this.cacheService.set(
+      accessToken,
+      JSON.stringify({
+        ...customer,
+        refreshToken: undefined,
+      }),
+      (this.accessTokenOption.expiresIn as number) / 1000,
+    );
   }
 }

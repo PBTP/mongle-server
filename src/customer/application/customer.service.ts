@@ -16,7 +16,7 @@ export class CustomerService {
     return await this.customerRepository.save(newCustomer);
   }
 
-  async findOne(dto: Partial<CustomerDto>): Promise<Customer> {
+  async findOne(dto: Partial<Customer>): Promise<Customer> {
     const where = [];
 
     for (const key in dto) {
