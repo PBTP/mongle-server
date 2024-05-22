@@ -42,7 +42,7 @@ export class AuthService {
       this.accessTokenOption,
     );
 
-    await this.makeAccessToken(customer, accessToken);
+    await this.saveAccessToken(customer, accessToken);
 
     const refreshToken = this.jwtService.sign(
       { tokenType: 'refresh', subject: customer.customerId },
@@ -80,7 +80,7 @@ export class AuthService {
       this.refreshTokenOption,
     );
 
-    await this.makeAccessToken(customer, accessToken);
+    await this.saveAccessToken(customer, accessToken);
 
     await this.customerService.update({
       ...customer,
@@ -94,7 +94,7 @@ export class AuthService {
     };
   }
 
-  private async makeAccessToken(customer: Customer, accessToken: string) {
+  private async saveAccessToken(customer: Customer, accessToken: string) {
     const key = `customer:${customer.customerId}:accessToken`;
 
     if (this.accessTokenStrategy.toLowerCase() === 'unique') {
