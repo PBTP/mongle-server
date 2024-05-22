@@ -6,7 +6,6 @@ import {
   IsOptional,
   IsPhoneNumber,
   IsString,
-  IsUrl,
   Length,
 } from 'class-validator';
 
@@ -47,7 +46,6 @@ export class PreRegistrationSurveyBody {
 
   @ApiProperty()
   @IsOptional()
-  @IsUrl()
   snsContact?: string;
 
   @ApiProperty()
