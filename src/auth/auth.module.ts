@@ -13,7 +13,7 @@ import { CacheModule } from '../common/cache/cache.module';
   imports: [
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('jwtSecretKey/access'),
+        secret: configService.get<string>('jwt/access/secret'),
       }),
       inject: [ConfigService],
     }),

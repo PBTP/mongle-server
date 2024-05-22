@@ -4,27 +4,28 @@ import { CustomerService } from 'src/customer/application/customer.service';
 import { Customer } from 'src/customer/entities/customer.entity';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { CacheService } from "../../common/cache/cache.service";
+import { CacheService } from '../../common/cache/cache.service';
 
 @Injectable()
 export class AuthService {
-
-  private readonly accessTokenOption: JwtSignOptions = {
-    expiresIn: '1h',
-  }
-
-  private readonly refreshTokenOption: JwtSignOptions = {
-    expiresIn: '14d',
-  };
+  private readonly accessTokenOption: JwtSignOptions;
+  private readonly refreshTokenOption: JwtSignOptions;
 
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly cacheService:CacheService,
+    private readonly cacheService: CacheService,
     private readonly customerService: CustomerService,
   ) {
-    this.accessTokenOption.secret =this.configService.get<string>('jwtSecretKey/access');
-    this.refreshTokenOption.secret =this.configService.get<string>('jwtSecretKey/refresh');
+    this.accessTokenOption = {
+      secret: this.configService.get<string>('jwt/access/secret'),
+      expiresIn: this.configService.get<number>('jwt/access/expire'),
+    };
+
+    this.refreshTokenOption = {
+      secret: this.configService.get<string>('jwt/refresh/secret'),
+      expiresIn: this.configService.get<number>('jwt/refresh/expire'),
+    };
   }
 
   async login(dto: AuthDto): Promise<AuthDto> {
@@ -36,7 +37,14 @@ export class AuthService {
       this.accessTokenOption,
     );
 
-    await this.cacheService.set(accessToken, JSON.stringify(customer), 3600);
+    await this.cacheService.set(
+      accessToken,
+      JSON.stringify({
+        ...customer,
+        refreshToken: undefined,
+      }),
+      (this.accessTokenOption.expiresIn as number) / 1000,
+    );
 
     const refreshToken = this.jwtService.sign(
       { tokenType: 'refresh', subject: customer.uuid },
@@ -58,10 +66,11 @@ export class AuthService {
   async tokenRefresh(request: Request): Promise<AuthDto> {
     const token = request.headers['authorization'].replace('Bearer ', '');
 
-    let payload = this.jwtService.decode(token);
+    const payload = this.jwtService.decode(token);
 
-    const customer = await this.customerService.findOne({ uuid: payload.subject });
-
+    const customer: Customer = await this.customerService.findOne({
+      uuid: payload.subject,
+    });
 
     const accessToken = this.jwtService.sign(
       { tokenType: 'access', subject: customer.uuid },
@@ -84,5 +93,4 @@ export class AuthService {
       refreshToken: refreshToken,
     };
   }
-
 }
