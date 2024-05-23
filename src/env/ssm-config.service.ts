@@ -104,15 +104,10 @@ export const loadParameterStoreValue = async () => {
 
   parameters.sort((a: Parameter, b: Parameter) => {
     const getWeight = (env: string) => {
-      if (env.startsWith(`/mgmg/${nodeEnv}/`)) {
-        return 0;
-      }
-      if (env.startsWith('/mgmg/prod/')) {
-        return 2;
-      }
-      if (env.startsWith('/mgmg/dev/')) {
-        return 1;
-      }
+      if (env.startsWith(`/mgmg/${nodeEnv}/`)) return 0;
+      if (env.startsWith('/mgmg/prod/')) return 2;
+      if (env.startsWith('/mgmg/dev/')) return 1;
+
       return 3;
     };
 
