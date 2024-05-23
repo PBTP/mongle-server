@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { EmailService } from './email.service';
-import { ConfigModule } from '@nestjs/config';
+import { SystemAlarmModule } from '../config/system.alarm.module';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [SystemAlarmModule],
   providers: [EmailService],
   exports: [EmailService],
 })
