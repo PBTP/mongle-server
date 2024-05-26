@@ -7,6 +7,7 @@ import {
 } from '@aws-sdk/client-ssm';
 import { ConfigService } from '@nestjs/config';
 import * as process from 'node:process';
+import { Parameter } from '@aws-sdk/client-ssm/dist-types/models/models_1';
 
 @Injectable()
 export default class SSMConfigService {
@@ -73,8 +74,10 @@ export default class SSMConfigService {
 }
 
 export const loadParameterStoreValue = async () => {
-  const regex = /mgmg\/.+?\//;
+  const regex = /\/mgmg\/[^/]*\//;
+  const nodeEnv = process.env.NODE_ENV;
   let nextToken: string | undefined;
+  const parameters: Parameter[] = [];
 
   const ssmClient = new SSMClient({
     region: process.env.AWS_REGION,
@@ -95,26 +98,28 @@ export const loadParameterStoreValue = async () => {
       }),
     );
 
-    const parameters = response.Parameters.sort((a, b) => {
-      const getWeight = (env) => {
-        if (env === 'prod') return env === process.env.NODE_ENV ? 1 : 3;
-        if (env === 'dev') return env === process.env.NODE_ENV ? 1 : 2;
-        return 0;
-      };
-
-      const envA = a.Name.match(regex)[1];
-      const envB = b.Name.match(regex)[1];
-      return getWeight(envB) - getWeight(envA);
-    });
-
-    for (const parameter of parameters) {
-      const name = parameter.Name;
-      const key = name.replace(regex, '');
-      key.indexOf('/') === 0
-        ? (process.env[key.substring(1)] = parameter.Value)
-        : (process.env[key] = parameter.Value);
-    }
-
+    parameters.push(...response.Parameters);
     nextToken = response.NextToken;
   } while (nextToken);
+
+  parameters.sort((a: Parameter, b: Parameter) => {
+    const getWeight = (env: string) => {
+      if (env.startsWith(`/mgmg/${nodeEnv}/`)) return 0;
+      if (env.startsWith('/mgmg/prod/')) return 2;
+      if (env.startsWith('/mgmg/dev/')) return 1;
+
+      return 3;
+    };
+
+    return getWeight(b.Name) - getWeight(a.Name);
+  });
+
+  for (const parameter of parameters) {
+    const name = parameter.Name;
+    const key = name.replace(regex, '');
+
+    key.indexOf('/') === 0
+      ? (process.env[key.substring(1)] = parameter.Value)
+      : (process.env[key] = parameter.Value);
+  }
 };
