@@ -1,13 +1,18 @@
 import { ConsoleLogger, Injectable } from '@nestjs/common';
 import { SystemAlarmService } from '../../system/system.alarm.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class LoggerService extends ConsoleLogger {
+  private readonly env = this.configService.get('NODE_ENV');
   private readonly bar = '\n\n' + '-'.repeat(50) + '\n\n';
   private readonly logCache = new Map<string, number>(); // 메시지 캐시
   private readonly cacheDuration = 60 * 1000; // 1분 동안 캐시 유지
 
-  constructor(private readonly systemAlarmService: SystemAlarmService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly systemAlarmService: SystemAlarmService,
+  ) {
     super();
   }
 
@@ -23,6 +28,7 @@ export class LoggerService extends ConsoleLogger {
     super.warn(`⚠️ ${message}`, ...optionalParams);
 
     this.cacheCheck('warn', message) &&
+      this.env !== 'local' &&
       this.systemAlarmService.alarm(
         'logging',
         this.createMsg('warn', message, optionalParams),
@@ -33,6 +39,7 @@ export class LoggerService extends ConsoleLogger {
     super.error(`💥 ${message}`, ...optionalParams);
 
     this.cacheCheck('error', message) &&
+      this.env !== 'local' &&
       this.systemAlarmService.alarm(
         'logging',
         this.createMsg('error', message, optionalParams),
@@ -46,7 +53,7 @@ export class LoggerService extends ConsoleLogger {
   ): string {
     const icon = logLevel === 'error' ? '🚨' : '⚠️';
     const upperCaseLogLevel = logLevel.toUpperCase();
-    return `${this.bar}${icon} ${upperCaseLogLevel} ${icon}\n\n⏰ Time:${this.getDate()}\n📢 Message: ${message}\n💥 param: ${optionalParams}${this.bar}`;
+    return `${this.bar}${icon} ${this.env.toString().charAt(0).toUpperCase() + this.env.toString().substring(1)} Server ${upperCaseLogLevel} ${icon}\n\n⏰ Time:${this.getDate()}\n📢 Message: ${message}\n💥 param: ${optionalParams}${this.bar}`;
   }
 
   private cacheCheck(logLevel: string, message: string): boolean {
