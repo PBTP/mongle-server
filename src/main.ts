@@ -3,27 +3,22 @@ import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { winstonLogger } from './config/middleware/logger.config';
-import { SystemAlarmService } from './config/system.alarm.service';
-import { ExceptionsFilter } from './config/middleware/exception.filter';
-import { AuthService } from './auth/application/auth.service';
+import { LoggerService } from './config/logger/logger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
-    logger: winstonLogger,
   });
 
   app.enableCors({
     origin: ['https://mgmg.life', 'http://localhost:8000'],
   });
 
+  app.useLogger(app.get<LoggerService>(LoggerService));
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-
-  const systemAlarmService = app.get<SystemAlarmService>(SystemAlarmService);
-  const authService = app.get<AuthService>(AuthService);
-  app.useGlobalFilters(new ExceptionsFilter(systemAlarmService, authService));
+  app.useGlobalInterceptors(
+    new ClassSerializerInterceptor(app.get<Reflector>(Reflector)),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('몽글몽글 API')

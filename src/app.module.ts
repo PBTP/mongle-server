@@ -11,6 +11,8 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { CacheModule } from './common/cache/cache.module';
+import { LoggerModule } from './config/logger/logger.module';
+import { SystemAlarmModule } from "./system/system.alarm.module";
 
 @Module({
   imports: [
@@ -49,8 +51,10 @@ import { CacheModule } from './common/cache/cache.module';
     }),
     EmailModule,
     PreRegistrationServeyModule,
-    CacheModule,
+    SystemAlarmModule,
     CustomerModule,
+    LoggerModule,
+    CacheModule,
     AuthModule,
   ],
   controllers: [AppController],
