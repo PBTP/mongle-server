@@ -1,7 +1,9 @@
 import { CustomerService } from '../application/customer.service';
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CustomerDto } from './customer.dto';
+import { Customer } from '../entities/customer.entity';
+import { CurrentCustomer } from '../../auth/decorator/customer.decorator';
 
 @Controller('/api/v1/customer')
 export class CustomerController {
@@ -9,9 +11,11 @@ export class CustomerController {
 
   @Get('my')
   @UseGuards(AuthGuard())
-  async getMyCustomer(@Req() req: any): Promise<CustomerDto> {
+  async getMyCustomer(
+    @CurrentCustomer() customer: Customer,
+  ): Promise<CustomerDto> {
     return {
-      ...req.user,
+      ...customer,
     };
   }
 }

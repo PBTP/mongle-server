@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { AuthService } from './application/auth.service';
 import { AuthController } from './presentation/auth.controller';
 import { CustomerModule } from 'src/customer/customer.module';
@@ -9,6 +9,7 @@ import { JwtRefreshStrategy } from './application/jwt-refresh.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { CacheModule } from '../common/cache/cache.module';
 
+@Global()
 @Module({
   imports: [
     JwtModule.registerAsync({
@@ -23,6 +24,6 @@ import { CacheModule } from '../common/cache/cache.module';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAccessStrategy, JwtRefreshStrategy],
-  exports: [AuthService, JwtAccessStrategy, JwtRefreshStrategy],
+  exports: [AuthService, JwtAccessStrategy, JwtRefreshStrategy, PassportModule],
 })
 export class AuthModule {}
