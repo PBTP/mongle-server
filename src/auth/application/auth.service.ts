@@ -5,6 +5,7 @@ import { Customer } from 'src/customer/entities/customer.entity';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from '../../common/cache/cache.service';
+import { CustomerDto } from '../../customer/presentation/customer.dto';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +34,7 @@ export class AuthService {
     );
   }
 
-  async login(dto: AuthDto): Promise<AuthDto> {
+  async login(dto: CustomerDto): Promise<AuthDto> {
     let customer: Customer = await this.customerService.findOne(dto);
     customer = customer ?? (await this.customerService.create(dto));
 
@@ -55,7 +56,12 @@ export class AuthService {
     });
 
     return {
-      ...customer,
+      customerId: customer.customerId,
+      uuid: customer.uuid,
+      customerName: customer.customerName,
+      customerPhoneNumber: customer.customerPhoneNumber,
+      customerLocation: customer.customerLocation,
+      authProvider: customer.authProvider,
       accessToken: accessToken,
       refreshToken: refreshToken,
     };
@@ -88,7 +94,12 @@ export class AuthService {
     });
 
     return {
-      ...customer,
+      customerId: customer.customerId,
+      uuid: customer.uuid,
+      customerName: customer.customerName,
+      customerPhoneNumber: customer.customerPhoneNumber,
+      customerLocation: customer.customerLocation,
+      authProvider: customer.authProvider,
       accessToken: accessToken,
       refreshToken: refreshToken,
     };
