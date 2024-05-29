@@ -7,6 +7,7 @@ import {
   DeleteDateColumn,
 } from 'typeorm';
 import { Point } from 'typeorm';
+import { Exclude, Expose } from 'class-transformer';
 
 export enum AuthProvider {
   KAKAO = 'KAKAO',
@@ -16,6 +17,7 @@ export enum AuthProvider {
 @Entity({ name: 'customers' })
 export class Customer {
   @PrimaryGeneratedColumn()
+  @Exclude({ toPlainOnly: true })
   customerId: number;
 
   @Column({ type: 'varchar', length: 20, unique: true, nullable: false })
@@ -35,18 +37,23 @@ export class Customer {
   })
   customerLocation: Point;
 
+  @Expose({ toPlainOnly: true })
   @Column({ type: 'enum', enum: AuthProvider, nullable: false })
   authProvider: AuthProvider;
 
-  @CreateDateColumn({ nullable: false })
+  @Expose({ toPlainOnly: true })
+  @Column({ length: 20, unique: true, nullable: true })
+  refreshToken: string;
+
+  @CreateDateColumn()
+  @Exclude({ toPlainOnly: true })
   createdAt: Date;
 
-  @UpdateDateColumn({ nullable: false })
+  @UpdateDateColumn()
+  @Exclude({ toPlainOnly: true })
   modifiedAt: Date;
 
   @DeleteDateColumn({ nullable: true })
-  deletedAt: Date;
-
-  @Column({ length: 20, unique: true, nullable: true })
-  refreshToken: string;
+  @Exclude({ toPlainOnly: true })
+  deletedAt?: Date;
 }

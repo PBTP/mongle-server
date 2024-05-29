@@ -83,7 +83,8 @@ export class AuthService {
     await this.saveAccessToken(customer, accessToken);
 
     await this.customerService.update({
-      ...customer,
+      uuid: customer.uuid,
+      customerId: customer.customerId,
       refreshToken: refreshToken,
     });
 
