@@ -14,7 +14,7 @@ export default class SSMConfigService {
   private readonly ssmClient: SSMClient;
   private readonly ssmClientConfig: SSMClientConfig;
   private readonly logger = new Logger(SSMConfigService.name);
-  private readonly prefix: string = `/mgmg/${process.env.NODE_ENV}/`;
+  private readonly prefix: string = `/mgmg/server/${process.env.NODE_ENV}/`;
 
   constructor(private readonly configService: ConfigService) {
     this.ssmClientConfig = {
@@ -74,7 +74,7 @@ export default class SSMConfigService {
 }
 
 export const loadParameterStoreValue = async () => {
-  const regex = /\/mgmg\/[^/]*\//;
+  const regex = /\/mgmg\/server\/[^/]*\//;
   const nodeEnv = process.env.NODE_ENV;
   let nextToken: string | undefined;
   const parameters: Parameter[] = [];
@@ -90,7 +90,7 @@ export const loadParameterStoreValue = async () => {
   do {
     const response = await ssmClient.send(
       new GetParametersByPathCommand({
-        Path: '/mgmg/',
+        Path: '/mgmg/server/',
         Recursive: true,
         WithDecryption: true,
         MaxResults: 10,
@@ -104,9 +104,9 @@ export const loadParameterStoreValue = async () => {
 
   parameters.sort((a: Parameter, b: Parameter) => {
     const getWeight = (env: string) => {
-      if (env.startsWith(`/mgmg/${nodeEnv}/`)) return 0;
-      if (env.startsWith('/mgmg/prod/')) return 2;
-      if (env.startsWith('/mgmg/dev/')) return 1;
+      if (env.startsWith(`/mgmg/server/${nodeEnv}/`)) return 0;
+      if (env.startsWith('/mgmg/server/prod/')) return 2;
+      if (env.startsWith('/mgmg/server/dev/')) return 1;
 
       return 3;
     };
