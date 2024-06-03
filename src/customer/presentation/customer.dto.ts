@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsOptional, IsEnum, Length } from 'class-validator';
 import { Point } from 'typeorm';
-import { AuthProvider } from '../entities/customer.entity';
+import { AuthProvider } from '../../schemas/customers.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CustomerDto {

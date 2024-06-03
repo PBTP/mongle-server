@@ -2,7 +2,7 @@ import { CustomerService } from '../application/customer.service';
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CustomerDto } from './customer.dto';
-import { Customer } from '../entities/customer.entity';
+import { Customer } from '../../schemas/customers.entity';
 import { CurrentCustomer } from '../../auth/decorator/customer.decorator';
 import {
   ApiBearerAuth,
