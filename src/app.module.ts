@@ -10,7 +10,9 @@ import { CustomerModule } from './customer/customer.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
-import { CacheModule } from "./common/cache/cache.module";
+import { CacheModule } from './common/cache/cache.module';
+import { LoggerModule } from './config/logger/logger.module';
+import { SystemAlarmModule } from "./system/system.alarm.module";
 
 @Module({
   imports: [
@@ -40,17 +42,19 @@ import { CacheModule } from "./common/cache/cache.module";
     RedisModule.forRootAsync({
       useFactory: async (configService: ConfigService) => {
         const datasource = JSON.parse(configService.get('datasource/redis'));
-        return{
+        return {
           config: datasource,
-          readyLog: true
+          readyLog: true,
         };
       },
       inject: [ConfigService],
     }),
     EmailModule,
     PreRegistrationServeyModule,
-    CacheModule,
+    SystemAlarmModule,
     CustomerModule,
+    LoggerModule,
+    CacheModule,
     AuthModule,
   ],
   controllers: [AppController],

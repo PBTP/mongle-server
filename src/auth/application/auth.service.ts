@@ -131,4 +131,8 @@ export class AuthService {
       (this.accessTokenOption.expiresIn as number) / 1000,
     );
   }
+
+  async decodeToken(token: string): Promise<any> {
+    return await this.jwtService.decode(token);
+  }
 }
