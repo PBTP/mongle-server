@@ -1,30 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { S3 } from 'aws-sdk';
+import { Inject, Injectable } from '@nestjs/common';
+import { MetaData } from './dto/image.dto';
+import { CloudStorageService } from "../cloud/cloudStorageService";
 
 @Injectable()
 export class ImageService {
-  private readonly s3Client: S3;
-  private readonly bucketName: string = this.configService.get('s3/bucket_name');
+  constructor(
+    @Inject('CloudStorageService')
+    private readonly cloudStorageService: CloudStorageService,
+  ) {}
 
-  constructor(private readonly configService: ConfigService) {
-    this.s3Client = new S3({
-      useAccelerateEndpoint: true,
-      accessKeyId: this.configService.get('AWS_IAM_ACCESS_KEY_ID'),
-      secretAccessKey: this.configService.get('AWS_IAM_SECRET_ACCESS_KEY'),
-      region: this.configService.get('AWS_REGION'),
-    });
-  }
-
-  async generatedPreSignedUrl(
+  async generatePreSignedUrl(
     key: string,
-    metadata: { ContentType: string; ContentLength: number; extension: string },
+    metadata: MetaData,
     expiredTime: number = 60,
   ): Promise<string> {
-    return await this.s3Client.getSignedUrlPromise('putObject', {
-      Bucket: this.bucketName,
-      Key: key,
-      Expires: expiredTime,
-    });
+    return await this.cloudStorageService.generatePreSignedUrl(
+      key,
+      metadata,
+      expiredTime,
+    );
   }
 }

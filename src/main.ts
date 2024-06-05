@@ -15,8 +15,15 @@ async function bootstrap() {
   });
 
   app.useLogger(app.get<LoggerService>(LoggerService));
-  app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get<Reflector>(Reflector)));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  );
+  app.useGlobalInterceptors(
+    new ClassSerializerInterceptor(app.get<Reflector>(Reflector)),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('몽글몽글 API')

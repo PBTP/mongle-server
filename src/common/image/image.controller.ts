@@ -1,8 +1,9 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Param, Query, UseGuards } from "@nestjs/common";
 import { ImageService } from './image.service';
 import { CurrentCustomer } from '../../auth/decorator/customer.decorator';
 import { Customer } from '../../customer/entities/customer.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { MetaData } from './dto/image.dto';
 
 @Controller('/v1/image')
 export class ImageController {
@@ -10,10 +11,17 @@ export class ImageController {
 
   @Get('/presigned-url')
   @UseGuards(AuthGuard())
+  @HttpCode(201)
   async getPreSignedUrl(
     @CurrentCustomer() customer: Customer,
-    metadata: { ContentType: string; ContentLength: number; extension: string },
-  ): Promise<string> {
-    return this.imageService.generatedPreSignedUrl(customer.uuid, metadata, 60);
+    @Query() metadata: MetaData,
+  ): Promise<{ url: string }> {
+    return {
+      url: await this.imageService.generatePreSignedUrl(
+        customer.uuid,
+        metadata,
+        metadata.expiredTime,
+      ),
+    };
   }
 }
