@@ -10,13 +10,12 @@ import { validateOrReject as validation } from 'class-validator';
 import { ConfigService } from '@nestjs/config';
 import { SQS } from 'aws-sdk';
 
-const sqsName = {
+export const sqsName = {
   s3ImageCreated: 's3-image-object-created',
 };
 
 @Injectable()
 export class SqsConsumer implements MessageConsumer {
-  private readonly s3ImageObjectCreated: string = 's3-image-object-created';
   private readonly logger: Logger = new Logger(SqsConsumer.name);
   private readonly sqs: SQS = new SQS({
     region: this.configService.get<string>('AWS_REGION'),
@@ -55,25 +54,25 @@ export class SqsConsumer implements MessageConsumer {
       })
       .then((v) => {
         this.messageLog(sqsName.s3ImageCreated, message, 'success');
-        this.sqs.deleteMessage(
-          {
-            QueueUrl: this.configService.get<string>(
-              'sqs/url/s3-image-object-created',
-            ),
-            ReceiptHandle: message.ReceiptHandle,
-          },
-          (err, data) => {
-            if (err) {
-              this.logger.error(
-                `Error occurred while deleting message: ${err}`,
-              );
-              this.logger.error(`data: ${data}`);
-            }
-            this.messageLog(sqsName.s3ImageCreated, message, 'deleted');
-          },
-        );
+        this.deleteMessage(sqsName.s3ImageCreated, message);
         return v;
       });
+  }
+
+  private deleteMessage(queueName: string, message: SQS.Message) {
+    this.sqs.deleteMessage(
+      {
+        QueueUrl: this.configService.get<string>(`sqs/url/${queueName}`),
+        ReceiptHandle: message.ReceiptHandle,
+      },
+      (err, data) => {
+        if (err) {
+          this.logger.error(`Error occurred while deleting message: ${err}`);
+          this.logger.error(`data: ${data}`);
+        }
+        this.messageLog(sqsName.s3ImageCreated, message, 'deleted');
+      },
+    );
   }
 
   @SqsConsumerEventHandler('s3-image-object-created', 'error')
