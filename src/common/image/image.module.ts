@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Customer } from '../../customer/entities/customer.entity';
 import { ImageService } from './image.service';
 import { ImageController } from './image.controller';
-import { CloudModule } from '../cloud/cloud.module';
+import { Images } from './image.entity';
 
+@Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([Customer]), CloudModule],
+  imports: [TypeOrmModule.forFeature([Images])],
   exports: [ImageService],
   providers: [ImageService],
   controllers: [ImageController],

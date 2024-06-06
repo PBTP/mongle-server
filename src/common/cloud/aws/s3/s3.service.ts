@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
 import { ConfigService } from '@nestjs/config';
-import { MetaData } from '../image/dto/image.dto';
 import { BadRequestException } from '@nestjs/common/exceptions';
-import { CloudStorageService } from './cloudStorageService';
+import { CloudStorageServiceInterface } from '../../cloud.storage.service.interface';
+import { MetaData } from '../../../image/dto/image.dto';
 
 @Injectable()
-export class S3Service implements CloudStorageService {
+export class S3Service implements CloudStorageServiceInterface {
   private readonly s3Client: S3;
   private readonly bucketName: string =
     this.configService.get('s3/bucket_name');
@@ -45,5 +45,32 @@ export class S3Service implements CloudStorageService {
       Key: `${this.env}/images/${key}.${fileExtension}`,
       Expires: expiredTime,
     });
+  }
+
+  async generatePreSignedUrls(
+    key: string,
+    metadataArray: MetaData[],
+  ): Promise<string[]> {
+    const urls: string[] = [];
+
+    for (let i = 0; i < metadataArray.length; i++) {
+      const metadata = metadataArray[i];
+      const split = metadata.fileName.split('.');
+      const fileExtension = split[split.length - 1];
+
+      if (!this.supportExtensions.includes(fileExtension)) {
+        throw new BadRequestException('지원하지 않는 확장자입니다.');
+      }
+
+      const url = await this.s3Client.getSignedUrlPromise('putObject', {
+        Bucket: this.bucketName,
+        Key: `${this.env}/images/${key}/${i}.${fileExtension}`,
+        Expires: metadata.expiredTime,
+      });
+
+      urls.push(url);
+    }
+
+    return urls;
   }
 }

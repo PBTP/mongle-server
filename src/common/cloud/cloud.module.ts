@@ -1,13 +1,16 @@
-import { Module } from '@nestjs/common';
-import { S3Service } from './s3.service';
+import { Global, Module } from '@nestjs/common';
+import { S3Service } from './aws/s3/s3.service';
+import { SQSModule } from './aws/sqs/sqs.module';
 
+@Global()
 @Module({
-  imports: [],
+  imports: [SQSModule],
   providers: [
     {
       provide: 'CloudStorageService',
       useClass: S3Service,
     },
   ],
+  exports: ['CloudStorageService'],
 })
 export class CloudModule {}

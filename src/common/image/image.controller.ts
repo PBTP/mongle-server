@@ -1,4 +1,10 @@
-import { Controller, Get, HttpCode, HttpStatus, Param, Query, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ImageService } from './image.service';
 import { CurrentCustomer } from '../../auth/decorator/customer.decorator';
 import { Customer } from '../../customer/entities/customer.entity';
@@ -9,19 +15,15 @@ import { MetaData } from './dto/image.dto';
 export class ImageController {
   constructor(private readonly imageService: ImageService) {}
 
-  @Get('/presigned-url')
+  @Post('/presigned-url')
   @UseGuards(AuthGuard())
   @HttpCode(201)
   async getPreSignedUrl(
     @CurrentCustomer() customer: Customer,
-    @Query() metadata: MetaData,
-  ): Promise<{ url: string }> {
-    return {
-      url: await this.imageService.generatePreSignedUrl(
-        customer.uuid,
-        metadata,
-        metadata.expiredTime,
-      ),
-    };
+    @Body() metadata: MetaData[],
+  ): Promise<{ url: string }[]> {
+    return await this.imageService
+      .generatePreSignedUrl(customer.uuid, metadata)
+      .then((urls) => urls.map((url) => ({ url })));
   }
 }

@@ -2,9 +2,6 @@ import { IsNotEmpty, IsNumber, IsOptional, Max, MAX, MaxLength } from "class-val
 import { Exclude, Transform, Type } from "class-transformer";
 
 export class ImageDto {
-  @IsNumber()
-  @Exclude()
-  imageId: number;
   uuid: string;
   imageLink: string;
   createdAt: Date;
@@ -20,5 +17,5 @@ export class MetaData {
   fileName: string;
 
   @IsOptional()
-  expiredTime: number;
+  expiredTime: number = 60;
 }
