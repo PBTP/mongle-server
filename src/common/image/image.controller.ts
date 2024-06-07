@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { ImageService } from './image.service';
 import { CurrentCustomer } from '../../auth/decorator/customer.decorator';
-import { Customer } from '../../customer/entities/customer.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { MetaData } from './dto/image.dto';
+import { Customer } from '../../schemas/customers.entity';
 
 @Controller('/v1/image')
 export class ImageController {
