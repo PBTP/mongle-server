@@ -5,8 +5,15 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Point } from 'typeorm';
+import { Appointment } from './appointments.entity';
+import { BusinessChat } from './business-chats.entity';
+import { DriverChat } from './driver-chats.entity';
+import { Favorite } from './favorites.entity';
+import { Pet } from './pets.entity';
+import { Review } from './reviews.entity';
 
 export enum AuthProvider {
   KAKAO = 'KAKAO',
@@ -49,4 +56,22 @@ export class Customer {
 
   @Column({ length: 20, unique: true, nullable: true })
   refreshToken: string;
+
+  @OneToMany(() => BusinessChat, (businessChats) => businessChats.customer)
+  public businessChats: BusinessChat[];
+
+  @OneToMany(() => Favorite, (favorites) => favorites.customer)
+  public favorites: Favorite[];
+
+  @OneToMany(() => Review, (reviews) => reviews.customer)
+  public reviews: Review[];
+
+  @OneToMany(() => Appointment, (appointments) => appointments.customer)
+  public appointments: Appointment[];
+
+  @OneToMany(() => DriverChat, (driverChats) => driverChats.customer)
+  public driverChats: DriverChat[];
+
+  @OneToMany(() => Pet, (pets) => pets.customer)
+  public pets: Pet[];
 }

@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { Customer } from '../../customer/entities/customer.entity';
+import { Customer } from '../../schemas/customers.entity';
 
 export const CurrentCustomer = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {

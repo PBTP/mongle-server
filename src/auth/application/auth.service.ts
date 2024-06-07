@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuthDto } from '../presentation/auth.dto';
 import { CustomerService } from 'src/customer/application/customer.service';
-import { Customer } from 'src/customer/entities/customer.entity';
+import { Customer } from 'src/schemas/customers.entity';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from '../../common/cache/cache.service';

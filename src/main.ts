@@ -16,7 +16,9 @@ async function bootstrap() {
 
   app.useLogger(app.get<LoggerService>(LoggerService));
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get<Reflector>(Reflector)));
+  app.useGlobalInterceptors(
+    new ClassSerializerInterceptor(app.get<Reflector>(Reflector)),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('몽글몽글 API')
