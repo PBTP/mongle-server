@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ImageDto, MetaData } from './dto/image.dto';
-import { CloudStorageServiceInterface } from '../cloud/cloud.storage.service.interface';
-import { Images } from './image.entity';
+import { ImageDto, MetaData } from '../presentation/image.dto';
+import { CloudStorageServiceInterface } from '../../cloud/cloud.storage.service.interface';
+import { Images } from '../../../schemas/image.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 

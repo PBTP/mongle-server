@@ -1,4 +1,4 @@
-import { MetaData } from '../image/dto/image.dto';
+import { MetaData } from '../image/presentation/image.dto';
 
 export interface CloudStorageServiceInterface {
   generatePreSignedUrl(

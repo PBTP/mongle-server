@@ -1,8 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ImageService } from './image.service';
-import { ImageController } from './image.controller';
-import { Images } from './image.entity';
+import { ImageService } from './application/image.service';
+import { ImageController } from './presentation/image.controller';
+import { Images } from '../../schemas/image.entity';
 
 @Global()
 @Module({

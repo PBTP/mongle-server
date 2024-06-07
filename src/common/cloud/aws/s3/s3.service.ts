@@ -3,7 +3,7 @@ import { S3 } from 'aws-sdk';
 import { ConfigService } from '@nestjs/config';
 import { BadRequestException } from '@nestjs/common/exceptions';
 import { CloudStorageServiceInterface } from '../../cloud.storage.service.interface';
-import { MetaData } from '../../../image/dto/image.dto';
+import { MetaData } from '../../../image/presentation/image.dto';
 
 @Injectable()
 export class S3Service implements CloudStorageServiceInterface {
