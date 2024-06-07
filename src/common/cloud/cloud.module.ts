@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { S3Service } from './aws/s3/s3.service';
+import { S3Service } from './aws/s3/application/s3.service';
 import { SQSModule } from './aws/sqs/sqs.module';
 
 @Global()

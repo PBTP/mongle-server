@@ -2,10 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { SqsConsumerEventHandler, SqsMessageHandler } from '@ssut/nestjs-sqs';
 import { Message } from 'aws-sdk/clients/sqs';
 import { plainToInstance as toDto } from 'class-transformer';
-import { S3EventDetailDto } from '../presentation/s3-image-created-event-message.dto';
-import { MessageConsumer } from '../../../cloud.message.broker.interface';
-import { ImageService } from '../../../../image/application/image.service';
-import { Images } from '../../../../../schemas/image.entity';
+import { S3EventDetailDto } from '../../cloud/aws/sqs/presentation/s3-image-created-event-message.dto';
+import { MessageConsumer } from '../../cloud/cloud.broker.interface';
+import { ImageService } from './image.service';
+import { Images } from '../../../schemas/image.entity';
 import { validateOrReject as validation } from 'class-validator';
 import { ConfigService } from '@nestjs/config';
 import { SQS } from 'aws-sdk';
@@ -15,8 +15,8 @@ export const sqsName = {
 };
 
 @Injectable()
-export class SqsConsumer implements MessageConsumer {
-  private readonly logger: Logger = new Logger(SqsConsumer.name);
+export class ImageConsumer implements MessageConsumer {
+  private readonly logger: Logger = new Logger(ImageConsumer.name);
   private readonly sqs: SQS = new SQS({
     region: this.configService.get<string>('AWS_REGION'),
     credentials: {

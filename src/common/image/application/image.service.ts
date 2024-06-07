@@ -1,9 +1,10 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ImageDto, MetaData } from '../presentation/image.dto';
-import { CloudStorageServiceInterface } from '../../cloud/cloud.storage.service.interface';
+import { CloudStorageInterface } from '../../cloud/cloud.storage.interface';
 import { Images } from '../../../schemas/image.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { PresignedUrlDto } from "../../cloud/aws/s3/presentation/presigned-url.dto";
 
 @Injectable()
 export class ImageService {
@@ -11,15 +12,15 @@ export class ImageService {
 
   constructor(
     @Inject('CloudStorageService')
-    private readonly cloudStorageService: CloudStorageServiceInterface,
+    private readonly cloudStorageService: CloudStorageInterface,
     @InjectRepository(Images)
     private readonly imageRepository: Repository<Images>,
   ) {}
 
-  async generatePreSignedUrl(
+  async generatePreSignedUrls(
     key: string,
     metadata: MetaData[],
-  ): Promise<string[]> {
+  ): Promise<PresignedUrlDto[]> {
     return await this.cloudStorageService.generatePreSignedUrls(key, metadata);
   }
 

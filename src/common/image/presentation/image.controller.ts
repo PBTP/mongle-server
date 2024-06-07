@@ -10,6 +10,7 @@ import { CurrentCustomer } from '../../../auth/decorator/customer.decorator';
 import { AuthGuard } from '@nestjs/passport';
 import { MetaData } from './image.dto';
 import { Customer } from '../../../schemas/customers.entity';
+import { PresignedUrlDto } from "../../cloud/aws/s3/presentation/presigned-url.dto";
 
 @Controller('/v1/image')
 export class ImageController {
@@ -21,9 +22,14 @@ export class ImageController {
   async getPreSignedUrl(
     @CurrentCustomer() customer: Customer,
     @Body() metadata: MetaData[],
-  ): Promise<{ url: string }[]> {
+  ): Promise<PresignedUrlDto[]> {
     return await this.imageService
-      .generatePreSignedUrl(customer.uuid, metadata)
-      .then((urls) => urls.map((url) => ({ url })));
+      .generatePreSignedUrls(customer.uuid, metadata)
+      .then((dtos) => dtos.map((v) => {
+        return {
+          url: v.url,
+          expiredTime: v.expiredTime,
+        };
+      }));
   }
 }

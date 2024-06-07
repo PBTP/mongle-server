@@ -2,11 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
 import { ConfigService } from '@nestjs/config';
 import { BadRequestException } from '@nestjs/common/exceptions';
-import { CloudStorageServiceInterface } from '../../cloud.storage.service.interface';
-import { MetaData } from '../../../image/presentation/image.dto';
+import { CloudStorageInterface } from '../../../cloud.storage.interface';
+import { MetaData } from '../../../../image/presentation/image.dto';
+import { PresignedUrlDto } from "../presentation/presigned-url.dto";
 
 @Injectable()
-export class S3Service implements CloudStorageServiceInterface {
+export class S3Service implements CloudStorageInterface {
   private readonly s3Client: S3;
   private readonly bucketName: string =
     this.configService.get('s3/bucket_name');
@@ -32,7 +33,7 @@ export class S3Service implements CloudStorageServiceInterface {
     key: string,
     metadata: MetaData,
     expiredTime: number = 60,
-  ): Promise<string> {
+  ): Promise<PresignedUrlDto> {
     const split = metadata.fileName.split('.');
     const fileExtension = split[split.length - 1];
 
@@ -40,23 +41,26 @@ export class S3Service implements CloudStorageServiceInterface {
       throw new BadRequestException('지원하지 않는 확장자입니다.');
     }
 
-    return await this.s3Client.getSignedUrlPromise('putObject', {
+    let url = await this.s3Client.getSignedUrlPromise('putObject', {
       Bucket: this.bucketName,
       Key: `${this.env}/images/${key}.${fileExtension}`,
       Expires: expiredTime,
     });
+
+    return { url , expiredTime };
   }
 
   async generatePreSignedUrls(
     key: string,
     metadataArray: MetaData[],
-  ): Promise<string[]> {
-    const urls: string[] = [];
+  ): Promise<PresignedUrlDto[]> {
+    const dtos: PresignedUrlDto[] = [];
 
     for (let i = 0; i < metadataArray.length; i++) {
       const metadata = metadataArray[i];
       const split = metadata.fileName.split('.');
       const fileExtension = split[split.length - 1];
+      const expiredTime = metadata.expiredTime ?? 60;
 
       if (!this.supportExtensions.includes(fileExtension)) {
         throw new BadRequestException('지원하지 않는 확장자입니다.');
@@ -65,12 +69,12 @@ export class S3Service implements CloudStorageServiceInterface {
       const url = await this.s3Client.getSignedUrlPromise('putObject', {
         Bucket: this.bucketName,
         Key: `${this.env}/images/${key}/${i}.${fileExtension}`,
-        Expires: metadata.expiredTime,
+        Expires: expiredTime,
       });
 
-      urls.push(url);
+      dtos.push({ url , expiredTime });
     }
 
-    return urls;
+    return dtos;
   }
 }
