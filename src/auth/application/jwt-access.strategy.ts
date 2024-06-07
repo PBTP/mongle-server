@@ -6,7 +6,7 @@ import {
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Customer } from '../../customer/entities/customer.entity';
+import { Customer } from '../../schemas/customers.entity';
 import { CacheService } from '../../common/cache/cache.service';
 
 @Injectable()
