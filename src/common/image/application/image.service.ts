@@ -4,7 +4,7 @@ import { CloudStorageInterface } from '../../cloud/cloud.storage.interface';
 import { Images } from '../../../schemas/image.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { PresignedUrlDto } from "../../cloud/aws/s3/presentation/presigned-url.dto";
+import { PresignedUrlDto } from '../../cloud/aws/s3/presentation/presigned-url.dto';
 
 @Injectable()
 export class ImageService {

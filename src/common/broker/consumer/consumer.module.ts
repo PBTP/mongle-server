@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SqsModule } from '@ssut/nestjs-sqs';
 import { SQSClient } from '@aws-sdk/client-sqs';
-import { ImageConsumer, sqsName } from '../../../image/application/image.consumer';
+import { sqsName } from '../../image/application/image.consumer';
 
 @Module({
   imports: [
@@ -35,4 +35,4 @@ import { ImageConsumer, sqsName } from '../../../image/application/image.consume
     }),
   ],
 })
-export class SQSModule {}
+export class ConsumerModule {}

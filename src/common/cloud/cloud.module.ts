@@ -1,10 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { S3Service } from './aws/s3/application/s3.service';
-import { SQSModule } from './aws/sqs/sqs.module';
-
+import { ConsumerModule } from '../broker/consumer/consumer.module';
 @Global()
 @Module({
-  imports: [SQSModule],
+  imports: [ConsumerModule],
   providers: [
     {
       provide: 'CloudStorageService',

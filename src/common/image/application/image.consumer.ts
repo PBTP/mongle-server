@@ -3,7 +3,6 @@ import { SqsConsumerEventHandler, SqsMessageHandler } from '@ssut/nestjs-sqs';
 import { Message } from 'aws-sdk/clients/sqs';
 import { plainToInstance as toDto } from 'class-transformer';
 import { S3EventDetailDto } from '../../cloud/aws/sqs/presentation/s3-image-created-event-message.dto';
-import { MessageConsumer } from '../../cloud/cloud.broker.interface';
 import { ImageService } from './image.service';
 import { Images } from '../../../schemas/image.entity';
 import { validateOrReject as validation } from 'class-validator';
@@ -15,7 +14,7 @@ export const sqsName = {
 };
 
 @Injectable()
-export class ImageConsumer implements MessageConsumer {
+export class ImageConsumer {
   private readonly logger: Logger = new Logger(ImageConsumer.name);
   private readonly sqs: SQS = new SQS({
     region: this.configService.get<string>('AWS_REGION'),

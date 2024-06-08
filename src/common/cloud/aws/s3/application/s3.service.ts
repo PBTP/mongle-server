@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { BadRequestException } from '@nestjs/common/exceptions';
 import { CloudStorageInterface } from '../../../cloud.storage.interface';
 import { MetaData } from '../../../../image/presentation/image.dto';
-import { PresignedUrlDto } from "../presentation/presigned-url.dto";
+import { PresignedUrlDto } from '../presentation/presigned-url.dto';
 
 @Injectable()
 export class S3Service implements CloudStorageInterface {
@@ -41,13 +41,13 @@ export class S3Service implements CloudStorageInterface {
       throw new BadRequestException('지원하지 않는 확장자입니다.');
     }
 
-    let url = await this.s3Client.getSignedUrlPromise('putObject', {
+    const url = await this.s3Client.getSignedUrlPromise('putObject', {
       Bucket: this.bucketName,
       Key: `${this.env}/images/${key}.${fileExtension}`,
       Expires: expiredTime,
     });
 
-    return { url , expiredTime };
+    return { url, expiredTime };
   }
 
   async generatePreSignedUrls(
@@ -72,7 +72,7 @@ export class S3Service implements CloudStorageInterface {
         Expires: expiredTime,
       });
 
-      dtos.push({ url , expiredTime });
+      dtos.push({ url, expiredTime });
     }
 
     return dtos;
