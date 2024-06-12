@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsOptional, IsEnum, Length } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsEnum,
+  Length,
+  IsNumber,
+} from 'class-validator';
 import { Point } from 'typeorm';
 import { AuthProvider } from '../../schemas/customers.entity';
 import { ApiProperty } from '@nestjs/swagger';
@@ -6,9 +12,10 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CustomerDto {
   @ApiProperty({
     description: 'Mongle Server에서의 고객 식별자',
-    required: true,
-    type: String,
+    required: false,
+    readOnly: true,
   })
+  @IsNumber()
   customerId: number;
 
   @ApiProperty({
