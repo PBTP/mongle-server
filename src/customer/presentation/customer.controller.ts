@@ -1,16 +1,9 @@
 import { CustomerService } from '../application/customer.service';
-import { Controller, Get, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get } from '@nestjs/common';
 import { CustomerDto } from './customer.dto';
 import { Customer } from '../../schemas/customers.entity';
-import { CurrentCustomer } from '../../auth/decorator/customer.decorator';
-import {
-  ApiBearerAuth,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-  ApiUnauthorizedResponse,
-} from '@nestjs/swagger';
+import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('고객 관련 API')
 @Controller('/v1/customer')
@@ -22,12 +15,7 @@ export class CustomerController {
     description: 'Access Token을 통해 내 정보를 조회합니다.',
   })
   @ApiOkResponse({ type: CustomerDto, description: '내 정보 조회 성공' })
-  @ApiUnauthorizedResponse({
-    description:
-      'Unauthorized / Access Token이 만료되었거나 잘못되었습니다. 토큰을 갱신하세요',
-  })
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard())
+  @Auth()
   @Get('my')
   async getMyCustomer(
     @CurrentCustomer() customer: Customer,
