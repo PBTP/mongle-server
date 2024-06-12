@@ -32,7 +32,7 @@ export class Customer {
   customerName: string;
 
   @Column({ length: 20, nullable: true })
-  customerPhoneNumber: string;
+  customerPhoneNumber?: string;
 
   @Column({
     type: 'geometry',
@@ -40,7 +40,7 @@ export class Customer {
     srid: 4326,
     nullable: true,
   })
-  customerLocation: Point;
+  customerLocation?: Point;
 
   @Column({ type: 'enum', enum: AuthProvider, nullable: false })
   authProvider: AuthProvider;
@@ -52,10 +52,10 @@ export class Customer {
   modifiedAt: Date;
 
   @DeleteDateColumn({ nullable: true })
-  deletedAt: Date;
+  deletedAt?: Date;
 
   @Column({ length: 20, unique: true, nullable: true })
-  refreshToken: string;
+  refreshToken?: string;
 
   @OneToMany(() => BusinessChat, (businessChats) => businessChats.customer)
   public businessChats: BusinessChat[];

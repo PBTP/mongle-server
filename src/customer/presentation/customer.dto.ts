@@ -16,7 +16,8 @@ export class CustomerDto {
     readOnly: true,
   })
   @IsNumber()
-  customerId: number;
+  @IsOptional()
+  customerId?: number;
 
   @ApiProperty({
     description: 'ResourceServer에서 제공한 유저 식별자',
@@ -44,7 +45,7 @@ export class CustomerDto {
   })
   @IsOptional()
   @Length(1, 30)
-  customerPhoneNumber: string;
+  customerPhoneNumber?: string;
 
   @ApiProperty({
     description: '고객 위치',
@@ -52,7 +53,7 @@ export class CustomerDto {
     required: false,
   })
   @IsOptional()
-  customerLocation: Point;
+  customerLocation?: Point;
 
   @ApiProperty({
     description: '인증 제공자 타입',
@@ -63,5 +64,5 @@ export class CustomerDto {
   authProvider: AuthProvider;
 
   @IsOptional()
-  refreshToken: string;
+  refreshToken?: string;
 }
