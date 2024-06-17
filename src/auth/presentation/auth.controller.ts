@@ -1,15 +1,14 @@
-import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, Req } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { AuthDto } from './auth.dto';
-import { AuthGuard } from '@nestjs/passport';
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { CustomerDto } from '../../customer/presentation/customer.dto';
+import { Auth } from '../decorator/auth.decorator';
 
 @ApiTags('인증 관련 API')
 @Controller('/v1/auth')
@@ -41,9 +40,8 @@ export class AuthController {
     description:
       'Unauthorized / 요청한 Refresh Token에 해당하는 고객이 없습니다.',
   })
-  @ApiBearerAuth()
+  @Auth('refresh')
   @Post('/refresh')
-  @UseGuards(AuthGuard('refresh'))
   async refresh(@Req() req: Request): Promise<AuthDto> {
     return await this.authService.tokenRefresh(req);
   }
