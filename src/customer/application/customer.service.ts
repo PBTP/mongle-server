@@ -22,7 +22,7 @@ export class CustomerService {
     dto.customerId && (where['customerId'] = dto.customerId);
     dto.uuid && (where['uuid'] = dto.uuid);
 
-    return await this.customerRepository.findOneOrFail({
+    return await this.customerRepository.findOne({
       where: where,
     });
   }
