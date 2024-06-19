@@ -8,6 +8,11 @@ import { JwtAccessStrategy } from './application/jwt-access.strategy';
 import { JwtRefreshStrategy } from './application/jwt-refresh.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { CacheModule } from '../common/cache/cache.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { PhoneVerification } from 'src/schemas/phone-verification.entity';
+import { CustomerService } from 'src/customer/application/customer.service';
+import { PhoneVerificationService } from 'src/sms/application/phone-verification.service';
+import { AligoService } from 'src/sms/application/aligo.service';
 
 @Global()
 @Module({
@@ -21,9 +26,17 @@ import { CacheModule } from '../common/cache/cache.module';
     PassportModule.register({ defaultStrategy: 'access' }),
     CacheModule,
     CustomerModule,
+    TypeOrmModule.forFeature([PhoneVerification]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtAccessStrategy, JwtRefreshStrategy],
+  providers: [
+    AuthService,
+    JwtAccessStrategy,
+    JwtRefreshStrategy,
+    PhoneVerificationService,
+    CustomerService,
+    AligoService,
+  ],
   exports: [AuthService, JwtAccessStrategy, JwtRefreshStrategy, PassportModule],
 })
 export class AuthModule {}

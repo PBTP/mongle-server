@@ -12,7 +12,7 @@ import { AuthModule } from './auth/auth.module';
 import { RedisModule } from '@liaoliaots/nestjs-redis';
 import { CacheModule } from './common/cache/cache.module';
 import { LoggerModule } from './config/logger/logger.module';
-import { SystemAlarmModule } from "./system/system.alarm.module";
+import { SystemAlarmModule } from './system/system.alarm.module';
 import { ImageModule } from './common/image/image.module';
 import { CloudModule } from './common/cloud/cloud.module';
 
