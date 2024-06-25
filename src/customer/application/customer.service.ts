@@ -17,13 +17,10 @@ export class CustomerService {
   }
 
   async findOne(dto: Partial<Customer>): Promise<Customer> {
-    const where = [];
+    const where = {};
 
-    for (const key in dto) {
-      if (dto[key] !== undefined || dto[key] !== null) {
-        where.push({ [key]: dto[key] });
-      }
-    }
+    dto.customerId && (where['customerId'] = dto.customerId);
+    dto.uuid && (where['uuid'] = dto.uuid);
 
     return await this.customerRepository.findOne({
       where: where,

@@ -10,7 +10,7 @@ export class Images {
   @PrimaryGeneratedColumn()
   imageId: number;
 
-  @Column({ type: 'varchar', length: 20, nullable: false })
+  @Column({ type: 'varchar', length: 44, nullable: false })
   uuid: string;
 
   @Column({ type: 'varchar', length: 100, unique: true, nullable: false })
