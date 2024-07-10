@@ -6,6 +6,7 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from '../../common/cache/cache.service';
 import { CustomerDto } from '../../customer/presentation/customer.dto';
+import { UnauthorizedException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class AuthService {
@@ -132,7 +133,16 @@ export class AuthService {
     );
   }
 
-  async decodeToken(token: string): Promise<any> {
+  async decode(token: string): Promise<any> {
     return await this.jwtService.decode(token);
+  }
+
+  async getCustomer(token: string): Promise<Customer> {
+    const payload = await this.jwtService.verify(token);
+    if (!payload) {
+      throw new UnauthorizedException();
+    }
+
+    return await this.customerService.findOne({ customerId: payload.subject });
   }
 }
