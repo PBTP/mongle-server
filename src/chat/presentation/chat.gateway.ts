@@ -1,7 +1,6 @@
 import {
   WebSocketGateway,
   WebSocketServer,
-  SubscribeMessage,
   MessageBody,
   ConnectedSocket,
   OnGatewayConnection,
@@ -12,6 +11,7 @@ import { Logger } from '@nestjs/common';
 import { ChatDto, MessageDto } from './chat.dto';
 import { AuthService } from '../../auth/application/auth.service';
 import { CustomerDto } from '../../customer/presentation/customer.dto';
+import { Subscribe } from '../decorator/socket.decorator';
 
 @WebSocketGateway(5000, { namespace: 'chat' })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
@@ -43,7 +43,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Client disconnected: ${client.id}`);
   }
 
-  @SubscribeMessage('join')
+  @Subscribe('join')
   async handleJoin(
     @MessageBody() chat: ChatDto,
     @ConnectedSocket() client: Socket,
@@ -58,7 +58,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Client ${user.uuid} is already in room ${chat.roomId}`);
   }
 
-  @SubscribeMessage('leave')
+  @Subscribe('leave')
   async handleLeave(
     @MessageBody() chat: ChatDto,
     @ConnectedSocket() client: Socket,
@@ -69,7 +69,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Client ${user.uuid} leave room ${chat.roomId}`);
   }
 
-  @SubscribeMessage('send')
+  @Subscribe('send')
   handleMessage(
     @MessageBody() message: MessageDto,
     @ConnectedSocket() client: Socket,
