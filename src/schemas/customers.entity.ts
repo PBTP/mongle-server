@@ -14,6 +14,7 @@ import { DriverChat } from './driver-chats.entity';
 import { Favorite } from './favorites.entity';
 import { Pet } from './pets.entity';
 import { Review } from './reviews.entity';
+import { CustomerChatRoom } from './customer-chat-room.entity';
 
 export enum AuthProvider {
   KAKAO = 'KAKAO',
@@ -74,4 +75,7 @@ export class Customer {
 
   @OneToMany(() => Pet, (pets) => pets.customer)
   public pets: Pet[];
+
+  @OneToMany(() => CustomerChatRoom, (room) => room.chatRoom)
+  public chatRooms: CustomerChatRoom[];
 }

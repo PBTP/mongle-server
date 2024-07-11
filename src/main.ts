@@ -4,6 +4,7 @@ import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { LoggerService } from './config/logger/logger.config';
+import { ValidationDefaultOption } from './common/validation/validation.data';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -15,12 +16,7 @@ async function bootstrap() {
   });
 
   app.useLogger(app.get<LoggerService>(LoggerService));
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      transformOptions: { enableImplicitConversion: true },
-    }),
-  );
+  app.useGlobalPipes(new ValidationPipe(ValidationDefaultOption));
   app.useGlobalInterceptors(
     new ClassSerializerInterceptor(app.get<Reflector>(Reflector)),
   );

@@ -6830,6 +6830,11 @@ tsconfig-paths@4.2.0, tsconfig-paths@^4.1.2, tsconfig-paths@^4.2.0:
     minimist "^1.2.6"
     strip-bom "^3.0.0"
 
+tsid-ts@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/tsid-ts/-/tsid-ts-0.0.9.tgz#2fc486ee1b414d070f751510f6ab67a92d4ea0db"
+  integrity sha512-UQtHUWLO65lUht9m3Iy9iO7fxy1197L3CWEWP19VMCUpMZ548LSuWaTaLIL7NKdiWRJ6z7HJeuAJoVJ29NllnA==
+
 tslib@2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.1.tgz#0d0bfbaac2880b91e22df0768e55be9753a5b17e"

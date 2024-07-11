@@ -12,6 +12,7 @@ import {
 import { Appointment } from './appointments.entity';
 import { Business } from './business.entity';
 import { DriverChat } from './driver-chats.entity';
+import { DriverChatRoom } from './driver-chat-room.entity';
 
 @Entity({ name: 'drivers' })
 export class Driver {
@@ -41,6 +42,9 @@ export class Driver {
 
   @OneToMany(() => DriverChat, (driverChats) => driverChats.driver)
   public driverChats: DriverChat[];
+
+  @OneToMany(() => DriverChatRoom, (chat) => chat.driver)
+  public chatRooms: DriverChatRoom[];
 
   @ManyToOne(() => Business, (business) => business.drivers)
   @JoinColumn({ name: 'business_id' })

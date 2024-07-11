@@ -17,6 +17,7 @@ import { Driver } from './drivers.entity';
 import { Favorite } from './favorites.entity';
 import { Review } from './reviews.entity';
 import { ServiceOption } from './service-options.entity';
+import { BusinessChatRoom } from './business-chat-room.entity';
 
 @Entity({ name: 'business' })
 export class Business {
@@ -87,4 +88,7 @@ export class Business {
     (businessNotices) => businessNotices.business,
   )
   public businessNotices: BusinessNotice[];
+
+  @OneToMany(() => BusinessChatRoom, (chatRooms) => chatRooms.chatRoom)
+  public chatRooms: BusinessChatRoom[];
 }
