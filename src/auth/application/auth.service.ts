@@ -104,7 +104,7 @@ export class AuthService {
 
     const refreshToken = this.jwtService.sign(
       {
-        tokenType: 'access',
+        tokenType: 'refresh',
         subject: customer.customerId,
         userType: 'customer',
       },
