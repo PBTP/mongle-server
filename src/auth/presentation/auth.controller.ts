@@ -42,7 +42,7 @@ export class AuthController {
   })
   @Auth('refresh')
   @Post('/refresh')
-  async refresh(@Req() req: Request): Promise<AuthDto> {
+  async refresh(@Req() req: Request): Promise<CustomerDto> {
     return await this.authService.tokenRefresh(req);
   }
 }

@@ -27,4 +27,4 @@ export class ChatRoomDto {
   public createdAt: Date;
 }
 
-type UserType = 'customer' | 'driver' | 'business';
+export type UserType = 'customer' | 'driver' | 'business';
