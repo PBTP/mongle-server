@@ -21,7 +21,7 @@ export class DriverChatRoom {
   created_at: Date;
 
   @Column({ type: 'timestamp', nullable: true })
-  deleted_at: Date;
+  deletedAt: Date;
 
   @ManyToOne(() => Driver, (driver) => driver.chatRooms)
   @JoinColumn({ name: 'driver_id' })

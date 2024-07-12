@@ -1,16 +1,22 @@
 import { UserDto } from '../../auth/presentation/user.dto';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { MessageType } from '../../schemas/chat-message.entity';
 
 export class ChatDto {
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
-  public roomId: string;
-  public uuid: string;
+  chatRoomId: number;
+  uuid: string;
 }
 
 export class MessageDto extends ChatDto {
   @IsString()
   @IsNotEmpty()
-  public message: string;
-  public user: UserDto;
+  content: string;
+
+  @IsEnum(MessageType)
+  @IsNotEmpty()
+  chatMessageType: MessageType;
+
+  user: UserDto;
 }

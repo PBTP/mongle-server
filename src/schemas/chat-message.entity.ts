@@ -4,8 +4,10 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { ChatRoom } from './chat-rooms.entity';
+import { HasTsid } from '../common/entity/parent.entity';
 
 export enum MessageType {
   TEXT = 'TEXT',
@@ -15,28 +17,26 @@ export enum MessageType {
 }
 
 @Entity('chat_messages')
-export class ChatMessage {
+export class ChatMessage extends HasTsid {
   @PrimaryGeneratedColumn()
-  chat_message_id: number;
+  chatMessageId: number;
 
   @Column()
   chatRoomId: number;
 
-  @Column({ type: 'char', length: 13 })
+  @Column({ type: 'char', length: 13, nullable: false })
   senderUuid: string;
 
-  @Column({ type: 'char', length: 13, unique: true })
-  tsid: string;
-
   @Column({ type: 'enum', enum: MessageType })
-  chat_message_type: MessageType;
+  chatMessageType: MessageType;
 
   @Column({ type: 'text' })
-  chat_message_content: string;
+  chatMessageContent: string;
 
   @CreateDateColumn({ type: 'timestamp' })
-  created_at: Date;
+  createdAt: Date;
 
   @ManyToOne(() => ChatRoom, (chatRoom) => chatRoom.messages)
+  @JoinColumn({ name: 'chat_room_id' })
   chatRoom: ChatRoom;
 }

@@ -7,17 +7,21 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
+import { ForbiddenException, Logger, NotFoundException } from '@nestjs/common';
 import { ChatDto, MessageDto } from './chat.dto';
 import { AuthService } from '../../auth/application/auth.service';
-import { CustomerDto } from '../../customer/presentation/customer.dto';
 import { Subscribe } from '../decorator/socket.decorator';
+import { UnauthorizedException } from '@nestjs/common/exceptions';
+import { ChatService } from '../application/chat.service';
 
 @WebSocketGateway(5000, { namespace: 'chat' })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger: Logger = new Logger(ChatGateway.name);
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly chatService: ChatService,
+  ) {}
 
   @WebSocketServer()
   server: Server;
@@ -46,28 +50,33 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @Subscribe('join')
   async handleJoin(
-    @MessageBody() chat: ChatDto,
+    @MessageBody() dto: ChatDto,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
-    const user = client['user'];
+    const user = this.getUser(client);
+    const roomId = dto.chatRoomId.toString();
 
-    if (!client.rooms.has(chat.roomId)) {
-      await client.join(chat.roomId);
-      this.logger.log(`Client ${user.uuid} joined room ${chat.roomId}`);
+    if (!(await this.chatService.exists({ chatRoomId: dto.chatRoomId }))) {
+      throw new NotFoundException(`Room ${dto.chatRoomId} not found`);
+    }
+
+    if (!client.rooms.has(roomId)) {
+      await client.join(roomId);
+      this.logger.log(`Client ${user.uuid} joined room ${dto.chatRoomId}`);
       return;
     }
-    this.logger.log(`Client ${user.uuid} is already in room ${chat.roomId}`);
+    this.logger.log(`Client ${user.uuid} is already in room ${dto.chatRoomId}`);
   }
 
   @Subscribe('leave')
   async handleLeave(
-    @MessageBody() chat: ChatDto,
+    @MessageBody() dto: ChatDto,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
-    const user = client['user'] as CustomerDto;
+    const user = this.getUser(client);
 
-    await client.leave(chat.roomId);
-    this.logger.log(`Client ${user.uuid} leave room ${chat.roomId}`);
+    await client.leave(dto.chatRoomId.toString());
+    this.logger.log(`Client ${user.uuid} leave room ${dto.chatRoomId}`);
   }
 
   @Subscribe('send')
@@ -75,11 +84,31 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() message: MessageDto,
     @ConnectedSocket() client: Socket,
   ): void {
-    message.user = client['user'];
+    message.user = this.getUser(client);
 
-    this.server.to(message.roomId).emit('receive', message);
-    this.logger.log(
-      `Message from ${message.user} in room ${message.roomId} : ${message.message}`,
-    );
+    if (!this.chatService.exists({ chatRoomId: message.chatRoomId })) {
+      throw new NotFoundException(`Room ${message.chatRoomId} not found`);
+    }
+
+    if (!client.rooms.has(message.chatRoomId.toString())) {
+      throw new ForbiddenException('You are not in this room');
+    }
+    this.logger.log('Sending message...');
+
+    this.chatService.sendMessage(message).then((v) => {
+      this.server.to(v.chatRoomId.toString()).emit('receive', message);
+      this.logger.log(
+        `Message from ${message.user} in room ${message.chatRoomId.toString()} : ${message.content}`,
+      );
+    });
+  }
+
+  getUser(client: Socket): any {
+    const user = client['user'];
+    if (!user) {
+      throw new UnauthorizedException('Unauthorized user');
+    }
+
+    return user;
   }
 }
