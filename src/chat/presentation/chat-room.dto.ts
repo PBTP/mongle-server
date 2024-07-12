@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsOptional, ValidateIf } from 'class-validator';
+import { IsNotEmpty, IsOptional, ValidateIf, ValidateNested } from "class-validator";
 import { RUD, Group } from '../../common/validation/validation.data';
+import { UserDto } from '../../auth/presentation/user.dto';
 
 export class ChatRoomDto {
   @IsNotEmpty({ groups: RUD })
@@ -17,14 +18,8 @@ export class ChatRoomDto {
   public chatRoomName: string;
 
   @IsNotEmpty({ groups: [Group.create] })
+  @ValidateNested({ groups: [Group.create] })
   @IsOptional()
-  public inviteUserType: UserType;
-
-  @IsNotEmpty({ groups: [Group.create] })
-  @IsOptional()
-  public inviteUserId: number;
-
+  public inviteUser: UserDto;
   public createdAt: Date;
 }
-
-export type UserType = 'customer' | 'driver' | 'business';

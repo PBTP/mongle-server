@@ -41,10 +41,12 @@ export class ChatService {
     dto: ChatRoomDto,
     customer: Customer,
   ): Promise<ChatRoom> {
-    const newRoom = await this.chatRepository.save(this.chatRepository.create(dto));
+    const newRoom = await this.chatRepository.save(
+      this.chatRepository.create(dto),
+    );
 
     dto.chatRoomId = newRoom.chatRoomId;
-    await this.roomServices[dto.inviteUserType].createChatRoom(dto);
+    await this.roomServices[dto.inviteUser.userType]!.createChatRoom(dto);
 
     return newRoom;
   }

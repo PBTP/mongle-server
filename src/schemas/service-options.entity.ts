@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { Business } from './business.entity';
+import { HasUuid } from "../common/entity/parent.entity";
 
 export enum PetSize {
   SMALL = 'SMALL',
@@ -19,12 +20,11 @@ export enum PetSize {
 }
 
 @Entity({ name: 'service_options' })
-export class ServiceOption {
+//TODO: 추후 UUID -> TSID로 변경
+export class ServiceOption extends HasUuid {
   @PrimaryColumn()
   public serviceOptionId: number;
 
-  @Column({ unique: true, type: 'uuid' })
-  public uuid: string;
 
   public serviceOptionDescription: string;
 

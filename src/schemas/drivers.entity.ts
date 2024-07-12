@@ -11,16 +11,13 @@ import {
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { Business } from './business.entity';
-import { DriverChat } from './driver-chats.entity';
 import { DriverChatRoom } from './driver-chat-room.entity';
+import { HasUuid } from '../common/entity/parent.entity';
 
 @Entity({ name: 'drivers' })
-export class Driver {
+export class Driver extends HasUuid {
   @PrimaryColumn()
   public driverId: number;
-
-  @Column({ unique: true, type: 'uuid' })
-  public uuid: string;
 
   @Column()
   public driverName: string;
@@ -39,9 +36,6 @@ export class Driver {
 
   @OneToMany(() => Appointment, (appointments) => appointments.driver)
   public appointments: Appointment[];
-
-  @OneToMany(() => DriverChat, (driverChats) => driverChats.driver)
-  public driverChats: DriverChat[];
 
   @OneToMany(() => DriverChatRoom, (chat) => chat.driver)
   public chatRooms: DriverChatRoom[];

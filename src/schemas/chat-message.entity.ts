@@ -23,7 +23,7 @@ export class ChatMessage {
   chatRoomId: number;
 
   @Column({ type: 'char', length: 13 })
-  sender_uuid: string;
+  senderUuid: string;
 
   @Column({ type: 'char', length: 13, unique: true })
   tsid: string;

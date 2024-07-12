@@ -4,7 +4,7 @@ import { Message } from 'aws-sdk/clients/sqs';
 import { plainToInstance as toDto } from 'class-transformer';
 import { S3EventDetailDto } from '../../cloud/aws/sqs/presentation/s3-image-created-event-message.dto';
 import { ImageService } from './image.service';
-import { Images } from '../../../schemas/image.entity';
+import { Image } from '../../../schemas/image.entity';
 import { validateOrReject as validation } from 'class-validator';
 import { ConfigService } from '@nestjs/config';
 import { SQS } from 'aws-sdk';
@@ -32,7 +32,7 @@ export class ImageConsumer {
   ) {}
 
   @SqsMessageHandler(sqsName.s3ImageCreated, false)
-  public async consumeMessage(message: Message): Promise<Images> {
+  public async consumeMessage(message: Message): Promise<Image> {
     this.messageLog(sqsName.s3ImageCreated, message, 'received');
 
     if (!message.Body) {

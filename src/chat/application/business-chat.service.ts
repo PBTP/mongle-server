@@ -30,7 +30,7 @@ export class BusinessChatService implements IChatService {
   async createChatRoom(dto: ChatRoomDto): Promise<BusinessChatRoom> {
     const newRoom = this.driverChatRoomRepository.create({
       chatRoomId: dto.chatRoomId,
-      businessId: dto.inviteUserId,
+      businessId: dto.inviteUser.userId,
     });
 
     return await this.driverChatRoomRepository.save(newRoom).then((room) => {

@@ -4,24 +4,20 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
-  BeforeInsert,
 } from 'typeorm';
 import { CustomerChatRoom } from './customer-chat-room.entity';
 import { DriverChatRoom } from './driver-chat-room.entity';
 import { BusinessChatRoom } from './business-chat-room.entity';
 import { ChatMessage } from './chat-message.entity';
-import { getTsid } from 'tsid-ts';
+import { HasTsid } from '../common/entity/parent.entity';
 
 @Entity('chat_rooms')
-export class ChatRoom {
+export class ChatRoom extends HasTsid {
   @PrimaryGeneratedColumn()
   chatRoomId: number;
 
   @Column({ type: 'varchar', length: 50, nullable: false })
   chatRoomName: string;
-
-  @Column({ type: 'char', length: 13, unique: true })
-  tsid: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
@@ -43,9 +39,4 @@ export class ChatRoom {
 
   @OneToMany(() => ChatMessage, (message) => message.chatRoom)
   messages: ChatMessage[];
-
-  @BeforeInsert()
-  generateTSID() {
-    this.tsid = getTsid().toString();
-  }
 }

@@ -1,7 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ImageDto, MetaData } from '../presentation/image.dto';
 import { CloudStorageInterface } from '../../cloud/cloud.storage.interface';
-import { Images } from '../../../schemas/image.entity';
+import { Image } from '../../../schemas/image.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PresignedUrlDto } from '../../cloud/aws/s3/presentation/presigned-url.dto';
@@ -13,8 +13,8 @@ export class ImageService {
   constructor(
     @Inject('CloudStorageService')
     private readonly cloudStorageService: CloudStorageInterface,
-    @InjectRepository(Images)
-    private readonly imageRepository: Repository<Images>,
+    @InjectRepository(Image)
+    private readonly imageRepository: Repository<Image>,
   ) {}
 
   async generatePreSignedUrls(
@@ -24,7 +24,7 @@ export class ImageService {
     return await this.cloudStorageService.generatePreSignedUrls(key, metadata);
   }
 
-  async create(dto: Partial<ImageDto>): Promise<Images> {
+  async create(dto: Partial<ImageDto>): Promise<Image> {
     return this.imageRepository
       .findOne({ where: { imageLink: dto.imageLink } })
       .then((v) => {
