@@ -26,13 +26,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Client connected: ${client.id}`);
 
     try {
-      const customer = await this.authService.getCustomer(
+      const user = await this.authService.getUser(
         client.handshake.headers.authorization.replace('Bearer ', ''),
       );
 
       client['user'] = {
-        uuid: customer.uuid,
-        name: customer.customerName,
+        uuid: user.uuid,
+        name: user.customerName,
+        userType: user.userType,
       };
     } catch (e) {
       client.disconnect();
@@ -48,7 +49,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @MessageBody() chat: ChatDto,
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
-    const user = client['user'] as CustomerDto;
+    const user = client['user'];
 
     if (!client.rooms.has(chat.roomId)) {
       await client.join(chat.roomId);

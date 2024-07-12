@@ -19,7 +19,7 @@ export class CustomerController {
   @Get('my')
   async getMyCustomer(
     @CurrentCustomer() customer: Customer,
-  ): Promise<Omit<CustomerDto, 'refreshToken'>> {
+  ): Promise<Omit<CustomerDto, 'refreshToken' | 'accessToken'>> {
     return {
       customerId: customer.customerId,
       uuid: customer.uuid,
