@@ -1,9 +1,10 @@
 import { CustomerService } from '../application/customer.service';
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Put } from '@nestjs/common';
 import { CustomerDto } from './customer.dto';
 import { Customer } from '../../schemas/customers.entity';
 import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { UpdateProfileDto } from './update-profile.dto';
 
 @ApiTags('고객 관련 API')
 @Controller('/v1/customer')
@@ -27,6 +28,29 @@ export class CustomerController {
       customerPhoneNumber: customer.customerPhoneNumber,
       customerLocation: customer.customerLocation,
       authProvider: customer.authProvider,
+    };
+  }
+
+  @ApiOperation({
+    summary: '사용자 정보 수정',
+    description: '사용자 정보를 수정합니다.',
+  })
+  @ApiOkResponse({ type: CustomerDto, description: '사용자 정보 수정 성공' })
+  @Auth()
+  @Put()
+  async updateProfile(
+    @CurrentCustomer() customer: Customer,
+    @Body() dto: UpdateProfileDto,
+  ): Promise<Omit<CustomerDto, 'refreshToken'>> {
+    const updatedCustomer = await this.authService.updateProfile(customer, dto);
+
+    return {
+      customerId: updatedCustomer.customerId,
+      uuid: updatedCustomer.uuid,
+      customerName: updatedCustomer.customerName,
+      customerPhoneNumber: updatedCustomer.customerPhoneNumber,
+      customerLocation: updatedCustomer.customerLocation,
+      authProvider: updatedCustomer.authProvider,
     };
   }
 }

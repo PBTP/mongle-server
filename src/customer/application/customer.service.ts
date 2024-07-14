@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Customer } from '../../schemas/customers.entity';
 import { CustomerDto } from '../presentation/customer.dto';
+import { UpdateProfileDto } from '../presentation/update-profile.dto';
 
 @Injectable()
 export class CustomerService {
@@ -40,5 +41,24 @@ export class CustomerService {
         return await this.customerRepository.save(customer);
       }
     });
+  }
+
+  async updateProfile(
+    customer: Customer,
+    dto: UpdateProfileDto,
+  ): Promise<Customer> {
+    return this.findOne({ customerId: customer.customerId }).then(
+      async (customer) => {
+        if (customer) {
+          customer.customerLocation =
+            dto.customerLocation ?? customer.customerLocation;
+          customer.customerName = dto.customerName ?? customer.customerName;
+          customer.customerPhoneNumber =
+            dto.customerPhoneNumber ?? customer.customerPhoneNumber;
+
+          return await this.customerRepository.save(customer);
+        }
+      },
+    );
   }
 }
