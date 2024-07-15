@@ -11,6 +11,7 @@ import { ChatService } from './application/chat.service';
 import { CustomerChatService } from './application/customer-chat.service';
 import { DriverChatService } from './application/driver-chat.service';
 import { BusinessChatService } from './application/business-chat.service';
+import { CacheModule } from '../common/cache/cache.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { BusinessChatService } from './application/business-chat.service';
       DriverChatRoom,
       BusinessChatRoom,
     ]),
+    CacheModule,
   ],
   exports: [
     ChatService,

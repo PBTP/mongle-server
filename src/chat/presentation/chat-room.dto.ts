@@ -1,4 +1,9 @@
-import { IsNotEmpty, IsOptional, ValidateIf, ValidateNested } from "class-validator";
+import {
+  IsNotEmpty,
+  IsOptional,
+  ValidateIf,
+  ValidateNested,
+} from 'class-validator';
 import { RUD, Group } from '../../common/validation/validation.data';
 import { UserDto } from '../../auth/presentation/user.dto';
 
@@ -22,4 +27,6 @@ export class ChatRoomDto {
   @IsOptional()
   public inviteUser: UserDto;
   public createdAt: Date;
+
+  public users?: UserDto[] = [];
 }

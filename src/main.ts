@@ -5,6 +5,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { LoggerService } from './config/logger/logger.config';
 import { ValidationDefaultOption } from './common/validation/validation.data';
+import { RedisIoAdapter } from './config/socket/socket.adapter';
+import { RedisService } from '@liaoliaots/nestjs-redis';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -20,6 +22,11 @@ async function bootstrap() {
   app.useGlobalInterceptors(
     new ClassSerializerInterceptor(app.get<Reflector>(Reflector)),
   );
+
+  const redisIoAdapter = new RedisIoAdapter(app, app.get(RedisService));
+
+  await redisIoAdapter.connectToRedis();
+  app.useWebSocketAdapter(redisIoAdapter);
 
   const config = new DocumentBuilder()
     .setTitle('몽글몽글 API')
