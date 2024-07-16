@@ -7,7 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Driver } from './drivers.entity';
-import { ChatRoom } from './chat-rooms.entity';
+import { ChatRoom } from './chat-room.entity';
 
 @Entity('driver_chat_rooms')
 export class DriverChatRoom {

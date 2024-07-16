@@ -6,7 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { ChatRoom } from './chat-rooms.entity';
+import { ChatRoom } from './chat-room.entity';
 import { HasTsid } from '../common/entity/parent.entity';
 
 export enum MessageType {

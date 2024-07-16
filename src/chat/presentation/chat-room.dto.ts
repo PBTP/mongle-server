@@ -25,7 +25,7 @@ export class ChatRoomDto {
   @IsNotEmpty({ groups: [Group.create] })
   @ValidateNested({ groups: [Group.create] })
   @IsOptional()
-  public inviteUser: UserDto;
+  public inviteUser?: UserDto;
   public createdAt: Date;
 
   public users?: UserDto[] = [];

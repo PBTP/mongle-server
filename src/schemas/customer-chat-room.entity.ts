@@ -7,7 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Customer } from './customers.entity';
-import { ChatRoom } from './chat-rooms.entity';
+import { ChatRoom } from './chat-room.entity';
 
 @Entity('customer_chat_rooms')
 export class CustomerChatRoom {

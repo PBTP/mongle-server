@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   Column,
 } from 'typeorm';
-import { ChatRoom } from './chat-rooms.entity';
+import { ChatRoom } from './chat-room.entity';
 import { Business } from './business.entity';
 
 @Entity('business_chat_rooms')

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ChatGateway } from './presentation/chat.gateway';
 import { ChatController } from './presentation/chat.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ChatRoom } from '../schemas/chat-rooms.entity';
+import { ChatRoom } from '../schemas/chat-room.entity';
 import { ChatMessage } from '../schemas/chat-message.entity';
 import { CustomerChatRoom } from '../schemas/customer-chat-room.entity';
 import { DriverChatRoom } from '../schemas/driver-chat-room.entity';
