@@ -25,7 +25,7 @@ export class CustomerDto {
     type: String,
   })
   @IsNotEmpty()
-  @Length(1, 20)
+  @Length(1, 44)
   uuid: string;
 
   @ApiProperty({
