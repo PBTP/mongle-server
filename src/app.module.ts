@@ -35,6 +35,7 @@ import { ChatModule } from './chat/chat.module';
           username: datasource.username,
           password: datasource.password,
           database: datasource.database,
+          logging: datasource.logging,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           synchronize: false,
           namingStrategy: new SnakeNamingStrategy(),

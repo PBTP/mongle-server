@@ -20,3 +20,23 @@ export class MessageDto extends ChatDto {
 
   user: UserDto;
 }
+
+export class ChatMessageDto {
+  @IsNumber()
+  @IsNotEmpty()
+  chatRoomId: number;
+
+  chatMessageId: number;
+
+  @IsString()
+  @IsNotEmpty()
+  senderUuid: string;
+
+  @IsEnum(MessageType)
+  @IsNotEmpty()
+  chatMessageType: MessageType;
+
+  @IsString()
+  @IsNotEmpty()
+  user: UserDto;
+}

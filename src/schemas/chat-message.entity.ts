@@ -1,10 +1,10 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  PrimaryColumn,
 } from 'typeorm';
 import { ChatRoom } from './chat-room.entity';
 import { HasTsid } from '../common/entity/parent.entity';
@@ -18,10 +18,10 @@ export enum MessageType {
 
 @Entity('chat_messages')
 export class ChatMessage extends HasTsid {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn({ type: 'int', nullable: false })
   chatMessageId: number;
 
-  @Column()
+  @PrimaryColumn({ type: 'int', nullable: false })
   chatRoomId: number;
 
   @Column({ type: 'char', length: 13, nullable: false })

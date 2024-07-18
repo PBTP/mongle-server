@@ -7,11 +7,14 @@ import { ChatRoomDto } from '../presentation/chat-room.dto';
 import { CustomerChatService } from './customer-chat.service';
 import { DriverChatService } from './driver-chat.service';
 import { BusinessChatService } from './business-chat.service';
-import { MessageDto } from '../presentation/chat.dto';
+import { ChatMessageDto, MessageDto } from '../presentation/chat.dto';
 import { UserDto } from '../../auth/presentation/user.dto';
 import { UserSocket } from '../presentation/chat.gateway';
 import { CacheService } from '../../common/cache/cache.service';
 import { Customer } from '../../schemas/customers.entity';
+import { Driver } from '../../schemas/drivers.entity';
+import { CursorDto } from '../../common/dto/cursor.dto';
+
 @Injectable()
 export class ChatService {
   private readonly logger = new Logger(ChatService.name);
@@ -23,7 +26,6 @@ export class ChatService {
     @InjectRepository(ChatMessage)
     private readonly chatMessageRepository: Repository<ChatMessage>,
     private readonly cacheService: CacheService,
-
     private readonly driverChatService: DriverChatService,
     private readonly customerChatService: CustomerChatService,
     private readonly businessChatService: BusinessChatService,
@@ -72,14 +74,84 @@ export class ChatService {
   }
 
   async saveMessage(message: MessageDto): Promise<ChatMessage> {
+    const lastMessage = await this.chatMessageRepository.find({
+      where: { chatRoomId: message.chatRoomId },
+      order: { chatMessageId: 'DESC' },
+      take: 1,
+    });
+
+    const lastMessageId: number = lastMessage[0]?.chatMessageId ?? 0;
+
     return await this.chatMessageRepository.save(
       this.chatMessageRepository.create({
+        chatMessageId: lastMessageId + 1,
         chatRoomId: message.chatRoomId,
         senderUuid: message.user.uuid,
         chatMessageType: message.chatMessageType,
         chatMessageContent: message.content,
       }),
     );
+  }
+
+  async getMessage(
+    chatRoomId: number,
+    cursor: number,
+    limit: number,
+  ): Promise<CursorDto<ChatMessageDto>> {
+    let query = this.chatMessageRepository
+      .createQueryBuilder('CM')
+      .leftJoinAndSelect('CM.chatRoom', 'chatRoom')
+      .leftJoinAndMapOne(
+        'CM.customer',
+        Customer,
+        'customer',
+        'CM.senderUuid = customer.uuid',
+      )
+      .leftJoinAndMapOne(
+        'CM.driver',
+        Driver,
+        'driver',
+        'CM.senderUuid = driver.uuid',
+      )
+      .where('CM.chatRoomId = :chatRoomId', { chatRoomId });
+
+    console.log('cursor', cursor);
+
+    if (cursor) {
+      query = query.andWhere('CM.chatMessageId <= :cursor', { cursor });
+    }
+
+    const chatMessages = await query
+      .orderBy('CM.chatMessageId', 'DESC')
+      .take(limit)
+      .getMany();
+
+    return {
+      data: chatMessages.map((message) => {
+        const userType = message['customer']
+          ? 'customer'
+          : message['driver']
+            ? 'driver'
+            : 'business';
+
+        const user = message[userType];
+
+        return {
+          chatRoomId: message.chatRoomId,
+          chatMessageId: message.chatMessageId,
+          senderUuid: message.senderUuid,
+          chatMessageType: message.chatMessageType,
+          chatMessageContent: message.chatMessageContent,
+          user: {
+            uuid: user.uuid,
+            userId: user[userType + 'Id'],
+            userType,
+            userName: user[userType + 'Name'],
+          },
+        };
+      }),
+      next: chatMessages[chatMessages.length - 1]?.chatMessageId - 1 ?? 0,
+    };
   }
 
   // 'join' message action
