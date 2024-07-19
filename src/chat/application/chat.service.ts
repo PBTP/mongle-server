@@ -99,13 +99,14 @@ export class ChatService {
     cursor: CursorDto<ChatMessageDto>,
     customer: Customer,
   ): Promise<CursorDto<ChatMessageDto>> {
-    this.customerChatService
-      .findChatRoom(customer.customerId, chatRoomId)
-      .then((chatRoom) => {
-        if (!chatRoom) {
-          throw new ForbiddenException('Your not allowed to access this room');
-        }
-      });
+    const chatRoom = await this.customerChatService.findChatRoom(
+      customer.customerId,
+      chatRoomId,
+    );
+
+    if (!chatRoom) {
+      throw new ForbiddenException('Your not allowed to access this room');
+    }
 
     let query = this.chatMessageRepository
       .createQueryBuilder('CM')
