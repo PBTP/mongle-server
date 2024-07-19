@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Req } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { AuthDto } from './auth.dto';
 import {
@@ -40,7 +40,7 @@ export class AuthController {
     description:
       'Unauthorized / 요청한 Refresh Token에 해당하는 고객이 없습니다.',
   })
-  @Auth('refresh')
+  @Auth(HttpStatus.CREATED, 'refresh')
   @Post('/refresh')
   async refresh(@Req() req: Request): Promise<CustomerDto> {
     return await this.authService.tokenRefresh(req);

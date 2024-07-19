@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Post, Query } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Query } from '@nestjs/common';
 import { ImageService } from '../application/image.service';
 import { Auth, CurrentCustomer } from '../../../auth/decorator/auth.decorator';
 import { MetaData } from './image.dto';
@@ -38,8 +38,7 @@ export class ImageController {
     type: [PresignedUrlDto],
     description: 'Generated presigned URL',
   })
-  @Auth()
-  @HttpCode(201)
+  @Auth(HttpStatus.CREATED)
   @Post('/presigned-url')
   async getPreSignedUrl(
     @CurrentCustomer() customer: Customer,

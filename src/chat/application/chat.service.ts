@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ChatRoom } from '../../schemas/chat-room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,6 +14,7 @@ import { CacheService } from '../../common/cache/cache.service';
 import { Customer } from '../../schemas/customers.entity';
 import { Driver } from '../../schemas/drivers.entity';
 import { CursorDto } from '../../common/dto/cursor.dto';
+import { Business } from '../../schemas/business.entity';
 
 @Injectable()
 export class ChatService {
@@ -95,9 +96,17 @@ export class ChatService {
 
   async getMessage(
     chatRoomId: number,
-    cursor: number,
-    limit: number,
+    cursor: CursorDto<ChatMessageDto>,
+    customer: Customer,
   ): Promise<CursorDto<ChatMessageDto>> {
+    this.customerChatService
+      .findChatRoom(customer.customerId, chatRoomId)
+      .then((chatRoom) => {
+        if (!chatRoom) {
+          throw new ForbiddenException('Your not allowed to access this room');
+        }
+      });
+
     let query = this.chatMessageRepository
       .createQueryBuilder('CM')
       .leftJoinAndSelect('CM.chatRoom', 'chatRoom')
@@ -113,17 +122,23 @@ export class ChatService {
         'driver',
         'CM.senderUuid = driver.uuid',
       )
+      .leftJoinAndMapOne(
+        'CM.business',
+        Business,
+        'business',
+        'CM.senderUuid = business.uuid',
+      )
       .where('CM.chatRoomId = :chatRoomId', { chatRoomId });
 
-    console.log('cursor', cursor);
-
-    if (cursor) {
-      query = query.andWhere('CM.chatMessageId <= :cursor', { cursor });
+    if (cursor.cursor) {
+      query = query.andWhere('CM.chatMessageId <= :cursor', {
+        cursor: cursor.cursor,
+      });
     }
 
     const chatMessages = await query
       .orderBy('CM.chatMessageId', 'DESC')
-      .take(limit)
+      .take(cursor.limit)
       .getMany();
 
     return {
@@ -154,6 +169,7 @@ export class ChatService {
     };
   }
 
+  // Socket Service
   // 'join' message action
   async join(client: UserSocket, chatRoomId: string): Promise<void> {
     this.joinRoom(chatRoomId, client.user)

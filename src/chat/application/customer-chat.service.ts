@@ -13,11 +13,11 @@ export class CustomerChatService implements IChatService {
     private readonly customerChatRoomRepository: Repository<CustomerChatRoom>,
   ) {}
 
-  async getChatRooms(): Promise<CustomerChatRoom[]> {
+  async findAllChatRoom(): Promise<CustomerChatRoom[]> {
     return await this.customerChatRoomRepository.find();
   }
 
-  async getChatRoomById(
+  async findChatRoom(
     customerId: number,
     chatRoomId: number,
   ): Promise<CustomerChatRoom> {
