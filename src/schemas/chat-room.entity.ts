@@ -20,7 +20,7 @@ export class ChatRoom extends HasTsid {
   chatRoomName: string;
 
   @CreateDateColumn({ type: 'timestamp' })
-  created_at: Date;
+  createdAt: Date;
 
   @OneToMany(
     () => CustomerChatRoom,
@@ -38,5 +38,5 @@ export class ChatRoom extends HasTsid {
   businessChatRooms: BusinessChatRoom[];
 
   @OneToMany(() => ChatMessage, (message) => message.chatRoom)
-  messages: ChatMessage[];
+  messages: Promise<ChatMessage[]>;
 }

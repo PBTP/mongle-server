@@ -25,9 +25,9 @@ export class CustomerChatRoom {
 
   @ManyToOne(() => Customer, (customer) => customer.chatRooms)
   @JoinColumn({ name: 'customer_id' })
-  customer: Customer;
+  customer: Promise<Customer>;
 
   @ManyToOne(() => ChatRoom, (chatRoom) => chatRoom.customerChatRooms)
   @JoinColumn({ name: 'chat_room_id' })
-  chatRoom: ChatRoom;
+  chatRoom: Promise<ChatRoom>;
 }

@@ -4,6 +4,9 @@ import { Repository } from 'typeorm';
 import { ChatRoomDto } from '../presentation/chat-room.dto';
 import { DriverChatRoom } from '../../schemas/driver-chat-room.entity';
 import { IChatService } from './chat.interface';
+import { UserDto } from '../../auth/presentation/user.dto';
+import { DriverService } from '../../driver/application/driver.service';
+import { plainToInstance as toDto } from 'class-transformer';
 
 @Injectable()
 export class DriverChatService implements IChatService {
@@ -12,10 +15,21 @@ export class DriverChatService implements IChatService {
   constructor(
     @InjectRepository(DriverChatRoom)
     private readonly driverChatRoomRepository: Repository<DriverChatRoom>,
+    private readonly driverService: DriverService,
   ) {}
 
-  async getChatRooms(): Promise<DriverChatRoom[]> {
-    return await this.driverChatRoomRepository.find();
+  async findChatRooms(user: UserDto): Promise<ChatRoomDto[]> {
+    const driverChatRooms = await this.driverChatRoomRepository.find({
+      where: { driverId: user.userId },
+    });
+
+    return await Promise.all(driverChatRooms.map((room) => room.chatRoom)).then(
+      (rooms) => {
+        return rooms.map((room) => {
+          return toDto(ChatRoomDto, room);
+        });
+      },
+    );
   }
 
   async getChatRoomById(

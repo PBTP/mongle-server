@@ -15,11 +15,12 @@ import { Customer } from '../../schemas/customers.entity';
 import { Driver } from '../../schemas/drivers.entity';
 import { CursorDto } from '../../common/dto/cursor.dto';
 import { Business } from '../../schemas/business.entity';
+import { IChatService } from './chat.interface';
 
 @Injectable()
 export class ChatService {
   private readonly logger = new Logger(ChatService.name);
-  private readonly roomServices = {};
+  private readonly roomServices = new Map<string, IChatService>();
 
   constructor(
     @InjectRepository(ChatRoom)
@@ -31,13 +32,13 @@ export class ChatService {
     private readonly customerChatService: CustomerChatService,
     private readonly businessChatService: BusinessChatService,
   ) {
-    this.roomServices['driver'] = driverChatService;
-    this.roomServices['customer'] = customerChatService;
-    this.roomServices['business'] = businessChatService;
+    this.roomServices.set('driver', driverChatService);
+    this.roomServices.set('customer', customerChatService);
+    this.roomServices.set('business', businessChatService);
   }
 
-  async getChatRooms(): Promise<ChatRoom[]> {
-    return await this.chatRepository.find();
+  async findChatRooms(user: UserDto): Promise<ChatRoomDto[]> {
+    return await this.roomServices.get(user.userType).findChatRooms(user);
   }
 
   async exists(chatRoom: Partial<ChatRoom>): Promise<boolean> {
@@ -69,7 +70,10 @@ export class ChatService {
     );
 
     dto.chatRoomId = newRoom.chatRoomId;
-    await this.roomServices[dto.inviteUser.userType]!.createChatRoom(dto);
+    await this.roomServices.get(dto.inviteUser.userType)!.createChatRoom(dto);
+
+    dto.inviteUser.userId = customer.customerId;
+    await this.customerChatService.createChatRoom(dto);
 
     return newRoom;
   }

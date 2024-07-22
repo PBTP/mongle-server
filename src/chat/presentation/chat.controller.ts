@@ -31,6 +31,17 @@ export class ChatController {
   }
 
   @Auth()
+  @Get()
+  async findChatRooms(
+    @CurrentCustomer() customer: Customer,
+  ): Promise<ChatRoomDto[]> {
+    return await this.chatService.findChatRooms({
+      userId: customer.customerId,
+      userType: 'customer',
+    });
+  }
+
+  @Auth()
   @Get(':chatRoomId/message')
   async getMessage(
     @Param('chatRoomId')
