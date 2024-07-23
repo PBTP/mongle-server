@@ -9,7 +9,7 @@ import { UpdateProfileDto } from './update-profile.dto';
 @ApiTags('고객 관련 API')
 @Controller('/v1/customer')
 export class CustomerController {
-  constructor(private readonly authService: CustomerService) {}
+  constructor(private readonly customerService: CustomerService) {}
 
   @ApiOperation({
     summary: '내 정보 조회',
@@ -42,7 +42,10 @@ export class CustomerController {
     @CurrentCustomer() customer: Customer,
     @Body() dto: UpdateProfileDto,
   ): Promise<Omit<CustomerDto, 'refreshToken'>> {
-    const updatedCustomer = await this.authService.updateProfile(customer, dto);
+    const updatedCustomer = await this.customerService.update({
+      ...customer,
+      ...dto,
+    });
 
     return {
       customerId: updatedCustomer.customerId,
