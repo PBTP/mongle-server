@@ -26,5 +26,5 @@ export class BusinessChatRoom {
   business: Business;
 
   @ManyToOne(() => ChatRoom, (chatRoom) => chatRoom.businessChatRooms)
-  chatRoom: ChatRoom;
+  chatRoom: Promise<ChatRoom>;
 }

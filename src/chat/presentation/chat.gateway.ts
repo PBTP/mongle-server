@@ -8,7 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ForbiddenException, Logger, NotFoundException } from '@nestjs/common';
-import { ChatDto, MessageDto } from './chat.dto';
+import { ChatMessageDto, ChatRoomDto } from './chat.dto';
 import { AuthService } from '../../auth/application/auth.service';
 import { Subscribe } from '../decorator/socket.decorator';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
@@ -42,7 +42,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       client.user = {
         uuid: user.uuid,
         name: user.customerName,
-        userType: user.userType,
+        userId: user.customerId,
+        userType: user.userType ?? 'customer',
       };
 
       await this.chatService.getUserChatRoomIds(client).then((v) => {
@@ -67,31 +68,42 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @Subscribe('join')
   async handleJoin(
-    @MessageBody() dto: ChatDto,
+    @MessageBody() dto: ChatRoomDto,
     @ConnectedSocket() client: UserSocket,
   ): Promise<void> {
-    if (!(await this.chatService.exists({ chatRoomId: dto.chatRoomId }))) {
-      throw new NotFoundException(`Room ${dto.chatRoomId} not found`);
+    const chatRoomExists = await this.chatService.exists({
+      chatRoomId: dto.chatRoomId,
+    });
+
+    const userChatRoomExsits = await this.chatService.exitsUserChatRoom(
+      client.user,
+      dto.chatRoomId,
+    );
+
+    if (!(chatRoomExists && userChatRoomExsits)) {
+      throw new NotFoundException(
+        `Not in ${client.user.uuid} Room ${dto.chatRoomId}`,
+      );
     }
 
     await this.chatService.join(client, dto.chatRoomId.toString());
   }
 
+  // socket room exits (채팅방 나가기 X)
   @Subscribe('exit')
   async handleExit(
-    @MessageBody() dto: ChatDto,
+    @MessageBody() dto: ChatRoomDto,
     @ConnectedSocket() client: UserSocket,
   ): Promise<void> {
     const user = this.getUser(client);
-
-    await this.chatService.exit(client);
-
-    this.logger.log(`Client ${user.uuid} exit room ${dto.chatRoomId}`);
+    this.chatService.exit(client).then(() => {
+      this.logger.log(`Client ${user.uuid} exit room ${dto.chatRoomId}`);
+    });
   }
 
   @Subscribe('send')
   async handleMessage(
-    @MessageBody() message: MessageDto,
+    @MessageBody() message: ChatMessageDto,
     @ConnectedSocket() client: UserSocket,
   ): Promise<void> {
     message.user = this.getUser(client);
@@ -114,7 +126,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.chatService.saveMessage(message).then((v) => {
       this.server.to(v.chatRoomId.toString()).emit('receive', message);
       this.logger.log(
-        `Message from ${message.user?.uuid} in room ${message.chatRoomId.toString()} : ${message.content}`,
+        `Message from ${message.user?.uuid} in room ${message.chatRoomId.toString()} : ${message.chatMessageContent}`,
       );
     });
   }

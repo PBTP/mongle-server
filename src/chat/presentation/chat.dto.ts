@@ -1,24 +1,38 @@
 import { UserDto } from '../../auth/presentation/user.dto';
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateIf,
+  ValidateNested,
+} from 'class-validator';
 import { MessageType } from '../../schemas/chat-message.entity';
+import { Group, RUD } from '../../common/validation/validation.data';
 
-export class ChatDto {
-  @IsNumber()
-  @IsNotEmpty()
-  chatRoomId: number;
-  uuid: string;
-}
+export class ChatRoomDto {
+  @IsNotEmpty({ groups: RUD })
+  @ValidateIf((o) => !o.tsid || o.chatRoomId, { groups: RUD })
+  @IsOptional()
+  public chatRoomId: number;
 
-export class MessageDto extends ChatDto {
-  @IsString()
-  @IsNotEmpty()
-  content: string;
+  @IsNotEmpty({ groups: RUD })
+  @ValidateIf((o) => o.tsid || !o.chatRoomId, { groups: RUD })
+  @IsOptional()
+  public tsid: string;
 
-  @IsEnum(MessageType)
-  @IsNotEmpty()
-  chatMessageType: MessageType;
+  @IsNotEmpty({ groups: [Group.create] })
+  @IsOptional()
+  public chatRoomName: string;
 
-  user: UserDto;
+  @IsNotEmpty({ groups: [Group.create] })
+  @ValidateNested({ groups: [Group.create] })
+  @IsOptional()
+  public inviteUser?: UserDto;
+  public createdAt: Date;
+
+  public lastMessage?: ChatMessageDto;
 }
 
 export class ChatMessageDto {
@@ -28,15 +42,16 @@ export class ChatMessageDto {
 
   chatMessageId: number;
 
-  @IsString()
-  @IsNotEmpty()
   senderUuid: string;
 
   @IsEnum(MessageType)
   @IsNotEmpty()
   chatMessageType: MessageType;
 
-  @IsString()
   @IsNotEmpty()
   user: UserDto;
+
+  @IsString()
+  @IsNotEmpty()
+  chatMessageContent: string;
 }

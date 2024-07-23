@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ChatRoomDto } from '../presentation/chat-room.dto';
 import { BusinessChatRoom } from '../../schemas/business-chat-room.entity';
 import { IChatService } from './chat.interface';
 import { UserDto } from '../../auth/presentation/user.dto';
 import { plainToInstance as toDto } from 'class-transformer';
+import { ChatRoomDto } from '../presentation/chat.dto';
 
 @Injectable()
 export class BusinessChatService implements IChatService {
@@ -15,6 +15,12 @@ export class BusinessChatService implements IChatService {
     @InjectRepository(BusinessChatRoom)
     private readonly businessChatRoomRepository: Repository<BusinessChatRoom>,
   ) {}
+
+  async exitsUserRoom(user: UserDto, chatRoomId: number): Promise<boolean> {
+    return await this.businessChatRoomRepository.exists({
+      where: { businessId: user.userId, chatRoomId },
+    });
+  }
 
   async findChatRooms(user: UserDto): Promise<ChatRoomDto[]> {
     const businessChatRooms = await this.businessChatRoomRepository.find({
@@ -39,7 +45,7 @@ export class BusinessChatService implements IChatService {
     });
   }
 
-  async createChatRoom(dto: ChatRoomDto): Promise<BusinessChatRoom> {
+  async createChatRoom(dto: ChatRoomDto): Promise<ChatRoomDto> {
     const newRoom = this.businessChatRoomRepository.create({
       chatRoomId: dto.chatRoomId,
       businessId: dto.inviteUser.userId,
@@ -47,7 +53,7 @@ export class BusinessChatService implements IChatService {
 
     return await this.businessChatRoomRepository.save(newRoom).then((room) => {
       this.logger.log(`Business Chat room created: ${room.chatRoomId}`);
-      return room;
+      return toDto(ChatRoomDto, room.chatRoom);
     });
   }
 }

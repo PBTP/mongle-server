@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ChatRoomDto } from '../presentation/chat-room.dto';
 import { DriverChatRoom } from '../../schemas/driver-chat-room.entity';
 import { IChatService } from './chat.interface';
 import { UserDto } from '../../auth/presentation/user.dto';
 import { DriverService } from '../../driver/application/driver.service';
 import { plainToInstance as toDto } from 'class-transformer';
+import { ChatRoomDto } from '../presentation/chat.dto';
 
 @Injectable()
 export class DriverChatService implements IChatService {
@@ -17,6 +17,12 @@ export class DriverChatService implements IChatService {
     private readonly driverChatRoomRepository: Repository<DriverChatRoom>,
     private readonly driverService: DriverService,
   ) {}
+
+  async exitsUserRoom(user: UserDto, chatRoomId: number): Promise<boolean> {
+    return await this.driverChatRoomRepository.exists({
+      where: { driverId: user.userId, chatRoomId },
+    });
+  }
 
   async findChatRooms(user: UserDto): Promise<ChatRoomDto[]> {
     const driverChatRooms = await this.driverChatRoomRepository.find({
@@ -32,16 +38,7 @@ export class DriverChatService implements IChatService {
     );
   }
 
-  async getChatRoomById(
-    driverId: number,
-    chatRoomId: number,
-  ): Promise<DriverChatRoom> {
-    return await this.driverChatRoomRepository.findOne({
-      where: { driverId, chatRoomId },
-    });
-  }
-
-  async createChatRoom(dto: ChatRoomDto): Promise<DriverChatRoom> {
+  async createChatRoom(dto: ChatRoomDto): Promise<ChatRoomDto> {
     const newRoom = this.driverChatRoomRepository.create({
       chatRoomId: dto.chatRoomId,
       driverId: dto.inviteUser.userId,
@@ -49,7 +46,7 @@ export class DriverChatService implements IChatService {
 
     return await this.driverChatRoomRepository.save(newRoom).then((room) => {
       this.logger.log(`Driver Chat room created: ${room.chatRoomId}`);
-      return room;
+      return toDto(ChatRoomDto, room);
     });
   }
 }

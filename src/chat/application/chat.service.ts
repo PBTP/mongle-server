@@ -3,12 +3,11 @@ import { Repository } from 'typeorm';
 import { ChatRoom } from '../../schemas/chat-room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChatMessage } from '../../schemas/chat-message.entity';
-import { ChatRoomDto } from '../presentation/chat-room.dto';
 import { CustomerChatService } from './customer-chat.service';
 import { DriverChatService } from './driver-chat.service';
 import { BusinessChatService } from './business-chat.service';
-import { ChatMessageDto, MessageDto } from '../presentation/chat.dto';
-import { UserDto } from '../../auth/presentation/user.dto';
+import { ChatMessageDto, ChatRoomDto } from '../presentation/chat.dto';
+import { UserDto, UserType } from '../../auth/presentation/user.dto';
 import { UserSocket } from '../presentation/chat.gateway';
 import { CacheService } from '../../common/cache/cache.service';
 import { Customer } from '../../schemas/customers.entity';
@@ -16,6 +15,7 @@ import { Driver } from '../../schemas/drivers.entity';
 import { CursorDto } from '../../common/dto/cursor.dto';
 import { Business } from '../../schemas/business.entity';
 import { IChatService } from './chat.interface';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class ChatService {
@@ -37,10 +37,17 @@ export class ChatService {
     this.roomServices.set('business', businessChatService);
   }
 
+  // 사용자 채팅방 목록
   async findChatRooms(user: UserDto): Promise<ChatRoomDto[]> {
     return await this.roomServices.get(user.userType).findChatRooms(user);
   }
 
+  // 유저가 채팅방에 존재하는지 확인
+  async exitsUserChatRoom(user: UserDto, chatRoomId: number): Promise<boolean> {
+    return this.roomServices.get(user.userType).exitsUserRoom(user, chatRoomId);
+  }
+
+  // 채팅방 존재 유무
   async exists(chatRoom: Partial<ChatRoom>): Promise<boolean> {
     const where = {};
 
@@ -52,6 +59,7 @@ export class ChatService {
     });
   }
 
+  // 특정 채팅방 조회
   async findOne(chatRoom: Partial<ChatRoom>): Promise<ChatRoom> {
     const where = {};
 
@@ -65,6 +73,10 @@ export class ChatService {
     dto: ChatRoomDto,
     customer: Customer,
   ): Promise<ChatRoom> {
+    if (dto.inviteUser.userId === customer.customerId) {
+      throw new BadRequestException('You cannot invite yourself');
+    }
+
     const newRoom = await this.chatRepository.save(
       this.chatRepository.create(dto),
     );
@@ -78,7 +90,7 @@ export class ChatService {
     return newRoom;
   }
 
-  async saveMessage(message: MessageDto): Promise<ChatMessage> {
+  async saveMessage(message: ChatMessageDto): Promise<ChatMessage> {
     const lastMessage = await this.chatMessageRepository.find({
       where: { chatRoomId: message.chatRoomId },
       order: { chatMessageId: 'DESC' },
@@ -93,18 +105,18 @@ export class ChatService {
         chatRoomId: message.chatRoomId,
         senderUuid: message.user.uuid,
         chatMessageType: message.chatMessageType,
-        chatMessageContent: message.content,
+        chatMessageContent: message.chatMessageContent,
       }),
     );
   }
 
-  async getMessage(
+  async findMessages(
     chatRoomId: number,
     cursor: CursorDto<ChatMessageDto>,
     customer: Customer,
   ): Promise<CursorDto<ChatMessageDto>> {
-    const chatRoom = await this.customerChatService.findChatRoom(
-      customer.customerId,
+    const chatRoom = await this.customerChatService.exitsUserRoom(
+      { userId: customer.customerId },
       chatRoomId,
     );
 
@@ -148,7 +160,7 @@ export class ChatService {
 
     return {
       data: chatMessages.map((message) => {
-        const userType = message['customer']
+        const userType: UserType = message['customer']
           ? 'customer'
           : message['driver']
             ? 'driver'

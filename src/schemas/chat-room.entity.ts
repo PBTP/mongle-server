@@ -38,5 +38,5 @@ export class ChatRoom extends HasTsid {
   businessChatRooms: BusinessChatRoom[];
 
   @OneToMany(() => ChatMessage, (message) => message.chatRoom)
-  messages: Promise<ChatMessage[]>;
+  messages: ChatMessage[];
 }
