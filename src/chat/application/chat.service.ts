@@ -189,7 +189,7 @@ export class ChatService {
           },
         };
       }),
-      next: chatMessages[chatMessages.length - 1]?.chatMessageId - 1 ?? 0,
+      next: (chatMessages[chatMessages.length - 1]?.chatMessageId ?? 1) - 1,
     };
   }
 

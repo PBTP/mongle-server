@@ -33,7 +33,7 @@ export class CursorDto<T> {
     description:
       '다음 페이지를 조회하기 위한 커서 값입니다. \n' +
       '해당 값을 cursor에 넣어 다음 페이지를 조회합니다.\n' +
-      '기본값은 0입니다. (첫 페이지)',
+      '더 이상 다음페이지가 존재하지 않으면 0으로 표기됩니다.',
     required: false,
     nullable: true,
     type: Number,
