@@ -30,7 +30,7 @@ export class ImageController {
     summary: 'presignedUrl 발급 요청',
     description:
       'presignedUrl을 발급받아 이미지 업로드를 위한 URL을 제공합니다.\n' +
-      '발급받은 url로 PUT 메소드로 이미지를 전송하면 S3에 이미지가 게시됩니다.' +
+      '발급받은 url로 PUT 메소드로 이미지를 전송하면 S3에 이미지가 게시됩니다.\n' +
       '이미지 업로드시에는 Body에 Binary로 이미지를 전송해야 합니다.',
   })
   @ApiResponse({

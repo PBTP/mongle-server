@@ -72,7 +72,7 @@ export class ChatService {
   async createChatRoom(
     dto: ChatRoomDto,
     customer: Customer,
-  ): Promise<ChatRoom> {
+  ): Promise<ChatRoomDto> {
     if (dto.inviteUser.userId === customer.customerId) {
       throw new BadRequestException('You cannot invite yourself');
     }
@@ -87,7 +87,14 @@ export class ChatService {
     dto.inviteUser.userId = customer.customerId;
     await this.customerChatService.createChatRoom(dto);
 
-    return newRoom;
+    const roomDto = new ChatRoomDto();
+    roomDto.chatRoomId = newRoom.chatRoomId;
+    roomDto.tsid = newRoom.tsid;
+    roomDto.chatRoomName = newRoom.chatRoomName;
+    roomDto.inviteUser = dto.inviteUser;
+    roomDto.lastMessage = null;
+    roomDto.createdAt = newRoom.createdAt;
+    return roomDto;
   }
 
   async saveMessage(message: ChatMessageDto): Promise<ChatMessage> {
