@@ -48,7 +48,10 @@ export class ChatController {
 
   @ApiOperation({
     summary: '채팅방 목록 조회',
-    description: '현재 유저의 채팅방 목록을 조회합니다.',
+    description:
+      '현재 유저의 채팅방 목록을 조회합니다.' +
+      '정렬 기준은 마지막 메시지의 시간의 최신순으로 정렬됩니다.' +
+      '현재는 customer 만 조회 가능합니다.',
   })
   @ApiOkResponse({
     description: '채팅방 목록 조회 성공',
