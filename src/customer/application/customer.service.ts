@@ -32,6 +32,8 @@ export class CustomerService {
       if (customer) {
         customer.customerLocation =
           dto.customerLocation ?? customer.customerLocation;
+        customer.customerAddress =
+          dto.customerAddress ?? customer.customerAddress;
         customer.customerName = dto.customerName ?? customer.customerName;
         customer.customerPhoneNumber =
           dto.customerPhoneNumber ?? customer.customerPhoneNumber;

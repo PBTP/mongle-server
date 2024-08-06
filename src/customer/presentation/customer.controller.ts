@@ -42,9 +42,18 @@ export class CustomerController {
     @CurrentCustomer() customer: Customer,
     @Body() dto: UpdateProfileDto,
   ): Promise<Omit<CustomerDto, 'refreshToken'>> {
+    let customerLocation = null;
+    if (dto.latitude && dto.longitude) {
+      customerLocation = {
+        type: 'Point',
+        coordinates: [dto.longitude, dto.latitude],
+      };
+    }
+
     const updatedCustomer = await this.customerService.update({
       ...customer,
       ...dto,
+      customerLocation,
     });
 
     return {

@@ -56,6 +56,16 @@ export class CustomerDto {
   customerLocation?: Point;
 
   @ApiProperty({
+    description: '고객 상세 주소',
+    nullable: true,
+    required: false,
+    type: String,
+  })
+  @IsOptional()
+  @Length(1, 100)
+  customerAddress?: string;
+
+  @ApiProperty({
     description: '인증 제공자 타입',
     required: true,
   })

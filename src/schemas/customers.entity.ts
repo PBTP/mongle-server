@@ -42,6 +42,9 @@ export class Customer {
   })
   customerLocation?: Point;
 
+  @Column({ length: 100, nullable: true })
+  customerAddress?: string;
+
   @Column({ type: 'enum', enum: AuthProvider, nullable: false })
   authProvider: AuthProvider;
 
