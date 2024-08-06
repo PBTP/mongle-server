@@ -75,14 +75,18 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       chatRoomId: dto.chatRoomId,
     });
 
+    if (!chatRoomExists) {
+      throw new NotFoundException(`Room ${dto.chatRoomId} not found`);
+    }
+
     const userChatRoomExsits = await this.chatService.exitsUserChatRoom(
       client.user,
       dto.chatRoomId,
     );
 
-    if (!(chatRoomExists && userChatRoomExsits)) {
-      throw new NotFoundException(
-        `Not in ${client.user.uuid} Room ${dto.chatRoomId}`,
+    if (!userChatRoomExsits) {
+      throw new ForbiddenException(
+        `You are not in this ${dto.chatRoomId} room`,
       );
     }
 
