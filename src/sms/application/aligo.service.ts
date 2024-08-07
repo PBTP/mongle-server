@@ -1,9 +1,10 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { SmsService } from '../domain/sms-service.interface';
 
 @Injectable()
-export class AligoService {
+export class AligoService implements SmsService {
   private apiUrl: string;
   private userId: string;
   private key: string;

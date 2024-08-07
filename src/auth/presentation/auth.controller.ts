@@ -65,7 +65,10 @@ export class AuthController {
     summary: 'SMS 인증 요청',
     description: `전화번호로 SMS 인증 코드를 요청합니다.`,
   })
-  @ApiCreatedResponse({ description: 'SMS 인증 코드 전송 성공' })
+  @ApiResponse({
+    status: 200,
+    description: 'SMS 인증 코드 전송 성공',
+  })
   @ApiResponse({
     status: 400,
     description: 'Bad Request / 요청한 데이터가 유효하지 않습니다.',
@@ -110,7 +113,10 @@ export class AuthController {
     summary: '회원 가입',
     description: `기타 정보를 입력하여 회원 가입을 완료합니다.`,
   })
-  @ApiCreatedResponse({ description: '회원 가입 성공' })
+  @ApiResponse({
+    status: 200,
+    description: '회원 가입 성공',
+  })
   @ApiResponse({
     status: 400,
     description: 'Bad Request / 요청한 데이터가 유효하지 않습니다.',

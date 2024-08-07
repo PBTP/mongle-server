@@ -10,9 +10,8 @@ import { PassportModule } from '@nestjs/passport';
 import { CacheModule } from '../common/cache/cache.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PhoneVerification } from 'src/schemas/phone-verification.entity';
-import { CustomerService } from 'src/customer/application/customer.service';
 import { PhoneVerificationService } from 'src/sms/application/phone-verification.service';
-import { AligoService } from 'src/sms/application/aligo.service';
+import { SmsModule } from 'src/sms/sms.module';
 
 @Global()
 @Module({
@@ -27,6 +26,7 @@ import { AligoService } from 'src/sms/application/aligo.service';
     CacheModule,
     CustomerModule,
     TypeOrmModule.forFeature([PhoneVerification]),
+    SmsModule,
   ],
   controllers: [AuthController],
   providers: [
@@ -34,7 +34,6 @@ import { AligoService } from 'src/sms/application/aligo.service';
     JwtAccessStrategy,
     JwtRefreshStrategy,
     PhoneVerificationService,
-    AligoService,
   ],
   exports: [AuthService, JwtAccessStrategy, JwtRefreshStrategy, PassportModule],
 })

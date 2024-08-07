@@ -1,12 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PhoneVerification } from 'src/schemas/phone-verification.entity';
 import { Not, IsNull } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { PhoneVerificationRepository } from '../domain/phone-verification.repository';
-import { AligoService } from './aligo.service';
 import { ConfigService } from '@nestjs/config';
 import { createHmac, randomBytes } from 'crypto';
+import { SMS_SERVICE, SmsService } from '../domain/sms-service.interface';
 
 @Injectable()
 export class PhoneVerificationService {
@@ -17,7 +17,7 @@ export class PhoneVerificationService {
   constructor(
     @InjectRepository(PhoneVerification)
     private readonly phoneVerificationRepository: PhoneVerificationRepository,
-    private readonly aligoService: AligoService,
+    @Inject(SMS_SERVICE) private readonly smsService: SmsService,
     private readonly configService: ConfigService,
   ) {
     this.expiredMinutes = this.configService.get<number>(
@@ -40,7 +40,7 @@ export class PhoneVerificationService {
     });
 
     const message = `인증번호는 [${verificationCode}] 입니다.`;
-    await this.aligoService.sendSMS(phoneNumber, message);
+    await this.smsService.sendSMS(phoneNumber, message);
 
     return await this.phoneVerificationRepository.save(phoneVerification);
   }
