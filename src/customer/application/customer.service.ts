@@ -19,12 +19,9 @@ export class CustomerService {
   }
 
   async create(dto: CreateCustomerDto): Promise<Customer> {
-    const existingCustomersCount = await this.customerRepository.count();
-    const customerName = `사용자${existingCustomersCount + 1}`;
-
     const customer = this.customerRepository.create({
       uuid: dto.uuid,
-      customerName: customerName,
+      customerName: dto.name,
       customerPhoneNumber: dto.phoneNumber,
       customerLocation: null,
       authProvider: dto.authProvider,

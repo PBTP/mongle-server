@@ -18,10 +18,8 @@ import { Auth } from '../decorator/auth.decorator';
 import { CustomerService } from '../../customer/application/customer.service';
 import { Customer } from 'src/schemas/customers.entity';
 import { VerifyPhoneDto } from './verify-phone.dto';
-import { AligoService } from 'src/sms/application/aligo.service';
 import { PhoneVerificationService } from 'src/sms/application/phone-verification.service';
 import { CreateCustomerDto } from './create-customer.dto';
-import { PhoneVerificationRequestDto } from './phone-verification-request.dto';
 
 @ApiTags('인증 관련 API')
 @Controller('/v1/auth')
@@ -29,7 +27,6 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly phoneVerificationService: PhoneVerificationService,
-    private readonly aligoService: AligoService,
     private readonly customerService: CustomerService,
   ) {}
 
@@ -74,20 +71,10 @@ export class AuthController {
     description: 'Bad Request / 요청한 데이터가 유효하지 않습니다.',
   })
   @Post('/request-verification')
-  async requestVerification(@Body() dto: PhoneVerificationRequestDto) {
-    const verificationCode = Math.floor(
-      100000 + Math.random() * 900000,
-    ).toString();
-
-    await this.aligoService.sendVerificationCode(
-      dto.phoneNumber,
-      verificationCode,
-    );
-
-    await this.phoneVerificationService.createVerification(
-      dto.phoneNumber,
-      verificationCode,
-    );
+  async requestVerification(
+    @Body() dto: Omit<VerifyPhoneDto, 'verificationCode'>,
+  ) {
+    await this.phoneVerificationService.createVerification(dto.phoneNumber);
 
     return { message: '인증 코드가 전송되었습니다.' };
   }
@@ -96,7 +83,8 @@ export class AuthController {
     summary: 'SMS 인증 코드 확인',
     description: `SMS 인증 코드를 확인하고 verificationId를 반환합니다.`,
   })
-  @ApiCreatedResponse({
+  @ApiResponse({
+    status: 200,
     description: '인증 코드 확인 성공',
     schema: { example: { verificationId: 'verification-id' } },
   })

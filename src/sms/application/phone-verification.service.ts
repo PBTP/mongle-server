@@ -5,23 +5,33 @@ import { Not, IsNull } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { PhoneVerificationRepository } from '../domain/phone-verification.repository';
 import { AligoService } from './aligo.service';
-
-const EXPIRED_MINUTES = 3;
+import { ConfigService } from '@nestjs/config';
+import { createHmac, randomBytes } from 'crypto';
 
 @Injectable()
 export class PhoneVerificationService {
+  private readonly expiredMinutes: number;
+  private readonly otpLength: number;
+  private readonly otpSecret: string;
+
   constructor(
     @InjectRepository(PhoneVerification)
     private readonly phoneVerificationRepository: PhoneVerificationRepository,
     private readonly aligoService: AligoService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.expiredMinutes = this.configService.get<number>(
+      'sms/expired_minutes',
+      10,
+    );
+    this.otpLength = this.configService.get<number>('sms/otp_length', 6);
+    this.otpSecret = this.configService.get<string>('sms/otp_secret');
+  }
 
-  async createVerification(
-    phoneNumber: string,
-    verificationCode: string,
-  ): Promise<PhoneVerification> {
+  async createVerification(phoneNumber: string): Promise<PhoneVerification> {
+    const verificationCode = this.generateOtp(phoneNumber);
     const expiredAt = new Date();
-    expiredAt.setMinutes(expiredAt.getMinutes() + EXPIRED_MINUTES);
+    expiredAt.setMinutes(expiredAt.getMinutes() + this.expiredMinutes);
 
     const phoneVerification = this.phoneVerificationRepository.create({
       phoneNumber,
@@ -29,9 +39,23 @@ export class PhoneVerificationService {
       expiredAt,
     });
 
-    await this.aligoService.sendVerificationCode(phoneNumber, verificationCode);
+    const message = `인증번호는 [${verificationCode}] 입니다.`;
+    await this.aligoService.sendSMS(phoneNumber, message);
 
     return await this.phoneVerificationRepository.save(phoneVerification);
+  }
+
+  private generateOtp(phoneNumber: string): string {
+    const randomSalt = randomBytes(16).toString('hex');
+    const data = `${phoneNumber}-${randomSalt}`;
+
+    const hmac = createHmac('sha256', this.otpSecret);
+    hmac.update(data);
+    const hash = hmac.digest('hex');
+
+    const otp = parseInt(hash, 16).toString().slice(0, this.otpLength);
+
+    return otp;
   }
 
   async verifyCode(

@@ -34,7 +34,6 @@ import { AligoService } from 'src/sms/application/aligo.service';
     JwtAccessStrategy,
     JwtRefreshStrategy,
     PhoneVerificationService,
-    CustomerService,
     AligoService,
   ],
   exports: [AuthService, JwtAccessStrategy, JwtRefreshStrategy, PassportModule],
