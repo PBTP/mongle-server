@@ -29,7 +29,7 @@ export class CustomerService implements IUserService {
     });
   }
 
-  async update(dto: CustomerDto): Promise<Customer> {
+  async update(dto: Partial<CustomerDto>): Promise<Customer> {
     return this.findOne(dto).then(async (customer) => {
       if (customer) {
         customer.customerLocation =

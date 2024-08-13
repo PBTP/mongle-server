@@ -42,10 +42,17 @@ export class CustomerController {
     @CurrentCustomer() customer: Customer,
     @Body() dto: UpdateProfileDto,
   ): Promise<Omit<CustomerDto, 'refreshToken'>> {
-    const updatedCustomer = await this.customerService.update({
-      ...customer,
-      ...dto,
-    });
+    customer.customerName = dto.customerName
+      ? dto.customerName
+      : customer.customerName;
+    customer.customerPhoneNumber = dto.customerPhoneNumber
+      ? dto.customerPhoneNumber
+      : customer.customerPhoneNumber;
+    customer.customerLocation = dto.customerLocation
+      ? dto.customerLocation
+      : customer.customerLocation;
+
+    const updatedCustomer = await this.customerService.update(customer);
 
     return {
       customerId: updatedCustomer.customerId,
