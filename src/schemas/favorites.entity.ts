@@ -8,6 +8,7 @@ import {
 import { Business } from './business.entity';
 import { Customer } from './customers.entity';
 
+//TODO: 추후 UUID -> TSID로 변경
 @Entity({ name: 'favorites' })
 export class Favorite {
   @Column({ primary: true, unique: true, type: 'uuid' })

@@ -12,14 +12,12 @@ import { Appointment } from './appointments.entity';
 import { Business } from './business.entity';
 import { Customer } from './customers.entity';
 import { Pet } from './pets.entity';
+import { HasUuid } from '../common/entity/parent.entity';
 
 @Entity({ name: 'reviews' })
-export class Review {
+export class Review extends HasUuid {
   @PrimaryColumn()
   public reviewId: number;
-
-  @Column({ unique: true, type: 'uuid' })
-  public uuid: string;
 
   @Column()
   public rating: number;

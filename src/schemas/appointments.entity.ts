@@ -15,14 +15,12 @@ import { Driver } from './drivers.entity';
 import { Pet } from './pets.entity';
 import { Review } from './reviews.entity';
 import { ServiceOption } from './service-options.entity';
+import { HasUuid } from '../common/entity/parent.entity';
 
 @Entity({ name: 'appointments' })
-export class Appointment {
+export class Appointment extends HasUuid {
   @PrimaryColumn()
   public appointmentId: number;
-
-  @Column({ unique: true, type: 'uuid' })
-  public uuid: string;
 
   @Column({ type: 'date' })
   public appointmentDate: Date;
