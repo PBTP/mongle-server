@@ -12,6 +12,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PhoneVerification } from 'src/schemas/phone-verification.entity';
 import { PhoneVerificationService } from 'src/sms/application/phone-verification.service';
 import { SmsModule } from 'src/sms/sms.module';
+import { DriverModule } from '../driver/driver.module';
+import { BusinessModule } from '../business/business.module';
 
 @Global()
 @Module({
@@ -24,9 +26,11 @@ import { SmsModule } from 'src/sms/sms.module';
     }),
     PassportModule.register({ defaultStrategy: 'access' }),
     CacheModule,
+    DriverModule,
     CustomerModule,
     TypeOrmModule.forFeature([PhoneVerification]),
     SmsModule,
+    BusinessModule,
   ],
   controllers: [AuthController],
   providers: [

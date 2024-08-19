@@ -13,6 +13,7 @@ import { Appointment } from './appointments.entity';
 import { Breed } from './breed.entity';
 import { Customer } from './customers.entity';
 import { Review } from './reviews.entity';
+import { HasUuid } from '../common/entity/parent.entity';
 
 export enum Gender {
   MALE = 'MALE',
@@ -20,12 +21,9 @@ export enum Gender {
 }
 
 @Entity({ name: 'pets' })
-export class Pet {
+export class Pet extends HasUuid {
   @PrimaryColumn()
   public petId: number;
-
-  @Column({ unique: true, type: 'uuid' })
-  public uuid: string;
 
   @Column()
   public name: string;

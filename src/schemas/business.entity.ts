@@ -10,21 +10,19 @@ import {
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { BusinessBadge } from './business-badges.entity';
-import { BusinessChat } from './business-chats.entity';
 import { BusinessNotice } from './business-notices.entity';
 import { BusinessTag } from './business-tags.entity';
 import { Driver } from './drivers.entity';
 import { Favorite } from './favorites.entity';
 import { Review } from './reviews.entity';
 import { ServiceOption } from './service-options.entity';
+import { BusinessChatRoom } from './business-chat-room.entity';
+import { HasUuid } from '../common/entity/parent.entity';
 
 @Entity({ name: 'business' })
-export class Business {
+export class Business extends HasUuid {
   @PrimaryColumn()
   public businessId: number;
-
-  @Column({ unique: true, type: 'uuid' })
-  public uuid: string;
 
   @Column()
   public businessName: string;
@@ -58,9 +56,6 @@ export class Business {
   @DeleteDateColumn()
   public deletedAt: Date;
 
-  @OneToMany(() => BusinessChat, (businessChats) => businessChats.business)
-  public businessChats: BusinessChat[];
-
   @OneToMany(() => Favorite, (favorites) => favorites.business)
   public favorites: Favorite[];
 
@@ -87,4 +82,7 @@ export class Business {
     (businessNotices) => businessNotices.business,
   )
   public businessNotices: BusinessNotice[];
+
+  @OneToMany(() => BusinessChatRoom, (chatRooms) => chatRooms.chatRoom)
+  public chatRooms: BusinessChatRoom[];
 }

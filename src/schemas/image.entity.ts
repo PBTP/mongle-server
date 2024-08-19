@@ -4,9 +4,10 @@ import {
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { HasUuid } from '../common/entity/parent.entity';
 
-@Entity({ name: 'images' })
-export class Images {
+@Entity({ name: 'images', orderBy: { imageLink: 'ASC' } })
+export class Image extends HasUuid {
   @PrimaryGeneratedColumn()
   imageId: number;
 

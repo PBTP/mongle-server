@@ -1,23 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { AuthDto } from '../presentation/auth.dto';
 import { CustomerService } from 'src/customer/application/customer.service';
 import { Customer } from 'src/schemas/customers.entity';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from '../../common/cache/cache.service';
 import { CustomerDto } from '../../customer/presentation/customer.dto';
+import { UnauthorizedException } from '@nestjs/common/exceptions';
+import { DriverService } from '../../driver/application/driver.service';
+import { BusinessService } from '../../business/application/business.service';
 
 @Injectable()
 export class AuthService {
   private readonly accessTokenOption: JwtSignOptions;
   private readonly refreshTokenOption: JwtSignOptions;
   private readonly accessTokenStrategy: string;
+  private readonly userServices = {};
 
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly cacheService: CacheService,
     private readonly customerService: CustomerService,
+    private readonly driverService: DriverService,
+    private readonly businessService: BusinessService,
   ) {
     this.accessTokenOption = {
       secret: this.configService.get<string>('jwt/access/secret'),
@@ -32,22 +37,34 @@ export class AuthService {
     this.accessTokenStrategy = this.configService.get<string>(
       'jwt/access/strategy',
     );
+
+    this.userServices['customer'] = customerService;
+    this.userServices['driver'] = driverService;
+    this.userServices['business'] = businessService;
   }
 
-  async login(dto: CustomerDto): Promise<AuthDto> {
+  async login(dto: CustomerDto): Promise<CustomerDto> {
     let customer: Customer = await this.customerService.findOne(dto);
     // TODO(Seokmin): Remove this line after implementing the registration process
     customer = customer ?? (await this.customerService.createOld(dto));
 
     const accessToken = this.jwtService.sign(
-      { tokenType: 'access', subject: customer.customerId },
+      {
+        tokenType: 'access',
+        subject: customer.customerId,
+        userType: 'customer',
+      },
       this.accessTokenOption,
     );
 
     await this.saveAccessToken(customer, accessToken);
 
     const refreshToken = this.jwtService.sign(
-      { tokenType: 'refresh', subject: customer.customerId },
+      {
+        tokenType: 'refresh',
+        subject: customer.customerId,
+        userType: 'customer',
+      },
       this.refreshTokenOption,
     );
 
@@ -68,22 +85,30 @@ export class AuthService {
     };
   }
 
-  async tokenRefresh(request: Request): Promise<AuthDto> {
+  async tokenRefresh(request: Request): Promise<CustomerDto> {
     const token = request.headers['authorization'].replace('Bearer ', '');
 
     const payload = this.jwtService.decode(token);
 
     const customer: Customer = await this.customerService.findOne({
-      customerId: payload.subject,
+      userId: payload.subject,
     });
 
     const accessToken = this.jwtService.sign(
-      { tokenType: 'access', subject: customer.customerId },
+      {
+        tokenType: 'access',
+        subject: customer.customerId,
+        userType: 'customer',
+      },
       this.accessTokenOption,
     );
 
     const refreshToken = this.jwtService.sign(
-      { tokenType: 'refresh', subject: customer.customerId },
+      {
+        tokenType: 'refresh',
+        subject: customer.customerId,
+        userType: 'customer',
+      },
       this.refreshTokenOption,
     );
 
@@ -133,7 +158,18 @@ export class AuthService {
     );
   }
 
-  async decodeToken(token: string): Promise<any> {
+  async decode(token: string): Promise<any> {
     return await this.jwtService.decode(token);
+  }
+
+  async getUser(token: string): Promise<any> {
+    const payload = await this.jwtService.verify(token);
+    if (!payload) {
+      throw new UnauthorizedException();
+    }
+
+    return await this.userServices[payload.userType].findOne({
+      userId: payload.subject,
+    });
   }
 }

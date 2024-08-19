@@ -4,9 +4,11 @@ import { Repository } from 'typeorm';
 import { Customer } from '../../schemas/customers.entity';
 import { CustomerDto } from '../presentation/customer.dto';
 import { CreateCustomerDto } from 'src/auth/presentation/create-customer.dto';
+import { IUserService } from '../../auth/user.interface';
+import { AuthDto } from '../../auth/presentation/auth.dto';
 
 @Injectable()
-export class CustomerService {
+export class CustomerService implements IUserService {
   constructor(
     @InjectRepository(Customer)
     private customerRepository: Repository<Customer>,
@@ -33,10 +35,10 @@ export class CustomerService {
     return await this.customerRepository.save(customer);
   }
 
-  async findOne(dto: Partial<Customer>): Promise<Customer> {
+  async findOne(dto: Partial<AuthDto>): Promise<Customer> {
     const where = {};
 
-    dto.customerId && (where['customerId'] = dto.customerId);
+    dto.userId && (where['customerId'] = dto.userId);
     dto.uuid && (where['uuid'] = dto.uuid);
 
     return await this.customerRepository.findOne({
@@ -44,7 +46,7 @@ export class CustomerService {
     });
   }
 
-  async update(dto: CustomerDto): Promise<Customer> {
+  async update(dto: Partial<CustomerDto>): Promise<Customer> {
     return this.findOne(dto).then(async (customer) => {
       if (customer) {
         customer.customerLocation =

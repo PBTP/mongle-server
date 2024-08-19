@@ -9,11 +9,11 @@ import {
 } from 'typeorm';
 import { Point } from 'typeorm';
 import { Appointment } from './appointments.entity';
-import { BusinessChat } from './business-chats.entity';
-import { DriverChat } from './driver-chats.entity';
 import { Favorite } from './favorites.entity';
 import { Pet } from './pets.entity';
 import { Review } from './reviews.entity';
+import { CustomerChatRoom } from './customer-chat-room.entity';
+import { HasUuid } from '../common/entity/parent.entity';
 
 export enum AuthProvider {
   KAKAO = 'KAKAO',
@@ -21,12 +21,9 @@ export enum AuthProvider {
 }
 
 @Entity({ name: 'customers' })
-export class Customer {
+export class Customer extends HasUuid {
   @PrimaryGeneratedColumn()
   customerId: number;
-
-  @Column({ type: 'varchar', length: 44, unique: true, nullable: false })
-  uuid: string;
 
   @Column({ length: 30, nullable: false })
   customerName: string;
@@ -57,9 +54,6 @@ export class Customer {
   @Column({ length: 20, unique: true, nullable: true })
   refreshToken?: string;
 
-  @OneToMany(() => BusinessChat, (businessChats) => businessChats.customer)
-  public businessChats: BusinessChat[];
-
   @OneToMany(() => Favorite, (favorites) => favorites.customer)
   public favorites: Favorite[];
 
@@ -69,9 +63,9 @@ export class Customer {
   @OneToMany(() => Appointment, (appointments) => appointments.customer)
   public appointments: Appointment[];
 
-  @OneToMany(() => DriverChat, (driverChats) => driverChats.customer)
-  public driverChats: DriverChat[];
-
   @OneToMany(() => Pet, (pets) => pets.customer)
   public pets: Pet[];
+
+  @OneToMany(() => CustomerChatRoom, (room) => room.chatRoom)
+  public chatRooms: CustomerChatRoom[];
 }
