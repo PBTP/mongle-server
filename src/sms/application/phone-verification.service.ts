@@ -1,12 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { PhoneVerification } from 'src/schemas/phone-verification.entity';
-import { Not, IsNull } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
-import { PhoneVerificationRepository } from '../domain/phone-verification.repository';
 import { ConfigService } from '@nestjs/config';
 import { createHmac, randomBytes } from 'crypto';
 import { SMS_SERVICE, SmsService } from '../domain/sms-service.interface';
+import { CacheService } from 'src/common/cache/cache.service';
+import { EncryptionService } from 'src/encryption/application/encryption-service';
+import { ENCRYPTION_SERVICE } from 'src/encryption/domain/encryption-service.interface';
 
 @Injectable()
 export class PhoneVerificationService {
@@ -15,10 +14,11 @@ export class PhoneVerificationService {
   private readonly otpSecret: string;
 
   constructor(
-    @InjectRepository(PhoneVerification)
-    private readonly phoneVerificationRepository: PhoneVerificationRepository,
-    @Inject(SMS_SERVICE) private readonly smsService: SmsService,
+    private readonly cacheService: CacheService,
     private readonly configService: ConfigService,
+    @Inject(SMS_SERVICE) private readonly smsService: SmsService,
+    @Inject(ENCRYPTION_SERVICE)
+    private readonly encryptionService: EncryptionService,
   ) {
     this.expiredMinutes = this.configService.get<number>(
       'sms/expired_minutes',
@@ -28,21 +28,28 @@ export class PhoneVerificationService {
     this.otpSecret = this.configService.get<string>('sms/otp_secret');
   }
 
-  async createVerification(phoneNumber: string): Promise<PhoneVerification> {
-    const verificationCode = this.generateOtp(phoneNumber);
+  async createVerification(phoneNumber: string): Promise<void> {
+    const encryptedPhoneNumber = this.encryptionService.encrypt(phoneNumber);
+    const verificationCode = this.generateOtp(encryptedPhoneNumber);
     const expiredAt = new Date();
     expiredAt.setMinutes(expiredAt.getMinutes() + this.expiredMinutes);
 
-    const phoneVerification = this.phoneVerificationRepository.create({
-      phoneNumber,
+    const phoneVerification = {
+      phoneNumber: encryptedPhoneNumber,
       verificationCode,
-      expiredAt,
-    });
+      expiredAt: expiredAt.toISOString(),
+      verifiedAt: null,
+    };
+
+    const cacheKey = this.getCacheKey(encryptedPhoneNumber);
+    await this.cacheService.setData(
+      cacheKey,
+      phoneVerification,
+      this.expiredMinutes * 60,
+    );
 
     const message = `인증번호는 [${verificationCode}] 입니다.`;
     await this.smsService.sendSMS(phoneNumber, message);
-
-    return await this.phoneVerificationRepository.save(phoneVerification);
   }
 
   private generateOtp(phoneNumber: string): string {
@@ -61,28 +68,33 @@ export class PhoneVerificationService {
   async verifyCode(
     phoneNumber: string,
     verificationCode: string,
-  ): Promise<string> {
-    const phoneVerification = await this.phoneVerificationRepository.findOne({
-      where: {
-        phoneNumber,
-        verificationCode,
-        verifiedAt: IsNull(),
-        expiredAt: Not(IsNull()),
-      },
-    });
+  ): Promise<string | null> {
+    const encryptedPhoneNumber = this.encryptionService.encrypt(phoneNumber);
+    const cacheKey = this.getCacheKey(encryptedPhoneNumber);
+    const phoneVerification = await this.cacheService.getData<any>(cacheKey);
 
     if (!phoneVerification) {
       return null;
     }
 
     const now = new Date();
-    if (phoneVerification.expiredAt < now) {
+    const expiredAt = new Date(phoneVerification.expiredAt);
+
+    if (
+      phoneVerification.verificationCode !== verificationCode ||
+      expiredAt < now
+    ) {
       return null;
     }
 
-    phoneVerification.verifiedAt = now;
+    phoneVerification.verifiedAt = now.toISOString();
     phoneVerification.verificationId = uuidv4();
-    await this.phoneVerificationRepository.save(phoneVerification);
+
+    await this.cacheService.setData(
+      cacheKey,
+      phoneVerification,
+      this.expiredMinutes * 60,
+    );
     return phoneVerification.verificationId;
   }
 
@@ -90,13 +102,18 @@ export class PhoneVerificationService {
     phoneNumber: string,
     verificationId: string,
   ): Promise<boolean> {
-    const phoneVerification = await this.phoneVerificationRepository.findOne({
-      where: {
-        phoneNumber,
-        verificationId,
-        verifiedAt: Not(IsNull()),
-      },
-    });
-    return !!phoneVerification;
+    const encryptedPhoneNumber = this.encryptionService.encrypt(phoneNumber);
+    const cacheKey = this.getCacheKey(encryptedPhoneNumber);
+    const phoneVerification = await this.cacheService.getData<any>(cacheKey);
+
+    return (
+      !!phoneVerification &&
+      phoneVerification.verificationId === verificationId &&
+      phoneVerification.verifiedAt !== null
+    );
+  }
+
+  private getCacheKey(phoneNumber: string): string {
+    return `phone-verification:${phoneNumber}`;
   }
 }
