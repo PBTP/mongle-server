@@ -18,71 +18,90 @@ import { Review } from './reviews.entity';
 import { ServiceOption } from './service-options.entity';
 import { BusinessChatRoom } from './business-chat-room.entity';
 import { HasUuid } from '../common/entity/parent.entity';
+import { AuthProvider } from '../auth/presentation/user.dto';
 
 @Entity({ name: 'business' })
 export class Business extends HasUuid {
   @PrimaryColumn()
-  public businessId: number;
+  businessId: number;
 
-  @Column()
-  public businessName: string;
+  @Column({
+    nullable: false,
+  })
+  businessName: string;
 
-  @Column()
-  public businessPhoneNumber: string;
+  @Column({
+    nullable: true,
+  })
+  businessPhoneNumber: string;
 
   @Column({
     type: 'geometry',
     spatialFeatureType: 'Point',
     srid: 4326,
+  })
+  businessLocation: Point;
+
+  @Column({
     nullable: true,
   })
-  public businessLocation: Point;
+  businessPriceGuide: string;
 
-  @Column()
-  public businessPriceGuide: string;
+  @Column({
+    nullable: true,
+  })
+  businessRule: string;
 
-  @Column()
-  public businessRule: string;
-
-  @Column({ type: 'date' })
-  public openingDate: Date;
+  @Column({ type: 'date', nullable: true })
+  openingDate: Date;
 
   @CreateDateColumn()
-  public createdAt: Date;
+  createdAt: Date;
 
   @UpdateDateColumn()
-  public modifiedAt: Date;
+  modifiedAt: Date;
 
   @DeleteDateColumn()
-  public deletedAt: Date;
+  deletedAt: Date;
 
   @OneToMany(() => Favorite, (favorites) => favorites.business)
-  public favorites: Favorite[];
+  favorites: Favorite[];
 
   @OneToMany(() => Review, (reviews) => reviews.business)
-  public reviews: Review[];
+  reviews: Review[];
 
   @OneToMany(() => Appointment, (appointments) => appointments.business)
-  public appointments: Appointment[];
+  appointments: Appointment[];
 
   @OneToMany(() => Driver, (drivers) => drivers.business)
-  public drivers: Driver[];
+  drivers: Driver[];
 
   @OneToMany(() => ServiceOption, (serviceOptions) => serviceOptions.business)
-  public serviceOptions: ServiceOption[];
+  serviceOptions: ServiceOption[];
 
   @OneToMany(() => BusinessBadge, (businessBadges) => businessBadges.business)
-  public businessBadges: BusinessBadge[];
+  businessBadges: BusinessBadge[];
 
   @OneToMany(() => BusinessTag, (businessTags) => businessTags.business)
-  public businessTags: BusinessTag[];
+  businessTags: BusinessTag[];
 
   @OneToMany(
     () => BusinessNotice,
     (businessNotices) => businessNotices.business,
   )
-  public businessNotices: BusinessNotice[];
+  businessNotices: BusinessNotice[];
 
   @OneToMany(() => BusinessChatRoom, (chatRooms) => chatRooms.chatRoom)
-  public chatRooms: BusinessChatRoom[];
+  chatRooms: BusinessChatRoom[];
+
+  @Column({
+    type: 'enum',
+    enum: AuthProvider,
+    enumName: 'auth_provider',
+    nullable: false,
+  })
+  authProvider: AuthProvider;
+
+  @Column({ length: 20, unique: true, nullable: true })
+  refreshToken?: string;
 }

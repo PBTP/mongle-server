@@ -10,6 +10,7 @@ import { PassportModule } from '@nestjs/passport';
 import { CacheModule } from '../common/cache/cache.module';
 import { DriverModule } from '../driver/driver.module';
 import { BusinessModule } from '../business/business.module';
+import { UserModule } from './user.module';
 
 @Global()
 @Module({
@@ -21,13 +22,18 @@ import { BusinessModule } from '../business/business.module';
       inject: [ConfigService],
     }),
     PassportModule.register({ defaultStrategy: 'access' }),
+    UserModule,
     CacheModule,
     DriverModule,
     CustomerModule,
     BusinessModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtAccessStrategy, JwtRefreshStrategy],
+  providers: [
+    AuthService,
+    JwtAccessStrategy,
+    JwtRefreshStrategy
+  ],
   exports: [AuthService, JwtAccessStrategy, JwtRefreshStrategy, PassportModule],
 })
 export class AuthModule {}

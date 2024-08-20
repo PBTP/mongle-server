@@ -14,11 +14,7 @@ import { Pet } from './pets.entity';
 import { Review } from './reviews.entity';
 import { CustomerChatRoom } from './customer-chat-room.entity';
 import { HasUuid } from '../common/entity/parent.entity';
-
-export enum AuthProvider {
-  KAKAO = 'KAKAO',
-  APPLE = 'APPLE',
-}
+import { AuthProvider } from '../auth/presentation/user.dto';
 
 @Entity({ name: 'customers' })
 export class Customer extends HasUuid {

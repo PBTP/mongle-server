@@ -1,7 +1,16 @@
 import { IsNotEmpty, IsOptional } from 'class-validator';
 import { Group } from '../../common/validation/validation.data';
 
+export enum AuthProvider {
+  KAKAO = 'KAKAO',
+  APPLE = 'APPLE',
+  GOOGLE = 'GOOGLE',
+  BASIC = 'BASIC',
+}
+
 export class UserDto {
+  authProvider?: AuthProvider;
+
   @IsNotEmpty({ groups: [Group.create] })
   @IsOptional()
   userType?: UserType;
@@ -9,6 +18,7 @@ export class UserDto {
   @IsNotEmpty({ groups: [Group.create] })
   @IsOptional()
   userId?: number;
+  phoneNumber?: string;
   uuid?: string;
   name?: string;
 }

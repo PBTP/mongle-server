@@ -7,8 +7,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CustomerDto } from '../../customer/presentation/customer.dto';
 import { Auth } from '../decorator/auth.decorator';
+import { UserDto } from './user.dto';
 
 @ApiTags('인증 관련 API')
 @Controller('/v1/auth')
@@ -26,7 +26,7 @@ export class AuthController {
     description: `Unauthorized / 요청한 Access Token이 만료되었습니다. 토큰을 갱신하세요`,
   })
   @Post('/login')
-  async login(@Body() dto: CustomerDto) {
+  async login(@Body() dto: UserDto) {
     return await this.authService.login(dto);
   }
 
@@ -42,7 +42,7 @@ export class AuthController {
   })
   @Auth(HttpStatus.CREATED, 'refresh')
   @Post('/refresh')
-  async refresh(@Req() req: Request): Promise<CustomerDto> {
+  async refresh(@Req() req: Request): Promise<UserDto> {
     return await this.authService.tokenRefresh(req);
   }
 }
