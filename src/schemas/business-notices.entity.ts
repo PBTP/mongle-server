@@ -9,14 +9,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Business } from './business.entity';
+import { HasUuid } from '../common/entity/parent.entity';
 
-@Entity({ name: 'business_notices' })
-export class BusinessNotice {
+@Entity({ name: 'business_notices', orderBy: { createdAt: 'ASC' } })
+export class BusinessNotice extends HasUuid {
   @PrimaryColumn()
   public businessNoticeId: number;
-
-  @Column({ unique: true, type: 'uuid' })
-  public uuid: string;
 
   @Column()
   public title: string;

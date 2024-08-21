@@ -15,6 +15,7 @@ import { LoggerModule } from './config/logger/logger.module';
 import { SystemAlarmModule } from './system/system.alarm.module';
 import { ImageModule } from './common/image/image.module';
 import { CloudModule } from './common/cloud/cloud.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { CloudModule } from './common/cloud/cloud.module';
           username: datasource.username,
           password: datasource.password,
           database: datasource.database,
+          logging: datasource.logging,
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           synchronize: false,
           namingStrategy: new SnakeNamingStrategy(),
@@ -60,6 +62,7 @@ import { CloudModule } from './common/cloud/cloud.module';
     AuthModule,
     ImageModule,
     CloudModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

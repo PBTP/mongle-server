@@ -2,6 +2,8 @@ import {
   applyDecorators,
   createParamDecorator,
   ExecutionContext,
+  HttpCode,
+  HttpStatus,
   UseGuards,
 } from '@nestjs/common';
 import { Customer } from '../../schemas/customers.entity';
@@ -15,7 +17,10 @@ export const CurrentCustomer = createParamDecorator(
   },
 );
 
-export function Auth(authGuardType: string = 'access') {
+export function Auth(
+  httpStatusCode: HttpStatus | number = HttpStatus.OK,
+  authGuardType: string = 'access',
+) {
   return applyDecorators(
     UseGuards(AuthGuard(authGuardType)),
     ApiBearerAuth(),
@@ -23,5 +28,6 @@ export function Auth(authGuardType: string = 'access') {
       description:
         'Unauthorized / Access Token이 만료되었거나 잘못되었습니다. 토큰을 갱신하세요',
     }),
+    HttpCode(httpStatusCode),
   );
 }

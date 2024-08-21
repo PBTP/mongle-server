@@ -8,6 +8,8 @@ import { JwtAccessStrategy } from './application/jwt-access.strategy';
 import { JwtRefreshStrategy } from './application/jwt-refresh.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { CacheModule } from '../common/cache/cache.module';
+import { DriverModule } from '../driver/driver.module';
+import { BusinessModule } from '../business/business.module';
 
 @Global()
 @Module({
@@ -20,7 +22,9 @@ import { CacheModule } from '../common/cache/cache.module';
     }),
     PassportModule.register({ defaultStrategy: 'access' }),
     CacheModule,
+    DriverModule,
     CustomerModule,
+    BusinessModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAccessStrategy, JwtRefreshStrategy],

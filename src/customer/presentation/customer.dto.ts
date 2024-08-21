@@ -7,8 +7,9 @@ import {
 } from 'class-validator';
 import { AuthProvider } from '../../schemas/customers.entity';
 import { ApiProperty } from '@nestjs/swagger';
+import { AuthDto } from '../../auth/presentation/auth.dto';
 
-export class CustomerDto {
+export class CustomerDto extends AuthDto {
   @ApiProperty({
     description: 'Mongle Server에서의 고객 식별자',
     required: false,
@@ -79,7 +80,4 @@ export class CustomerDto {
   @IsNotEmpty()
   @IsEnum(AuthProvider)
   authProvider: AuthProvider;
-
-  @IsOptional()
-  refreshToken?: string;
 }
