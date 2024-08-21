@@ -13,22 +13,13 @@ export class UpdateProfileDto {
   customerName: string;
 
   @ApiProperty({
-    description: '고객 위치 경도',
+    description: '고객 위치',
     nullable: true,
     required: false,
-    type: Number,
+    type: String,
   })
   @IsOptional()
-  longitude?: number;
-
-  @ApiProperty({
-    description: '고객 위치 위도',
-    nullable: true,
-    required: false,
-    type: Number,
-  })
-  @IsOptional()
-  latitude?: number;
+  customerLocation?: string;
 
   @ApiProperty({
     description: '고객 상세 주소',
@@ -37,6 +28,14 @@ export class UpdateProfileDto {
     type: String,
   })
   @IsOptional()
-  @Length(1, 100)
   customerAddress?: string;
+
+  @ApiProperty({
+    description: '프로필 이미지 URL',
+    nullable: true,
+    required: false,
+    type: String,
+  })
+  @IsOptional()
+  profileImageUrl?: string;
 }

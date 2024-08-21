@@ -5,7 +5,6 @@ import {
   Length,
   IsNumber,
 } from 'class-validator';
-import { Point } from 'typeorm';
 import { AuthProvider } from '../../schemas/customers.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -53,7 +52,7 @@ export class CustomerDto {
     required: false,
   })
   @IsOptional()
-  customerLocation?: Point;
+  customerLocation?: string;
 
   @ApiProperty({
     description: '고객 상세 주소',
@@ -62,8 +61,16 @@ export class CustomerDto {
     type: String,
   })
   @IsOptional()
-  @Length(1, 100)
   customerAddress?: string;
+
+  @ApiProperty({
+    description: '프로필 이미지 URL',
+    nullable: true,
+    required: false,
+    type: String,
+  })
+  @IsOptional()
+  profileImageUrl?: string;
 
   @ApiProperty({
     description: '인증 제공자 타입',

@@ -34,6 +34,8 @@ export class CustomerService {
           dto.customerLocation ?? customer.customerLocation;
         customer.customerAddress =
           dto.customerAddress ?? customer.customerAddress;
+        customer.profileImageUrl =
+          dto.profileImageUrl ?? customer.profileImageUrl;
         customer.customerName = dto.customerName ?? customer.customerName;
         customer.customerPhoneNumber =
           dto.customerPhoneNumber ?? customer.customerPhoneNumber;

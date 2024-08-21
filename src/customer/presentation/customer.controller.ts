@@ -27,6 +27,7 @@ export class CustomerController {
       customerName: customer.customerName,
       customerPhoneNumber: customer.customerPhoneNumber,
       customerLocation: customer.customerLocation,
+      profileImageUrl: customer.profileImageUrl,
       authProvider: customer.authProvider,
     };
   }
@@ -42,18 +43,9 @@ export class CustomerController {
     @CurrentCustomer() customer: Customer,
     @Body() dto: UpdateProfileDto,
   ): Promise<Omit<CustomerDto, 'refreshToken'>> {
-    let customerLocation = null;
-    if (dto.latitude && dto.longitude) {
-      customerLocation = {
-        type: 'Point',
-        coordinates: [dto.longitude, dto.latitude],
-      };
-    }
-
     const updatedCustomer = await this.customerService.update({
       ...customer,
       ...dto,
-      customerLocation,
     });
 
     return {
@@ -62,6 +54,7 @@ export class CustomerController {
       customerName: updatedCustomer.customerName,
       customerPhoneNumber: updatedCustomer.customerPhoneNumber,
       customerLocation: updatedCustomer.customerLocation,
+      profileImageUrl: updatedCustomer.profileImageUrl,
       authProvider: updatedCustomer.authProvider,
     };
   }
