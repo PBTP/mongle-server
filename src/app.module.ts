@@ -16,6 +16,7 @@ import { SystemAlarmModule } from './system/system.alarm.module';
 import { ImageModule } from './common/image/image.module';
 import { CloudModule } from './common/cloud/cloud.module';
 import { ChatModule } from './chat/chat.module';
+import { PetModule } from './pet/pet.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { ChatModule } from './chat/chat.module';
     ImageModule,
     CloudModule,
     ChatModule,
+    PetModule,
   ],
   controllers: [AppController],
   providers: [AppService],

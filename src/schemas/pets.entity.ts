@@ -50,6 +50,9 @@ export class Pet extends HasUuid {
   @Column()
   public vaccinationStatus: string;
 
+  @Column()
+  public photoUrl: string;
+
   @CreateDateColumn()
   public createdAt: Date;
 
