@@ -4,12 +4,13 @@ import {
   IsEnum,
   Length,
   IsNumber,
+  ValidateIf,
 } from 'class-validator';
 import { Point } from 'typeorm';
-;
 import { ApiProperty } from '@nestjs/swagger';
 import { AuthDto } from '../../auth/presentation/auth.dto';
-import { AuthProvider } from "../../auth/presentation/user.dto";
+import { AuthProvider, UserGroup } from '../../auth/presentation/user.dto';
+import { CRUD } from '../../common/validation/validation.data';
 
 export class BusinessDto extends AuthDto {
   @ApiProperty({
@@ -19,6 +20,7 @@ export class BusinessDto extends AuthDto {
   })
   @IsNumber()
   @IsOptional()
+  @ValidateIf((o) => !o.uuid, { groups: CRUD })
   businessId?: number;
 
   @ApiProperty({
@@ -26,8 +28,10 @@ export class BusinessDto extends AuthDto {
     required: true,
     type: String,
   })
-  @IsNotEmpty()
-  @Length(1, 44)
+  @Length(1, 44, { groups: CRUD })
+  @IsNotEmpty({ groups: CRUD })
+  @IsOptional()
+  @ValidateIf((o) => !o.businessId, { groups: CRUD })
   uuid: string;
 
   @ApiProperty({
@@ -90,6 +94,7 @@ export class BusinessDto extends AuthDto {
     required: true,
   })
   @IsNotEmpty()
-  @IsEnum(AuthProvider)
+  @IsOptional()
+  @IsEnum(AuthProvider, { groups: [UserGroup.login] })
   authProvider: AuthProvider;
 }

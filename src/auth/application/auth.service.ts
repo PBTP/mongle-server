@@ -71,7 +71,7 @@ export class AuthService {
       uuid: user.uuid,
       name: user.name,
       userId: user.userId,
-      userType: user.userType,
+      userType: user.userType ?? dto.userType,
       phoneNumber: user.phoneNumber,
       authProvider: user.authProvider,
       accessToken: accessToken,
