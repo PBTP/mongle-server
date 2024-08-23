@@ -125,7 +125,7 @@ export class AuthService {
   private async saveAccessToken(user: UserDto, accessToken: string) {
     const key = `${user.userType}:${user.userId}:accessToken`;
 
-    if (this.accessTokenStrategy.toLowerCase() === 'unique') {
+    if (this.accessTokenStrategy?.toLowerCase() === 'unique') {
       this.cacheService.get(key).then((v) => {
         if (v) {
           this.cacheService.del(v);

@@ -18,7 +18,7 @@ export class BusinessController {
   @ApiOkResponse({ type: CustomerDto, description: '내 정보 조회 성공' })
   @Auth()
   @Get('my')
-  async getMyCustomer(
+  async getMyBusinessInfo(
     @CurrentBusiness() business: Business,
   ): Promise<BusinessDto> {
     return {

@@ -5,7 +5,6 @@ import { IUserService } from '../../auth/user.interface';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
 import { Business } from '../../schemas/business.entity';
 import { AuthDto } from '../../auth/presentation/auth.dto';
-import { Customer } from '../../schemas/customers.entity';
 
 @Injectable()
 export class BusinessService implements IUserService {
