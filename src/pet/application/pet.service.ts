@@ -72,7 +72,6 @@ export class PetService {
     pet.neuteredYn = dto.neuteredYn ?? pet.neuteredYn;
     pet.personality = dto.personality ?? pet.personality;
     pet.vaccinationStatus = dto.vaccinationStatus ?? pet.vaccinationStatus;
-    pet.photoUrl = dto.photoUrl ?? pet.photoUrl;
     pet.gender = dto.gender ?? pet.gender;
 
     return await this.petRepository.save(pet);
