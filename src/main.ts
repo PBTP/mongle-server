@@ -7,6 +7,7 @@ import { LoggerService } from './config/logger/logger.config';
 import { ValidationDefaultOption } from './common/validation/validation.data';
 import { RedisIoAdapter } from './config/socket/socket.adapter';
 import { RedisService } from '@liaoliaots/nestjs-redis';
+import { EntityNotFoundExceptionFilter } from './common/filters/entit-not-found.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -23,6 +24,7 @@ async function bootstrap() {
 
   app.useLogger(app.get<LoggerService>(LoggerService));
   app.useGlobalPipes(new ValidationPipe(ValidationDefaultOption));
+  app.useGlobalFilters(new EntityNotFoundExceptionFilter());
   app.useGlobalInterceptors(
     new ClassSerializerInterceptor(app.get<Reflector>(Reflector)),
   );

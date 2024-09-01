@@ -112,13 +112,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ): Promise<void> {
     message.user = this.getUser(client);
 
-    const chatRoom = await this.chatService.findOne({
+    await this.chatService.findOne({
       chatRoomId: message.chatRoomId,
     });
-
-    if (!chatRoom) {
-      throw new NotFoundException(`Room ${message.chatRoomId} not found`);
-    }
 
     if (!client.rooms.has(message.chatRoomId.toString())) {
       throw new ForbiddenException(
