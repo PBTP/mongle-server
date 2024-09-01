@@ -12,7 +12,7 @@ import { PetDto } from './pet.dto';
 import { Pet } from '../../schemas/pets.entity';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GroupValidation } from 'src/common/validation/validation.decorator';
-import { Group } from 'src/common/validation/validation.data';
+import { CrudGroup } from 'src/common/validation/validation.data';
 import { Customer } from 'src/schemas/customers.entity';
 import { CurrentCustomer } from 'src/auth/decorator/auth.decorator';
 
@@ -27,7 +27,7 @@ export class PetController {
   })
   @ApiOkResponse({ type: PetDto, description: '반려동물 정보 생성 성공' })
   @Post()
-  @GroupValidation([Group.create])
+  @GroupValidation([CrudGroup.create])
   async create(
     @Body() dto: PetDto,
     @CurrentCustomer() customer: Customer,
@@ -41,7 +41,7 @@ export class PetController {
   })
   @ApiOkResponse({ type: PetDto, description: '반려동물 정보 조회 성공' })
   @Get(':id')
-  @GroupValidation([Group.read])
+  @GroupValidation([CrudGroup.read])
   async getOne(
     @Param('id') id: number,
     @CurrentCustomer() customer: Customer,
@@ -55,7 +55,7 @@ export class PetController {
   })
   @ApiOkResponse({ type: PetDto, description: '반려동물 정보 수정 성공' })
   @Put(':id')
-  @GroupValidation([Group.update])
+  @GroupValidation([CrudGroup.update])
   async update(
     @Param('id') id: number,
     @Body() dto: Omit<PetDto, 'petId'>,
@@ -70,7 +70,7 @@ export class PetController {
   })
   @ApiOkResponse({ description: '반려동물 정보 삭제 성공' })
   @Delete(':id')
-  @GroupValidation([Group.delete])
+  @GroupValidation([CrudGroup.delete])
   async delete(
     @Param('id') id: number,
     @CurrentCustomer() customer: Customer,

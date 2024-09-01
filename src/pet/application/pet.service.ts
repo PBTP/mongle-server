@@ -21,7 +21,7 @@ export class PetService {
   ) {}
 
   async create(dto: PetDto, customer: Customer): Promise<Pet> {
-    const breed = await this.breedRepository.findOne({
+    const breed = await this.breedRepository.findOneOrFail({
       where: { breedId: dto.breedId },
     });
 
@@ -39,14 +39,10 @@ export class PetService {
   }
 
   async findOne(id: number, customer: Customer): Promise<Pet> {
-    const pet = await this.petRepository.findOne({
+    const pet = await this.petRepository.findOneOrFail({
       where: { petId: id },
       relations: ['breed', 'customer'],
     });
-
-    if (!pet) {
-      throw new NotFoundException('반려동물을 찾을 수 없습니다.');
-    }
 
     if (pet.customer.customerId !== customer.customerId) {
       throw new ForbiddenException('해당 반려동물에 접근할 수 없습니다.');
@@ -63,13 +59,9 @@ export class PetService {
     const pet = await this.findOne(id, customer);
 
     if (dto.breedId && dto.breedId !== pet.breed.breedId) {
-      const breed = await this.breedRepository.findOne({
+      const breed = await this.breedRepository.findOneOrFail({
         where: { breedId: dto.breedId },
       });
-
-      if (!breed) {
-        throw new NotFoundException('견종을 찾을 수 없습니다.');
-      }
 
       pet.breed = breed;
     }
