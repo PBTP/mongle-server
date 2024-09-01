@@ -14,7 +14,11 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: ['https://mgmg.life', 'http://localhost:8000'],
+    origin: [
+      'https://mgmg.life',
+      'http://localhost:8000',
+      'http://localhost:3000',
+    ],
   });
 
   app.useLogger(app.get<LoggerService>(LoggerService));
