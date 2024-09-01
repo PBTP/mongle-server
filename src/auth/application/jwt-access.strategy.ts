@@ -6,8 +6,8 @@ import {
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { Customer } from '../../schemas/customers.entity';
 import { CacheService } from '../../common/cache/cache.service';
+import { UserDto } from '../presentation/user.dto';
 
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
@@ -22,7 +22,7 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
     });
   }
 
-  async validate(req: Request, payload: any): Promise<Customer> {
+  async validate(req: Request, payload: any): Promise<UserDto> {
     if (!payload) {
       throw new UnauthorizedException();
     }
@@ -32,6 +32,6 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
     }
 
     const token = req.headers['authorization'].replace('Bearer ', '');
-    return JSON.parse(await this.cacheService.get(token)) as Customer;
+    return JSON.parse(await this.cacheService.get(token)) as UserDto;
   }
 }

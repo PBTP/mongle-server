@@ -5,17 +5,21 @@ import { Customer } from '../../schemas/customers.entity';
 import { CustomerDto } from '../presentation/customer.dto';
 import { IUserService } from '../../auth/user.interface';
 import { AuthDto } from '../../auth/presentation/auth.dto';
+import { UserDto, UserType } from '../../auth/presentation/user.dto';
 
 @Injectable()
 export class CustomerService implements IUserService {
+  readonly userType: UserType = 'customer';
+
   constructor(
     @InjectRepository(Customer)
     private customerRepository: Repository<Customer>,
   ) {}
 
   async create(dto: CustomerDto): Promise<Customer> {
-    const newCustomer = await this.customerRepository.create(dto);
-    return await this.customerRepository.save(newCustomer);
+    return await this.customerRepository.save(
+      this.customerRepository.create(dto),
+    );
   }
 
   async findOne(dto: Partial<AuthDto>): Promise<Customer> {
@@ -42,5 +46,16 @@ export class CustomerService implements IUserService {
         return await this.customerRepository.save(customer);
       }
     });
+  }
+
+  toUserDto(customer: Customer): UserDto {
+    return {
+      uuid: customer.uuid,
+      name: customer.customerName,
+      userId: customer.customerId,
+      userType: this.userType,
+      phoneNumber: customer.customerPhoneNumber,
+      authProvider: customer.authProvider,
+    };
   }
 }

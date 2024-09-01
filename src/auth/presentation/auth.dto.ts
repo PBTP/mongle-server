@@ -15,5 +15,5 @@ export class AuthDto extends UserDto {
     type: String,
   })
   @IsOptional()
-  refreshToken: string;
+  refreshToken?: string;
 }

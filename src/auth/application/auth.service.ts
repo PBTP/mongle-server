@@ -1,28 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { CustomerService } from 'src/customer/application/customer.service';
-import { Customer } from 'src/schemas/customers.entity';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from '../../common/cache/cache.service';
-import { CustomerDto } from '../../customer/presentation/customer.dto';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
-import { DriverService } from '../../driver/application/driver.service';
-import { BusinessService } from '../../business/application/business.service';
+import { UserService } from './user.service';
+import { UserDto } from '../presentation/user.dto';
+import { AuthDto } from '../presentation/auth.dto';
 
 @Injectable()
 export class AuthService {
   private readonly accessTokenOption: JwtSignOptions;
   private readonly refreshTokenOption: JwtSignOptions;
   private readonly accessTokenStrategy: string;
-  private readonly userServices = {};
 
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly cacheService: CacheService,
-    private readonly customerService: CustomerService,
-    private readonly driverService: DriverService,
-    private readonly businessService: BusinessService,
+    private readonly userService: UserService,
   ) {
     this.accessTokenOption = {
       secret: this.configService.get<string>('jwt/access/secret'),
@@ -37,67 +32,68 @@ export class AuthService {
     this.accessTokenStrategy = this.configService.get<string>(
       'jwt/access/strategy',
     );
-
-    this.userServices['customer'] = customerService;
-    this.userServices['driver'] = driverService;
-    this.userServices['business'] = businessService;
   }
 
-  async login(dto: CustomerDto): Promise<CustomerDto> {
-    let customer: Customer = await this.customerService.findOne(dto);
-    customer = customer ?? (await this.customerService.create(dto));
+  async login(dto: UserDto): Promise<AuthDto> {
+    let user: UserDto = await this.userService.findOne(dto);
+    user = user ?? (await this.userService.create(dto));
+
+    user.userId = user['customerId'] ?? user['driverId'] ?? user['businessId'];
+    user.userType = dto.userType;
 
     const accessToken = this.jwtService.sign(
       {
         tokenType: 'access',
-        subject: customer.customerId,
-        userType: 'customer',
+        subject: user.userId,
+        userType: user.userType,
       },
       this.accessTokenOption,
     );
 
-    await this.saveAccessToken(customer, accessToken);
+    await this.saveAccessToken(user, accessToken);
 
     const refreshToken = this.jwtService.sign(
       {
         tokenType: 'refresh',
-        subject: customer.customerId,
-        userType: 'customer',
+        subject: user.userId,
+        userType: user.userType,
       },
       this.refreshTokenOption,
     );
 
-    await this.customerService.update({
-      ...customer,
+    await this.userService.update({
+      ...user,
+      userType: user.userType,
       refreshToken: refreshToken,
     });
 
     return {
-      customerId: customer.customerId,
-      uuid: customer.uuid,
-      customerName: customer.customerName,
-      customerPhoneNumber: customer.customerPhoneNumber,
-      customerLocation: customer.customerLocation,
-      authProvider: customer.authProvider,
+      uuid: user.uuid,
+      name: user.name,
+      userId: user.userId,
+      userType: user.userType ?? dto.userType,
+      phoneNumber: user.phoneNumber,
+      authProvider: user.authProvider,
       accessToken: accessToken,
       refreshToken: refreshToken,
     };
   }
 
-  async tokenRefresh(request: Request): Promise<CustomerDto> {
+  async tokenRefresh(request: Request): Promise<AuthDto> {
     const token = request.headers['authorization'].replace('Bearer ', '');
 
     const payload = this.jwtService.decode(token);
 
-    const customer: Customer = await this.customerService.findOne({
+    const user: UserDto = await this.userService.findOne({
+      userType: payload.userType,
       userId: payload.subject,
     });
 
     const accessToken = this.jwtService.sign(
       {
         tokenType: 'access',
-        subject: customer.customerId,
-        userType: 'customer',
+        subject: user.userId,
+        userType: user.userType,
       },
       this.accessTokenOption,
     );
@@ -105,35 +101,31 @@ export class AuthService {
     const refreshToken = this.jwtService.sign(
       {
         tokenType: 'refresh',
-        subject: customer.customerId,
-        userType: 'customer',
+        subject: user.userId,
+        userType: user.userType,
       },
       this.refreshTokenOption,
     );
 
-    await this.saveAccessToken(customer, accessToken);
+    await this.saveAccessToken(user, accessToken);
 
-    await this.customerService.update({
-      ...customer,
+    await this.userService.update({
+      ...user,
       refreshToken: refreshToken,
     });
 
+    const userDto = this.userService.toUserDto(user);
     return {
-      customerId: customer.customerId,
-      uuid: customer.uuid,
-      customerName: customer.customerName,
-      customerPhoneNumber: customer.customerPhoneNumber,
-      customerLocation: customer.customerLocation,
-      authProvider: customer.authProvider,
+      ...userDto,
       accessToken: accessToken,
       refreshToken: refreshToken,
     };
   }
 
-  private async saveAccessToken(customer: Customer, accessToken: string) {
-    const key = `customer:${customer.customerId}:accessToken`;
+  private async saveAccessToken(user: UserDto, accessToken: string) {
+    const key = `${user.userType}:${user.userId}:accessToken`;
 
-    if (this.accessTokenStrategy.toLowerCase() === 'unique') {
+    if (this.accessTokenStrategy?.toLowerCase() === 'unique') {
       this.cacheService.get(key).then((v) => {
         if (v) {
           this.cacheService.del(v);
@@ -150,7 +142,7 @@ export class AuthService {
     await this.cacheService.set(
       accessToken,
       JSON.stringify({
-        ...customer,
+        ...user,
         refreshToken: undefined,
       }),
       (this.accessTokenOption.expiresIn as number) / 1000,
@@ -167,7 +159,8 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    return await this.userServices[payload.userType].findOne({
+    return await this.userService.findOne({
+      userType: payload.userType,
       userId: payload.subject,
     });
   }
