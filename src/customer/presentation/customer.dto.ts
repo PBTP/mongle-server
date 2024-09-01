@@ -6,9 +6,9 @@ import {
   IsNumber,
 } from 'class-validator';
 import { Point } from 'typeorm';
-import { AuthProvider } from '../../schemas/customers.entity';
 import { ApiProperty } from '@nestjs/swagger';
 import { AuthDto } from '../../auth/presentation/auth.dto';
+import { AuthProvider } from '../../auth/presentation/user.dto';
 
 export class CustomerDto extends AuthDto {
   @ApiProperty({

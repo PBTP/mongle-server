@@ -1,11 +1,21 @@
-export enum Group {
+import { UserGroup } from '../../auth/presentation/user.dto';
+
+export enum CrudGroup {
   create = 'create',
   read = 'read',
   update = 'update',
   delete = 'delete',
 }
 
-export const RUD = [Group.read, Group.update, Group.delete];
+export type Group = CrudGroup | UserGroup;
+
+export const RUD = [CrudGroup.read, CrudGroup.update, CrudGroup.delete];
+export const CRUD = [
+  CrudGroup.create,
+  CrudGroup.read,
+  CrudGroup.update,
+  CrudGroup.delete,
+];
 
 export const ValidationDefaultOption = {
   transform: true,

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from './auth.controller';
-import { AuthService } from '../application/auth.service';
-import { AuthProvider, UserDto } from './user.dto';
+import { AuthService } from '../../auth/application/auth.service';
+import { AuthController } from '../../auth/presentation/auth.controller';
+import { AuthProvider, UserDto } from '../../auth/presentation/user.dto';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -15,14 +15,10 @@ describe('AuthController', () => {
           provide: AuthService,
           useValue: {
             login: jest.fn().mockResolvedValue({
-              uuid: 'test-uuid',
-              authProvider: AuthProvider.BASIC,
               accessToken: 'test-access-token',
               refreshToken: 'test-refresh-token',
             }),
             tokenRefresh: jest.fn().mockResolvedValue({
-              uuid: 'test-uuid',
-              authProvider: AuthProvider.BASIC,
               accessToken: 'test-new-access-token',
               refreshToken: 'test-new-refresh-token',
             }),
@@ -35,7 +31,7 @@ describe('AuthController', () => {
     service = module.get<AuthService>(AuthService);
   });
 
-  it('로그인', async () => {
+  it('로그인하고 토큰을 반환', async () => {
     const userDto: UserDto = {
       uuid: 'test-uuid',
       authProvider: AuthProvider.BASIC,
@@ -44,8 +40,6 @@ describe('AuthController', () => {
     const result = await controller.login(userDto);
 
     expect(result).toEqual({
-      uuid: 'test-uuid',
-      authProvider: AuthProvider.BASIC,
       accessToken: 'test-access-token',
       refreshToken: 'test-refresh-token',
     });
@@ -62,8 +56,6 @@ describe('AuthController', () => {
     const result = await controller.refresh(req as any);
 
     expect(result).toEqual({
-      uuid: 'test-uuid',
-      authProvider: AuthProvider.BASIC,
       accessToken: 'test-new-access-token',
       refreshToken: 'test-new-refresh-token',
     });
