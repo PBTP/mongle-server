@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Customer } from '../../schemas/customers.entity';
 import { CustomerDto } from '../presentation/customer.dto';
+import { CreateCustomerDto } from 'src/auth/presentation/create-customer.dto';
 import { IUserService } from '../../auth/user.interface';
 import { AuthDto } from '../../auth/presentation/auth.dto';
 
@@ -13,9 +14,25 @@ export class CustomerService implements IUserService {
     private customerRepository: Repository<Customer>,
   ) {}
 
-  async create(dto: CustomerDto): Promise<Customer> {
+  // TODO(Seokmin): Remove this method after implementing the registration process
+  async createOld(dto: CustomerDto): Promise<Customer> {
     const newCustomer = await this.customerRepository.create(dto);
     return await this.customerRepository.save(newCustomer);
+  }
+
+  async create(dto: CreateCustomerDto): Promise<Customer> {
+    const customer = this.customerRepository.create({
+      uuid: dto.uuid,
+      customerName: dto.name,
+      customerPhoneNumber: dto.phoneNumber,
+      customerLocation: null,
+      authProvider: dto.authProvider,
+      createdAt: new Date(),
+      modifiedAt: new Date(),
+      refreshToken: null,
+    });
+
+    return await this.customerRepository.save(customer);
   }
 
   async findOne(dto: Partial<AuthDto>): Promise<Customer> {

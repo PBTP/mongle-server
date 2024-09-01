@@ -8,8 +8,11 @@ import { JwtAccessStrategy } from './application/jwt-access.strategy';
 import { JwtRefreshStrategy } from './application/jwt-refresh.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { CacheModule } from '../common/cache/cache.module';
+import { PhoneVerificationService } from 'src/sms/application/phone-verification.service';
+import { SmsModule } from 'src/sms/sms.module';
 import { DriverModule } from '../driver/driver.module';
 import { BusinessModule } from '../business/business.module';
+import { EncryptionModule } from 'src/encryption/encryption.module';
 
 @Global()
 @Module({
@@ -24,10 +27,17 @@ import { BusinessModule } from '../business/business.module';
     CacheModule,
     DriverModule,
     CustomerModule,
+    SmsModule,
     BusinessModule,
+    EncryptionModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtAccessStrategy, JwtRefreshStrategy],
+  providers: [
+    AuthService,
+    JwtAccessStrategy,
+    JwtRefreshStrategy,
+    PhoneVerificationService,
+  ],
   exports: [AuthService, JwtAccessStrategy, JwtRefreshStrategy, PassportModule],
 })
 export class AuthModule {}

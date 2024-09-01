@@ -45,7 +45,8 @@ export class AuthService {
 
   async login(dto: CustomerDto): Promise<CustomerDto> {
     let customer: Customer = await this.customerService.findOne(dto);
-    customer = customer ?? (await this.customerService.create(dto));
+    // TODO(Seokmin): Remove this line after implementing the registration process
+    customer = customer ?? (await this.customerService.createOld(dto));
 
     const accessToken = this.jwtService.sign(
       {
