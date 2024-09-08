@@ -63,7 +63,7 @@ export class CustomerDto extends AuthDto {
     required: false,
   })
   @IsOptional()
-  customerDetailLocation?: string;
+  customerDetailAddress?: string;
 
   @ApiProperty({
     description: '인증 제공자 타입',

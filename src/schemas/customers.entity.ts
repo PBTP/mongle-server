@@ -29,7 +29,7 @@ export class Customer extends HasUuid {
   customerPhoneNumber?: string;
 
   @Column({ nullable: true })
-  customerDetailLocation: string;
+  customerDetailAddress: string;
 
   @Column({
     type: 'geometry',
@@ -38,9 +38,6 @@ export class Customer extends HasUuid {
     nullable: true,
   })
   customerLocation?: Point;
-
-  @Column({ length: 100, nullable: true })
-  customerAddress?: string;
 
   @Column({ type: 'enum', enum: AuthProvider, nullable: false })
   authProvider: AuthProvider;

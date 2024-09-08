@@ -48,9 +48,9 @@ export class CustomerService implements IUserService {
       );
     }
 
-    if (dto.customerDetailLocation) {
-      dto.customerDetailLocation = this.securityService.encrypt(
-        dto.customerDetailLocation,
+    if (dto.customerDetailAddress) {
+      dto.customerDetailAddress = this.securityService.encrypt(
+        dto.customerDetailAddress,
       );
     }
 
@@ -59,8 +59,8 @@ export class CustomerService implements IUserService {
         customer.customerName = dto.customerName ?? customer.customerName;
         customer.customerPhoneNumber =
           dto.phoneNumber ?? customer.customerPhoneNumber;
-        customer.customerDetailLocation =
-          dto.customerDetailLocation ?? customer.customerDetailLocation;
+        customer.customerDetailAddress =
+          dto.customerDetailAddress ?? customer.customerDetailAddress;
         customer.refreshToken = dto.refreshToken ?? customer.refreshToken;
 
         return await this.customerRepository.save(customer);
