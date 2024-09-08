@@ -10,7 +10,7 @@ import {
 import { ChatService } from '../application/chat.service';
 import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
 import { Customer } from '../../schemas/customers.entity';
-import { Group } from '../../common/validation/validation.data';
+import { CrudGroup } from '../../common/validation/validation.data';
 import { GroupValidation } from '../../common/validation/validation.decorator';
 import { CursorDto } from '../../common/dto/cursor.dto';
 import { ChatMessageDto, ChatRoomDto } from './chat.dto';
@@ -38,7 +38,7 @@ export class ChatController {
   })
   @Auth(HttpStatus.CREATED)
   @Post()
-  @GroupValidation([Group.create])
+  @GroupValidation([CrudGroup.create])
   async createChat(
     @Body() chatRoom: ChatRoomDto,
     @CurrentCustomer() customer: Customer,

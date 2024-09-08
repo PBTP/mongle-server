@@ -66,7 +66,7 @@ export class ChatService {
     chatRoom.chatRoomId && (where['chatRoomId'] = chatRoom.chatRoomId);
     chatRoom.tsid && (where['tsid'] = chatRoom.tsid);
 
-    return await this.chatRepository.findOne({ where });
+    return await this.chatRepository.findOneOrFail({ where });
   }
 
   async createChatRoom(

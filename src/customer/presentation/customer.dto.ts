@@ -5,9 +5,11 @@ import {
   Length,
   IsNumber,
 } from 'class-validator';
-import { AuthProvider } from '../../schemas/customers.entity';
+import { Point } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { AuthDto } from '../../auth/presentation/auth.dto';
+import { AuthProvider } from '../../auth/presentation/user.dto';
+import { ImageDto } from "../../common/image/presentation/image.dto";
 
 export class CustomerDto extends AuthDto {
   @ApiProperty({
@@ -53,25 +55,15 @@ export class CustomerDto extends AuthDto {
     required: false,
   })
   @IsOptional()
-  customerLocation?: string;
+  customerLocation?: Point;
 
   @ApiProperty({
-    description: '고객 상세 주소',
+    description: '고객 위치 상세주소',
     nullable: true,
     required: false,
-    type: String,
   })
   @IsOptional()
-  customerAddress?: string;
-
-  @ApiProperty({
-    description: '프로필 이미지 URL',
-    nullable: true,
-    required: false,
-    type: String,
-  })
-  @IsOptional()
-  profileImageUrl?: string;
+  customerDetailLocation?: string;
 
   @ApiProperty({
     description: '인증 제공자 타입',
@@ -80,4 +72,9 @@ export class CustomerDto extends AuthDto {
   @IsNotEmpty()
   @IsEnum(AuthProvider)
   authProvider: AuthProvider;
+
+  @ApiProperty({
+    description: '프로필 이미지',
+  })
+  profileImage?: ImageDto;
 }

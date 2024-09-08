@@ -60,7 +60,7 @@ export class CustomerChatService implements IChatService {
     customerId: number,
     chatRoomId: number,
   ): Promise<CustomerChatRoom> {
-    return await this.customerChatRoomRepository.findOne({
+    return await this.customerChatRoomRepository.findOneOrFail({
       where: { customerId, chatRoomId },
     });
   }

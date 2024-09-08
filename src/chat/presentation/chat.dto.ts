@@ -9,7 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { MessageType } from '../../schemas/chat-message.entity';
-import { Group, RUD } from '../../common/validation/validation.data';
+import { CrudGroup, RUD } from '../../common/validation/validation.data';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ChatMessageDto {
@@ -105,7 +105,7 @@ export class ChatRoomDto {
     nullable: false,
     type: String,
   })
-  @IsNotEmpty({ groups: [Group.create] })
+  @IsNotEmpty({ groups: [CrudGroup.create] })
   @IsString()
   @IsOptional()
   public chatRoomName: string;
@@ -116,8 +116,8 @@ export class ChatRoomDto {
     required: false,
     type: UserDto,
   })
-  @IsNotEmpty({ groups: [Group.create] })
-  @ValidateNested({ groups: [Group.create] })
+  @IsNotEmpty({ groups: [CrudGroup.create] })
+  @ValidateNested({ groups: [CrudGroup.create] })
   @IsOptional()
   public inviteUser: UserDto;
 

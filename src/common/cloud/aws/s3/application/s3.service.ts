@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { S3 } from 'aws-sdk';
 import { ConfigService } from '@nestjs/config';
 import { BadRequestException } from '@nestjs/common/exceptions';
-import { CloudStorageInterface } from '../../../cloud.storage.interface';
+import { ICloudStorage } from '../../../cloud-storage.interface';
 import { MetaData } from '../../../../image/presentation/image.dto';
 import { PresignedUrlDto } from '../presentation/presigned-url.dto';
 
 @Injectable()
-export class S3Service implements CloudStorageInterface {
+export class S3Service implements ICloudStorage {
   private readonly s3Client: S3;
   private readonly bucketName: string =
     this.configService.get('s3/bucket_name');

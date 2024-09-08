@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ImageDto, MetaData } from '../presentation/image.dto';
-import { CloudStorageInterface } from '../../cloud/cloud.storage.interface';
+import { ICloudStorage } from '../../cloud/cloud-storage.interface';
 import { Image } from '../../../schemas/image.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,7 +12,7 @@ export class ImageService {
 
   constructor(
     @Inject('CloudStorageService')
-    private readonly cloudStorageService: CloudStorageInterface,
+    private readonly cloudStorageService: ICloudStorage,
     @InjectRepository(Image)
     private readonly imageRepository: Repository<Image>,
   ) {}
