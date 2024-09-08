@@ -5,8 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  OneToMany,
-} from 'typeorm';
+  OneToMany, OneToOne, JoinColumn
+} from "typeorm";
 import { Point } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { Favorite } from './favorites.entity';
@@ -15,6 +15,7 @@ import { Review } from './reviews.entity';
 import { CustomerChatRoom } from './customer-chat-room.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 import { AuthProvider } from '../auth/presentation/user.dto';
+import { Image } from "./image.entity";
 
 @Entity({ name: 'customers' })
 export class Customer extends HasUuid {
@@ -24,8 +25,11 @@ export class Customer extends HasUuid {
   @Column({ length: 30, nullable: false })
   customerName: string;
 
-  @Column({ length: 20, nullable: true })
+  @Column({ nullable: true })
   customerPhoneNumber?: string;
+
+  @Column({ nullable: true })
+  customerDetailLocation: string;
 
   @Column({
     type: 'geometry',
@@ -47,21 +51,21 @@ export class Customer extends HasUuid {
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;
 
-  @Column({ length: 20, unique: true, nullable: true })
+  @Column({ unique: true, nullable: true })
   refreshToken?: string;
 
   @OneToMany(() => Favorite, (favorites) => favorites.customer)
-  public favorites: Favorite[];
+  favorites: Favorite[];
 
   @OneToMany(() => Review, (reviews) => reviews.customer)
-  public reviews: Review[];
+  reviews: Review[];
 
   @OneToMany(() => Appointment, (appointments) => appointments.customer)
-  public appointments: Appointment[];
+  appointments: Appointment[];
 
   @OneToMany(() => Pet, (pets) => pets.customer)
-  public pets: Pet[];
+  pets: Pet[];
 
   @OneToMany(() => CustomerChatRoom, (room) => room.chatRoom)
-  public chatRooms: CustomerChatRoom[];
+  chatRooms: CustomerChatRoom[];
 }
