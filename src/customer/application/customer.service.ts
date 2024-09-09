@@ -1,13 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Customer } from '../../schemas/customers.entity';
-import { CustomerDto } from '../presentation/customer.dto';
-import { IUserService } from '../../auth/user.interface';
-import { AuthDto } from '../../auth/presentation/auth.dto';
-import { UserDto, UserType } from '../../auth/presentation/user.dto';
-import { SecurityService } from '../../auth/application/security.service';
-import { Image } from '../../schemas/image.entity';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Customer } from "../../schemas/customers.entity";
+import { CustomerDto } from "../presentation/customer.dto";
+import { IUserService } from "../../auth/user.interface";
+import { AuthDto } from "../../auth/presentation/auth.dto";
+import { UserDto, UserType } from "../../auth/presentation/user.dto";
+import { SecurityService } from "../../auth/application/security.service";
+import { Image } from "../../schemas/image.entity";
 import { ImageService } from "../../common/image/application/image.service";
 
 @Injectable()
@@ -29,16 +29,24 @@ export class CustomerService implements IUserService {
   }
 
   async findOne(dto: Partial<AuthDto>): Promise<Customer> {
-    const where = {};
-
-    dto.userId && (where['customerId'] = dto.userId);
-    dto.uuid && (where['uuid'] = dto.uuid);
-
-    return await this.customerRepository
+    const query = this.customerRepository
       .createQueryBuilder('C')
-      .where('C.customer_id = :customer_id', { customer_id: dto.userId })
       .leftJoinAndMapOne('C.profileImage', Image, 'I', 'C.uuid =  I.uuid')
-      .getOne();
+      .addSelect('I.image_url', 'profileImage');
+
+    if (dto.userId) {
+      query.andWhere('C.customer_id = :customer_id', {
+        customer_id: dto.userId,
+      });
+    }
+
+    if (dto.uuid) {
+      query.andWhere('C.uuid = :uuid', { uuid: dto.uuid });
+    }
+
+    query.orderBy('C.modified_at', 'DESC');
+    query.addOrderBy('I.created_at', 'DESC');
+    return query.getOne();
   }
 
   async update(dto: Partial<CustomerDto>): Promise<Customer> {

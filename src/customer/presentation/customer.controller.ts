@@ -1,9 +1,9 @@
-import { CustomerService } from '../application/customer.service';
-import { Body, Controller, Get, Put } from '@nestjs/common';
-import { CustomerDto } from './customer.dto';
-import { Customer } from '../../schemas/customers.entity';
-import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CustomerService } from "../application/customer.service";
+import { Body, Controller, Get, Put } from "@nestjs/common";
+import { CustomerDto } from "./customer.dto";
+import { Customer } from "../../schemas/customers.entity";
+import { Auth, CurrentCustomer } from "../../auth/decorator/auth.decorator";
+import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 @ApiTags('고객 관련 API')
 @Controller('/v1/customer')
@@ -30,7 +30,7 @@ export class CustomerController {
           customerId: v.customerId,
           authProvider: v.authProvider,
           customerName: v.customerName,
-          profileImage: v['profileImage'],
+          profileImageUrl: v?.profileImage?.imageUrl,
         };
       });
   }

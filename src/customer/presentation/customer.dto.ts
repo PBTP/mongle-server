@@ -1,15 +1,8 @@
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsEnum,
-  Length,
-  IsNumber,
-} from 'class-validator';
-import { Point } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
-import { AuthDto } from '../../auth/presentation/auth.dto';
-import { AuthProvider } from '../../auth/presentation/user.dto';
-import { ImageDto } from "../../common/image/presentation/image.dto";
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, Length } from "class-validator";
+import { Point } from "typeorm";
+import { ApiProperty } from "@nestjs/swagger";
+import { AuthDto } from "../../auth/presentation/auth.dto";
+import { AuthProvider } from "../../auth/presentation/user.dto";
 
 export class CustomerDto extends AuthDto {
   @ApiProperty({
@@ -74,7 +67,7 @@ export class CustomerDto extends AuthDto {
   authProvider: AuthProvider;
 
   @ApiProperty({
-    description: '프로필 이미지',
+    description: '프로필 이미지 URL',
   })
-  profileImage?: ImageDto;
+  profileImageUrl?: string;
 }

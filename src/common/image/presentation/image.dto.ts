@@ -1,10 +1,10 @@
-import { IsNotEmpty, IsNumber, IsOptional, Max } from 'class-validator';
-import { Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsNumber, IsOptional, Max } from "class-validator";
+import { Type } from "class-transformer";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class ImageDto {
   uuid: string;
-  imageLink: string;
+  imageUrl: string;
   createdAt: Date;
 }
 

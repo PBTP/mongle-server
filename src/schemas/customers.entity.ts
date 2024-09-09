@@ -1,20 +1,20 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
   DeleteDateColumn,
-  OneToMany, OneToOne, JoinColumn
+  Entity,
+  OneToMany,
+  Point,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
 } from "typeorm";
-import { Point } from 'typeorm';
-import { Appointment } from './appointments.entity';
-import { Favorite } from './favorites.entity';
-import { Pet } from './pets.entity';
-import { Review } from './reviews.entity';
-import { CustomerChatRoom } from './customer-chat-room.entity';
-import { HasUuid } from '../common/entity/parent.entity';
-import { AuthProvider } from '../auth/presentation/user.dto';
+import { Appointment } from "./appointments.entity";
+import { Favorite } from "./favorites.entity";
+import { Pet } from "./pets.entity";
+import { Review } from "./reviews.entity";
+import { CustomerChatRoom } from "./customer-chat-room.entity";
+import { HasUuid } from "../common/entity/parent.entity";
+import { AuthProvider } from "../auth/presentation/user.dto";
 import { Image } from "./image.entity";
 
 @Entity({ name: 'customers' })
@@ -68,4 +68,7 @@ export class Customer extends HasUuid {
 
   @OneToMany(() => CustomerChatRoom, (room) => room.chatRoom)
   chatRooms: CustomerChatRoom[];
+
+  // not column properties
+  profileImage?: Image;
 }
