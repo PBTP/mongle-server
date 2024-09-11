@@ -1,6 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from "@nestjs/swagger";
+import { ImageMetaDataDto } from "../../../../image/presentation/image.dto";
 
-export class PresignedUrlDto {
+export class PresignedUrlDto extends ImageMetaDataDto {
   @ApiProperty({
     description: 'presigned URL',
   })

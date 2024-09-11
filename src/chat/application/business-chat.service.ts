@@ -1,11 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { BusinessChatRoom } from '../../schemas/business-chat-room.entity';
-import { IChatService } from './chat.interface';
-import { UserDto } from '../../auth/presentation/user.dto';
-import { plainToInstance as toDto } from 'class-transformer';
-import { ChatRoomDto } from '../presentation/chat.dto';
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { BusinessChatRoom } from "../../schemas/business-chat-room.entity";
+import { IChatService } from "./chat.interface";
+import { UserDto } from "../../auth/presentation/user.dto";
+import { ChatRoomDto } from "../presentation/chat.dto";
+import { toDto } from "../../common/function/util.function";
 
 @Injectable()
 export class BusinessChatService implements IChatService {

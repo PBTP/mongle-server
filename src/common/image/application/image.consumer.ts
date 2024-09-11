@@ -1,13 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { SqsConsumerEventHandler, SqsMessageHandler } from '@ssut/nestjs-sqs';
-import { Message } from 'aws-sdk/clients/sqs';
-import { plainToInstance as toDto } from 'class-transformer';
-import { S3EventDetailDto } from '../../cloud/aws/sqs/presentation/s3-image-created-event-message.dto';
-import { ImageService } from './image.service';
-import { Image } from '../../../schemas/image.entity';
-import { validateOrReject as validation } from 'class-validator';
-import { ConfigService } from '@nestjs/config';
-import { SQS } from 'aws-sdk';
+import { Injectable, Logger } from "@nestjs/common";
+import { SqsConsumerEventHandler, SqsMessageHandler } from "@ssut/nestjs-sqs";
+import { Message } from "aws-sdk/clients/sqs";
+import { S3EventDetailDto } from "../../cloud/aws/sqs/presentation/s3-image-created-event-message.dto";
+import { ImageService } from "./image.service";
+import { Image } from "../../../schemas/image.entity";
+import { validateOrReject as validation } from "class-validator";
+import { ConfigService } from "@nestjs/config";
+import { SQS } from "aws-sdk";
+import { toDto } from "../../function/util.function";
 
 export const sqsName = {
   s3ImageCreated: 's3-image-object-created',
@@ -49,7 +49,7 @@ export class ImageConsumer {
     return await this.imageService
       .create({
         uuid: uuid,
-        imageLink: `https://image.mgmg.life/${imageKey}`,
+        imageUrl: `https://image.mgmg.life/${imageKey}`,
       })
       .then((v) => {
         this.messageLog(sqsName.s3ImageCreated, message, 'success');

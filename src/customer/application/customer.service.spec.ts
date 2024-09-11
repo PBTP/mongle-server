@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CustomerService } from './customer.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { Customer } from '../../schemas/customers.entity';
-import { Repository } from 'typeorm';
-import { AuthProvider } from '../../auth/presentation/user.dto';
+import { Test, TestingModule } from "@nestjs/testing";
+import { CustomerService } from "./customer.service";
+import { getRepositoryToken } from "@nestjs/typeorm";
+import { Customer } from "../../schemas/customer.entity";
+import { Repository } from "typeorm";
+import { AuthProvider } from "../../auth/presentation/user.dto";
 
 describe('CustomerService', () => {
   let service: CustomerService;

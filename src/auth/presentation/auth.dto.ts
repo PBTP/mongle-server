@@ -1,6 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional } from 'class-validator';
-import { UserDto } from './user.dto';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsOptional } from "class-validator";
+import { UserDto } from "./user.dto";
 
 export class AuthDto extends UserDto {
   @ApiProperty({

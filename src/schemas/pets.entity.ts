@@ -1,19 +1,19 @@
 import {
-  Entity,
-  PrimaryColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
   CreateDateColumn,
   DeleteDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { Appointment } from './appointments.entity';
-import { Breed } from './breed.entity';
-import { Customer } from './customers.entity';
-import { Review } from './reviews.entity';
-import { HasUuid } from '../common/entity/parent.entity';
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  UpdateDateColumn
+} from "typeorm";
+import { Appointment } from "./appointments.entity";
+import { Breed } from "./breed.entity";
+import { Customer } from "./customer.entity";
+import { Review } from "./reviews.entity";
+import { HasUuid } from "../common/entity/parent.entity";
 
 export enum Gender {
   MALE = 'MALE',

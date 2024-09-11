@@ -1,14 +1,10 @@
-import {
-  Injectable,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Pet } from '../../schemas/pets.entity';
-import { Breed } from '../../schemas/breed.entity';
-import { Customer } from '../../schemas/customers.entity';
-import { PetDto } from '../presentation/pet.dto';
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Pet } from "../../schemas/pets.entity";
+import { Breed } from "../../schemas/breed.entity";
+import { Customer } from "../../schemas/customer.entity";
+import { PetDto } from "../presentation/pet.dto";
 
 @Injectable()
 export class PetService {

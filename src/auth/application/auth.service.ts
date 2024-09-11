@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { CacheService } from '../../common/cache/cache.service';
-import { UnauthorizedException } from '@nestjs/common/exceptions';
-import { UserService } from './user.service';
-import { UserDto } from '../presentation/user.dto';
-import { AuthDto } from '../presentation/auth.dto';
+import { Injectable } from "@nestjs/common";
+import { JwtService, JwtSignOptions } from "@nestjs/jwt";
+import { ConfigService } from "@nestjs/config";
+import { CacheService } from "../../common/cache/cache.service";
+import { UnauthorizedException } from "@nestjs/common/exceptions";
+import { UserService } from "./user.service";
+import { UserDto } from "../presentation/user.dto";
+import { AuthDto } from "../presentation/auth.dto";
 
 @Injectable()
 export class AuthService {
@@ -62,7 +62,7 @@ export class AuthService {
     );
 
     await this.userService.update({
-      ...user,
+      userId: user.userId,
       userType: user.userType,
       refreshToken: refreshToken,
     });
@@ -110,7 +110,8 @@ export class AuthService {
     await this.saveAccessToken(user, accessToken);
 
     await this.userService.update({
-      ...user,
+      userId: user.userId,
+      userType: user.userType,
       refreshToken: refreshToken,
     });
 

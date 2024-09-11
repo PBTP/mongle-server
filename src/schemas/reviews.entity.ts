@@ -1,18 +1,18 @@
 import {
-  Entity,
-  PrimaryColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
   CreateDateColumn,
   DeleteDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { Appointment } from './appointments.entity';
-import { Business } from './business.entity';
-import { Customer } from './customers.entity';
-import { Pet } from './pets.entity';
-import { HasUuid } from '../common/entity/parent.entity';
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  UpdateDateColumn
+} from "typeorm";
+import { Appointment } from "./appointments.entity";
+import { Business } from "./business.entity";
+import { Customer } from "./customer.entity";
+import { Pet } from "./pets.entity";
+import { HasUuid } from "../common/entity/parent.entity";
 
 @Entity({ name: 'reviews' })
 export class Review extends HasUuid {

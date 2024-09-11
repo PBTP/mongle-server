@@ -1,10 +1,9 @@
-import { CustomerService } from '../application/customer.service';
-import { Body, Controller, Get, Put } from '@nestjs/common';
-import { CustomerDto } from './customer.dto';
-import { Customer } from '../../schemas/customers.entity';
-import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { UpdateProfileDto } from './update-profile.dto';
+import { CustomerService } from "../application/customer.service";
+import { Body, Controller, Get, Put } from "@nestjs/common";
+import { CustomerDto } from "./customer.dto";
+import { Customer } from "../../schemas/customer.entity";
+import { Auth, CurrentCustomer } from "../../auth/decorator/auth.decorator";
+import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 @ApiTags('고객 관련 API')
 @Controller('/v1/customer')
@@ -21,14 +20,16 @@ export class CustomerController {
   async getMyCustomer(
     @CurrentCustomer() customer: Customer,
   ): Promise<Omit<CustomerDto, 'refreshToken' | 'accessToken'>> {
-    return {
-      customerId: customer.customerId,
-      uuid: customer.uuid,
-      customerName: customer.customerName,
-      customerPhoneNumber: customer.customerPhoneNumber,
-      customerLocation: customer.customerLocation,
-      authProvider: customer.authProvider,
-    };
+    return await this.customerService
+      .findOne({ userId: customer.customerId }, true)
+      .then((v) => {
+        delete v['accessToken'];
+        delete v['refreshToken'];
+        return {
+          ...v,
+          profileImageUrl: v?.profileImage?.imageUrl,
+        };
+      });
   }
 
   @ApiOperation({
@@ -40,27 +41,23 @@ export class CustomerController {
   @Put()
   async updateProfile(
     @CurrentCustomer() customer: Customer,
-    @Body() dto: UpdateProfileDto,
+    @Body() dto: CustomerDto,
   ): Promise<Omit<CustomerDto, 'refreshToken'>> {
-    customer.customerName = dto.customerName
-      ? dto.customerName
-      : customer.customerName;
-    customer.customerPhoneNumber = dto.customerPhoneNumber
-      ? dto.customerPhoneNumber
-      : customer.customerPhoneNumber;
-    customer.customerLocation = dto.customerLocation
-      ? dto.customerLocation
-      : customer.customerLocation;
+    dto.userId = customer.customerId;
 
-    const updatedCustomer = await this.customerService.update(customer);
-
-    return {
-      customerId: updatedCustomer.customerId,
-      uuid: updatedCustomer.uuid,
-      customerName: updatedCustomer.customerName,
-      customerPhoneNumber: updatedCustomer.customerPhoneNumber,
-      customerLocation: updatedCustomer.customerLocation,
-      authProvider: updatedCustomer.authProvider,
-    };
+    return await this.customerService
+      .update({
+        ...customer,
+        ...dto,
+      })
+      .then((v) => {
+        return {
+          uuid: v.uuid,
+          customerId: v.customerId,
+          authProvider: v.authProvider,
+          customerName: v.customerName,
+          presignedUrlDto: v.presignedUrlDto,
+        };
+      });
   }
 }

@@ -1,14 +1,9 @@
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsEnum,
-  Length,
-  IsNumber,
-} from 'class-validator';
-import { Point } from 'typeorm';
-import { ApiProperty } from '@nestjs/swagger';
-import { AuthDto } from '../../auth/presentation/auth.dto';
-import { AuthProvider } from '../../auth/presentation/user.dto';
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, Length, Matches, ValidateNested } from "class-validator";
+import { Point } from "typeorm";
+import { ApiProperty } from "@nestjs/swagger";
+import { AuthDto } from "../../auth/presentation/auth.dto";
+import { AuthProvider } from "../../auth/presentation/user.dto";
+import { PresignedUrlDto } from "../../common/cloud/aws/s3/presentation/presigned-url.dto";
 
 export class CustomerDto extends AuthDto {
   @ApiProperty({
@@ -46,6 +41,9 @@ export class CustomerDto extends AuthDto {
   })
   @IsOptional()
   @Length(1, 30)
+  @Matches(/^(01[016789]{1})-[0-9]{3,4}-[0-9]{4}$/, {
+    message: 'This is not Phone number ex) xxx-xxxx-xxxx',
+  })
   customerPhoneNumber?: string;
 
   @ApiProperty({
@@ -57,10 +55,37 @@ export class CustomerDto extends AuthDto {
   customerLocation?: Point;
 
   @ApiProperty({
+    description: '고객 위치 주소',
+    nullable: true,
+    required: false,
+  })
+  @IsOptional()
+  customerAddress?: string;
+
+  @ApiProperty({
+    description: '고객 위치 상세주소',
+    nullable: true,
+    required: false,
+  })
+  @IsOptional()
+  customerDetailAddress?: string;
+
+  @ApiProperty({
     description: '인증 제공자 타입',
     required: true,
   })
   @IsNotEmpty()
   @IsEnum(AuthProvider)
   authProvider: AuthProvider;
+
+  @ApiProperty({
+    description: '프로필 이미지 URL',
+  })
+  profileImageUrl?: string;
+
+  @ApiProperty({
+    description: '프로필 이미지 업데이트용 DTO',
+  })
+  @ValidateNested()
+  presignedUrlDto?: PresignedUrlDto;
 }
