@@ -1,12 +1,6 @@
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  CreateDateColumn,
-} from 'typeorm';
-import { Business } from './business.entity';
-import { Customer } from './customers.entity';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { Business } from "./business.entity";
+import { Customer } from "./customer.entity";
 
 //TODO: 추후 UUID -> TSID로 변경
 @Entity({ name: 'favorites' })

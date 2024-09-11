@@ -1,20 +1,12 @@
-import { PetService } from '../application/pet.service';
-import {
-  Body,
-  Controller,
-  Get,
-  Post,
-  Put,
-  Delete,
-  Param,
-} from '@nestjs/common';
-import { PetDto } from './pet.dto';
-import { Pet } from '../../schemas/pets.entity';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { GroupValidation } from 'src/common/validation/validation.decorator';
-import { CrudGroup } from 'src/common/validation/validation.data';
-import { Customer } from 'src/schemas/customers.entity';
-import { CurrentCustomer } from 'src/auth/decorator/auth.decorator';
+import { PetService } from "../application/pet.service";
+import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { PetDto } from "./pet.dto";
+import { Pet } from "../../schemas/pets.entity";
+import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { GroupValidation } from "src/common/validation/validation.decorator";
+import { CrudGroup } from "src/common/validation/validation.data";
+import { Customer } from "src/schemas/customer.entity";
+import { CurrentCustomer } from "src/auth/decorator/auth.decorator";
 
 @ApiTags('반려동물 관련 API')
 @Controller('/v1/pet')

@@ -29,7 +29,10 @@ export class Customer extends HasUuid {
   customerPhoneNumber?: string;
 
   @Column({ nullable: true })
-  customerDetailAddress: string;
+  customerAddress?: string;
+
+  @Column({ nullable: true })
+  customerDetailAddress?: string;
 
   @Column({
     type: 'geometry',

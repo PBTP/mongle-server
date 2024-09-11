@@ -55,6 +55,14 @@ export class CustomerDto extends AuthDto {
   customerLocation?: Point;
 
   @ApiProperty({
+    description: '고객 위치 주소',
+    nullable: true,
+    required: false,
+  })
+  @IsOptional()
+  customerAddress?: string;
+
+  @ApiProperty({
     description: '고객 위치 상세주소',
     nullable: true,
     required: false,

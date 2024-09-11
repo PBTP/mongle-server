@@ -2,7 +2,7 @@ import { Body, Controller, HttpStatus, Post, Query } from "@nestjs/common";
 import { ImageService } from "../application/image.service";
 import { Auth, CurrentCustomer } from "../../../auth/decorator/auth.decorator";
 import { ImageMetaDataDto } from "./image.dto";
-import { Customer } from "../../../schemas/customers.entity";
+import { Customer } from "../../../schemas/customer.entity";
 import { PresignedUrlDto } from "../../cloud/aws/s3/presentation/presigned-url.dto";
 import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 

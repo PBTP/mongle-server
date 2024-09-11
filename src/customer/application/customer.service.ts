@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { Customer } from "../../schemas/customers.entity";
+import { Customer } from "../../schemas/customer.entity";
 import { CustomerDto } from "../presentation/customer.dto";
 import { IUserService } from "../../auth/user.interface";
 import { AuthDto } from "../../auth/presentation/auth.dto";
@@ -20,18 +20,19 @@ export class CustomerService implements IUserService {
     @InjectRepository(Customer)
     private readonly customerRepository: Repository<Customer>,
     private readonly securityService: SecurityService,
-    private readonly imageService: ImageService,
-  ) {}
+    private readonly imageService: ImageService
+  ) {
+  }
 
   async create(dto: CustomerDto): Promise<Customer> {
     return await this.customerRepository.save(
-      this.customerRepository.create(dto),
+      this.customerRepository.create(dto)
     );
   }
 
   async findOne(
     dto: Partial<AuthDto>,
-    encrypt: boolean = false,
+    encrypt: boolean = false
   ): Promise<Customer> {
     const query = this.customerRepository
       .createQueryBuilder('C')
@@ -40,7 +41,7 @@ export class CustomerService implements IUserService {
 
     if (dto.userId) {
       query.andWhere('C.customer_id = :customer_id', {
-        customer_id: dto.userId,
+        customer_id: dto.userId
       });
     }
 
@@ -55,10 +56,12 @@ export class CustomerService implements IUserService {
 
     if (encrypt) {
       customer.customerPhoneNumber = this.securityService.decrypt(
-        customer.customerPhoneNumber,
+        customer.customerPhoneNumber
       );
+
+      customer.customerAddress = this.securityService.decrypt(customer.customerAddress);
       customer.customerDetailAddress = this.securityService.decrypt(
-        customer.customerDetailAddress,
+        customer.customerDetailAddress
       );
     }
 
@@ -68,13 +71,19 @@ export class CustomerService implements IUserService {
   async update(dto: Partial<CustomerDto>): Promise<CustomerDto> {
     if (dto.phoneNumber || dto.customerPhoneNumber) {
       dto.phoneNumber = this.securityService.encrypt(
-        dto.phoneNumber ?? dto.customerPhoneNumber,
+        dto.phoneNumber ?? dto.customerPhoneNumber
       );
     }
 
     if (dto.customerDetailAddress) {
       dto.customerDetailAddress = this.securityService.encrypt(
-        dto.customerDetailAddress,
+        dto.customerDetailAddress
+      );
+    }
+
+    if (dto.customerAddress) {
+      dto.customerAddress = this.securityService.encrypt(
+        dto.customerAddress
       );
     }
 
@@ -84,6 +93,7 @@ export class CustomerService implements IUserService {
           customer.customerName = dto.customerName ?? customer.customerName;
           customer.customerPhoneNumber =
             dto.phoneNumber ?? customer.customerPhoneNumber;
+          customer.customerAddress = dto.customerAddress ?? customer.customerAddress;
           customer.customerDetailAddress =
             dto.customerDetailAddress ?? customer.customerDetailAddress;
           customer.refreshToken = dto.refreshToken ?? customer.refreshToken;
@@ -95,11 +105,11 @@ export class CustomerService implements IUserService {
         if (customer && dto.presignedUrlDto) {
           const presignedUrlDto = await this.imageService.generatePreSignedUrls(
             customer.uuid,
-            [dto.presignedUrlDto],
+            [dto.presignedUrlDto]
           );
 
           const customerDto = toDto(CustomerDto, customer);
-          customerDto.presignedUrlDto = presignedUrlDto[0];
+          customerDto.presignedUrlDto = presignedUrlDto.find(() => true);
           return customerDto;
         }
         return customer;
@@ -113,7 +123,7 @@ export class CustomerService implements IUserService {
       userId: customer.customerId,
       userType: this.userType,
       phoneNumber: customer.customerPhoneNumber,
-      authProvider: customer.authProvider,
+      authProvider: customer.authProvider
     };
   }
 }

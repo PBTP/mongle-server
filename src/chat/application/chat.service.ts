@@ -1,21 +1,21 @@
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { ChatRoom } from '../../schemas/chat-room.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ChatMessage } from '../../schemas/chat-message.entity';
-import { CustomerChatService } from './customer-chat.service';
-import { DriverChatService } from './driver-chat.service';
-import { BusinessChatService } from './business-chat.service';
-import { ChatMessageDto, ChatRoomDto } from '../presentation/chat.dto';
-import { UserDto, UserType } from '../../auth/presentation/user.dto';
-import { UserSocket } from '../presentation/chat.gateway';
-import { CacheService } from '../../common/cache/cache.service';
-import { Customer } from '../../schemas/customers.entity';
-import { Driver } from '../../schemas/drivers.entity';
-import { CursorDto } from '../../common/dto/cursor.dto';
-import { Business } from '../../schemas/business.entity';
-import { IChatService } from './chat.interface';
-import { BadRequestException } from '@nestjs/common/exceptions';
+import { ForbiddenException, Injectable, Logger } from "@nestjs/common";
+import { Repository } from "typeorm";
+import { ChatRoom } from "../../schemas/chat-room.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { ChatMessage } from "../../schemas/chat-message.entity";
+import { CustomerChatService } from "./customer-chat.service";
+import { DriverChatService } from "./driver-chat.service";
+import { BusinessChatService } from "./business-chat.service";
+import { ChatMessageDto, ChatRoomDto } from "../presentation/chat.dto";
+import { UserDto, UserType } from "../../auth/presentation/user.dto";
+import { UserSocket } from "../presentation/chat.gateway";
+import { CacheService } from "../../common/cache/cache.service";
+import { Customer } from "../../schemas/customer.entity";
+import { Driver } from "../../schemas/drivers.entity";
+import { CursorDto } from "../../common/dto/cursor.dto";
+import { Business } from "../../schemas/business.entity";
+import { IChatService } from "./chat.interface";
+import { BadRequestException } from "@nestjs/common/exceptions";
 
 @Injectable()
 export class ChatService {

@@ -1,7 +1,7 @@
 import { CustomerService } from "../application/customer.service";
 import { Body, Controller, Get, Put } from "@nestjs/common";
 import { CustomerDto } from "./customer.dto";
-import { Customer } from "../../schemas/customers.entity";
+import { Customer } from "../../schemas/customer.entity";
 import { Auth, CurrentCustomer } from "../../auth/decorator/auth.decorator";
 import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
