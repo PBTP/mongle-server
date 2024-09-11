@@ -1,15 +1,15 @@
-import { MetaData } from '../image/presentation/image.dto';
-import { PresignedUrlDto } from './aws/s3/presentation/presigned-url.dto';
+import { ImageMetaDataDto } from "../image/presentation/image.dto";
+import { PresignedUrlDto } from "./aws/s3/presentation/presigned-url.dto";
 
 export interface ICloudStorage {
   generatePreSignedUrl(
     key: string,
-    metadata: MetaData,
+    metadata: ImageMetaDataDto,
     expiredTime: number,
   ): Promise<PresignedUrlDto>;
 
   generatePreSignedUrls(
     key: string,
-    metadata: MetaData[],
+    metadata: ImageMetaDataDto[],
   ): Promise<PresignedUrlDto[]>;
 }

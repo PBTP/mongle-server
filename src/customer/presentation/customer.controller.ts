@@ -21,15 +21,12 @@ export class CustomerController {
     @CurrentCustomer() customer: Customer,
   ): Promise<Omit<CustomerDto, 'refreshToken' | 'accessToken'>> {
     return await this.customerService
-      .findOne({
-        userId: customer.customerId,
-      })
+      .findOne({ userId: customer.customerId }, true)
       .then((v) => {
+        delete v['accessToken'];
+        delete v['refreshToken'];
         return {
-          uuid: v.uuid,
-          customerId: v.customerId,
-          authProvider: v.authProvider,
-          customerName: v.customerName,
+          ...v,
           profileImageUrl: v?.profileImage?.imageUrl,
         };
       });
@@ -48,13 +45,19 @@ export class CustomerController {
   ): Promise<Omit<CustomerDto, 'refreshToken'>> {
     dto.userId = customer.customerId;
 
-    return await this.customerService.update(customer).then((v) => {
-      return {
-        uuid: v.uuid,
-        customerId: v.customerId,
-        authProvider: v.authProvider,
-        customerName: v.customerName,
-      };
-    });
+    return await this.customerService
+      .update({
+        ...customer,
+        ...dto,
+      })
+      .then((v) => {
+        return {
+          uuid: v.uuid,
+          customerId: v.customerId,
+          authProvider: v.authProvider,
+          customerName: v.customerName,
+          presignedUrlDto: v.presignedUrlDto,
+        };
+      });
   }
 }

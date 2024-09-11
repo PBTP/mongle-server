@@ -1,16 +1,10 @@
-import { Body, Controller, HttpStatus, Post, Query } from '@nestjs/common';
-import { ImageService } from '../application/image.service';
-import { Auth, CurrentCustomer } from '../../../auth/decorator/auth.decorator';
-import { MetaData } from './image.dto';
-import { Customer } from '../../../schemas/customers.entity';
-import { PresignedUrlDto } from '../../cloud/aws/s3/presentation/presigned-url.dto';
-import {
-  ApiBody,
-  ApiOperation,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, HttpStatus, Post, Query } from "@nestjs/common";
+import { ImageService } from "../application/image.service";
+import { Auth, CurrentCustomer } from "../../../auth/decorator/auth.decorator";
+import { ImageMetaDataDto } from "./image.dto";
+import { Customer } from "../../../schemas/customers.entity";
+import { PresignedUrlDto } from "../../cloud/aws/s3/presentation/presigned-url.dto";
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from "@nestjs/swagger";
 
 @ApiTags('이미지 관련 API')
 @Controller('/v1/image')
@@ -18,7 +12,7 @@ export class ImageController {
   constructor(private readonly imageService: ImageService) {}
 
   @ApiBody({
-    type: [MetaData],
+    type: [ImageMetaDataDto],
     description: '이미지에 대한 메타 데이터 입니다.',
   })
   @ApiQuery({
@@ -43,7 +37,7 @@ export class ImageController {
   async getPreSignedUrl(
     @CurrentCustomer() customer: Customer,
     @Query('key') key: string,
-    @Body() metadata: MetaData[],
+    @Body() metadata: ImageMetaDataDto[],
   ): Promise<PresignedUrlDto[]> {
     return await this.imageService
       .generatePreSignedUrls(key ?? customer.uuid, metadata)
@@ -52,6 +46,8 @@ export class ImageController {
           return {
             url: v.url,
             expiredTime: v.expiredTime,
+            fileName: v.fileName,
+            fileSize: v.fileSize,
           };
         }),
       );

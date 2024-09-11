@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, Max } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, Matches, Max } from "class-validator";
 import { Type } from "class-transformer";
 import { ApiProperty } from "@nestjs/swagger";
 
@@ -8,7 +8,7 @@ export class ImageDto {
   createdAt: Date;
 }
 
-export class MetaData {
+export class ImageMetaDataDto {
   @ApiProperty({
     description:
       '파일의 크기는 Byte 단위로 전달합니다.\n' + '최대 크기는 10MB입니다.',
@@ -22,6 +22,10 @@ export class MetaData {
     description:
       '확장자까지 포함된 파일 이름입니다.\n' +
       '확장자를 포함하지 않은 파일 이름은 불가능합니다.',
+  })
+  @Matches(/\.(jpg|jpeg|png|gif|svg)$/i, {
+    message:
+      'The file extension must be one of the following: jpg, jpeg, png, gif, svg',
   })
   @IsNotEmpty()
   fileName: string;

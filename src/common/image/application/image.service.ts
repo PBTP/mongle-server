@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from "@nestjs/common";
-import { ImageDto, MetaData } from "../presentation/image.dto";
+import { ImageDto, ImageMetaDataDto } from "../presentation/image.dto";
 import { ICloudStorage } from "../../cloud/cloud-storage.interface";
 import { Image } from "../../../schemas/image.entity";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -19,7 +19,7 @@ export class ImageService {
 
   async generatePreSignedUrls(
     key: string,
-    metadata: MetaData[],
+    metadata: ImageMetaDataDto[],
   ): Promise<PresignedUrlDto[]> {
     return await this.cloudStorageService.generatePreSignedUrls(key, metadata);
   }
