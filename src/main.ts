@@ -17,6 +17,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'https://mgmg.life',
+      'https://web-view.mgmg.life',
       'http://localhost:8000',
       'http://localhost:3000',
     ],
