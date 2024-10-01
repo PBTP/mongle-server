@@ -1,17 +1,27 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Pet } from "../../schemas/pets.entity";
-import { Breed } from "../../schemas/breed.entity";
-import { Customer } from "../../schemas/customer.entity";
-import { PetDto } from "../presentation/pet.dto";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Pet } from '../../schemas/pets.entity';
+import { Breed } from '../../schemas/breed.entity';
+import { Customer } from '../../schemas/customer.entity';
+import { PetDto } from '../presentation/pet.dto';
+import {
+  ChecklistType,
+  PetChecklist,
+  PetChecklistCategory,
+} from '../../schemas/pet-checklist.entity';
 
 @Injectable()
 export class PetService {
   constructor(
     @InjectRepository(Pet)
     private petRepository: Repository<Pet>,
-
+    @InjectRepository(PetChecklist)
+    private petChecklistRepository: Repository<PetChecklist>,
     @InjectRepository(Breed)
     private breedRepository: Repository<Breed>,
   ) {}
@@ -55,11 +65,9 @@ export class PetService {
     const pet = await this.findOne(id, customer);
 
     if (dto.breedId && dto.breedId !== pet.breed.breedId) {
-      const breed = await this.breedRepository.findOneOrFail({
+      pet.breed = await this.breedRepository.findOneOrFail({
         where: { breedId: dto.breedId },
       });
-
-      pet.breed = breed;
     }
 
     pet.name = dto.name ?? pet.name;
@@ -77,5 +85,17 @@ export class PetService {
     const pet = await this.findOne(id, customer);
 
     await this.petRepository.softDelete(pet.petId);
+  }
+
+  async findCheckList(
+    category: PetChecklistCategory,
+    type: ChecklistType,
+  ): Promise<PetChecklist[]> {
+    return await this.petChecklistRepository.find({
+      where: {
+        petChecklistCategory: category,
+        petChecklistType: type,
+      },
+    });
   }
 }
