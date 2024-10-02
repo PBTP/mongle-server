@@ -14,6 +14,7 @@ import { Breed } from "./breed.entity";
 import { Customer } from "./customer.entity";
 import { Review } from "./reviews.entity";
 import { HasUuid } from "../common/entity/parent.entity";
+import { PetChecklistAnswer } from "./pet-checklist-answer.entity";
 
 export enum Gender {
   MALE = 'MALE',
@@ -72,4 +73,11 @@ export class Pet extends HasUuid {
   @ManyToOne(() => Breed, (breed) => breed.pets)
   @JoinColumn({ name: 'breed_id' })
   public breed: Breed;
+
+  @ManyToOne(
+    () => PetChecklistAnswer,
+    (petChecklistAnswer) => petChecklistAnswer.pet,
+  )
+  @JoinColumn({ name: 'pet_checklist_answer_id' })
+  petChecklistAnswer: PetChecklistAnswer;
 }

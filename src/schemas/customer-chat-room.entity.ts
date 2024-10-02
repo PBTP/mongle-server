@@ -11,10 +11,10 @@ export class CustomerChatRoom {
   chatRoomId: number;
 
   @CreateDateColumn({ type: 'timestamp' })
-  created_at: Date;
+  createdAt: Date;
 
   @Column({ type: 'timestamp', nullable: true })
-  deleted_at: Date;
+  deletedAt: Date;
 
   @ManyToOne(() => Customer, (customer) => customer.chatRooms)
   @JoinColumn({ name: 'customer_id' })

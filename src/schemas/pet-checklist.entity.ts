@@ -1,4 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { PetChecklistChoice } from "./pet-checklist-chocie.entity";
+import { PetChecklistAnswer } from "./pet-checklist-answer.entity";
+
 export enum PetChecklistCategory {
   HEALTH = 'health',
   FOOD = 'food',
@@ -29,5 +32,17 @@ export class PetChecklist {
   petChecklistCategory: PetChecklistCategory;
 
   @Column('text')
-  petChecklistTitle: string;
+  petChecklistContent: string;
+
+  @OneToMany(
+    () => PetChecklistChoice,
+    (petCheckListChoice) => petCheckListChoice.petChecklist,
+  )
+  petChecklistChoices: PetChecklistChoice[];
+
+  @OneToMany(
+    () => PetChecklistAnswer,
+    (petChecklistAnswer) => petChecklistAnswer.petChecklist,
+  )
+  petChecklistAnswer: PetChecklistAnswer[];
 }

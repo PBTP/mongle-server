@@ -1,15 +1,7 @@
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsEnum,
-  Length,
-  IsDate,
-  IsBoolean,
-  IsUrl,
-  IsNumber,
-} from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { Gender } from '../../schemas/pets.entity';
+import { IsBoolean, IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsUrl, Length } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
+import { Gender } from "../../schemas/pets.entity";
+import { ChecklistType, PetChecklistCategory } from "../../schemas/pet-checklist.entity";
 
 export class PetDto {
   @ApiProperty({
@@ -88,4 +80,63 @@ export class PetDto {
   @IsNotEmpty()
   @IsNumber()
   public breedId: number;
+}
+
+export class PetChecklistDto {
+  @ApiProperty({
+    description: '반려동물 체크리스트 ID',
+    required: false,
+    readOnly: true,
+  })
+  @IsOptional()
+  petChecklistId?: number;
+
+  @ApiProperty({
+    description: `체크리스트의 타입입니다. type은 총 choice와 answer가 있습니다.
+    choice는 선택지가 있는 체크리스트이며, answer는 답변이 있는 체크리스트입니다`,
+    required: false,
+  })
+  petChecklistType: ChecklistType;
+
+  @ApiProperty({
+    description: '체크리스트 카테고리입니다.',
+    required: true,
+  })
+  petChecklistCategory: PetChecklistCategory;
+
+  @ApiProperty({
+    description: '체크리스트 내용입니다.',
+    required: false,
+  })
+  petChecklistContent: string;
+
+  @ApiProperty({
+    description: '체크리스트 선택지입니다.',
+    required: false,
+  })
+  petChecklistChoices: PetChecklistChoiceDto[];
+}
+
+export class PetChecklistChoiceDto {
+  @ApiProperty({
+    description: '체크리스트 선택지 ID',
+    required: false,
+    readOnly: true,
+  })
+  @IsOptional()
+  petChecklistChoiceId?: number;
+
+  @ApiProperty({
+    description: '체크리스트 선택지 내용입니다.',
+    required: true,
+  })
+  @IsNotEmpty()
+  petChecklistChoiceContent: string;
+
+  @ApiProperty({
+    readOnly: true,
+    required: false,
+    description: '해당 선택지가 선택되었는지에 대한 유무입니다.',
+  })
+  checked: boolean;
 }
