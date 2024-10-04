@@ -138,5 +138,5 @@ export class PetChecklistChoiceDto {
     required: false,
     description: '해당 선택지가 선택되었는지에 대한 유무입니다.',
   })
-  checked: boolean;
+  checked: boolean = false;
 }

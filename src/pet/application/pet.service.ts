@@ -99,7 +99,7 @@ export class PetService {
     let query = this.petChecklistRepository
       .createQueryBuilder('PC')
       .leftJoinAndMapMany(
-        'PC.petCheckListChoices',
+        'PC.petChecklistChoices',
         PetChecklistChoice,
         'PCC',
         'PC.pet_checklist_id = PCC.pet_checklist_id',
