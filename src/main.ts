@@ -9,18 +9,20 @@ import { RedisIoAdapter } from './config/socket/socket.adapter';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import { EntityNotFoundExceptionFilter } from './common/filters/entit-not-found.filter';
 
+export const serviceWebUrls = [
+  'https://mgmg.life',
+  'https://web-view.mgmg.life',
+  'http://localhost:8000',
+  'http://localhost:3000',
+];
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bufferLogs: true,
   });
 
   app.enableCors({
-    origin: [
-      'https://mgmg.life',
-      'https://web-view.mgmg.life',
-      'http://localhost:8000',
-      'http://localhost:3000',
-    ],
+    origin: serviceWebUrls,
   });
 
   app.useLogger(app.get<LoggerService>(LoggerService));
