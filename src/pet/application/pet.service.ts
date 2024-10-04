@@ -1,15 +1,27 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Pet } from "../../schemas/pets.entity";
-import { Breed } from "../../schemas/breed.entity";
-import { Customer } from "../../schemas/customer.entity";
-import { PetChecklistChoiceDto, PetChecklistDto, PetDto } from "../presentation/pet.dto";
-import { ChecklistType, PetChecklist, PetChecklistCategory } from "../../schemas/pet-checklist.entity";
-import { PetChecklistChoice } from "../../schemas/pet-checklist-chocie.entity";
-import { PetChecklistAnswer } from "../../schemas/pet-checklist-answer.entity";
-import { PetChecklistChoiceAnswer } from "../../schemas/pet-checklist-chocie-answer.entity";
-import { toDto } from "../../common/function/util.function";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Pet } from '../../schemas/pets.entity';
+import { Breed } from '../../schemas/breed.entity';
+import { Customer } from '../../schemas/customer.entity';
+import {
+  PetChecklistChoiceDto,
+  PetChecklistDto,
+  PetDto,
+} from '../presentation/pet.dto';
+import {
+  ChecklistType,
+  PetChecklist,
+  PetChecklistCategory,
+} from '../../schemas/pet-checklist.entity';
+import { PetChecklistChoice } from '../../schemas/pet-checklist-chocie.entity';
+import { PetChecklistAnswer } from '../../schemas/pet-checklist-answer.entity';
+import { PetChecklistChoiceAnswer } from '../../schemas/pet-checklist-chocie-answer.entity';
+import { Builder } from 'builder-pattern';
 
 @Injectable()
 export class PetService {
@@ -89,12 +101,12 @@ export class PetService {
     petId: number,
   ): Promise<PetChecklistDto[]> {
     // SELECT *
-    // FROM pet_checklist PC
-    // LEFT JOIN pet_checklist_answers PCA ON pc.pet_checklist_id = pca.pet_checklist_id
-    // LEFT JOIN pet_checklist_choices PCC ON pc.pet_checklist_id = pcc.pet_checklist_id
-    // LEFT JOIN pet_checklist_choices_answers  PCCA ON PC.pet_checklist_id = PCCA.pet_checklist_id
-    //   AND PCC.pet_checklist_choice_id = PCCA.pet_checklist_choice_id
-    // ORDER BY PC.pet_checklist_id, PCC.pet_checklist_choice_id
+    //   FROM pet_checklist PC
+    //        LEFT JOIN pet_checklist_answers PCA ON pc.pet_checklist_id = pca.pet_checklist_id
+    //        LEFT JOIN pet_checklist_choices PCC ON pc.pet_checklist_id = pcc.pet_checklist_id
+    //        LEFT JOIN pet_checklist_choices_answers  PCCA ON PC.pet_checklist_id = PCCA.pet_checklist_id
+    //              AND PCC.pet_checklist_choice_id = PCCA.pet_checklist_choice_id
+    //  ORDER BY PC.pet_checklist_id, PCC.pet_checklist_choice_id
 
     let query = this.petChecklistRepository
       .createQueryBuilder('PC')
@@ -107,7 +119,7 @@ export class PetService {
 
     if (petId) {
       query = query
-        .leftJoinAndMapMany(
+        .leftJoinAndMapOne(
           'PCC.petChecklistChoiceAnswers',
           PetChecklistChoiceAnswer,
           'PCCA',
@@ -117,7 +129,7 @@ export class PetService {
           { petId },
         )
         .leftJoinAndMapMany(
-          'PC.petChecklistAnswers',
+          'PC.petChecklistAnswer',
           PetChecklistAnswer,
           'PCA',
           'PC.pet_checklist_id = PCA.pet_checklist_id AND PCA.pet_id = :petId',
@@ -129,17 +141,36 @@ export class PetService {
     category &&
       query.andWhere('PC.pet_checklist_category = :category', { category });
 
+    query.orderBy('PC.pet_checklist_id');
+
     const data = await query.getMany();
     return data.map((checklist) => {
-      const dto = toDto(PetChecklistDto, checklist);
+      const dto = Builder<PetChecklistDto>()
+        .petChecklistId(checklist.petChecklistId)
+        .petChecklistType(checklist.petChecklistType)
+        .petChecklistCategory(checklist.petChecklistCategory)
+        .petChecklistContent(checklist.petChecklistContent)
+        .petChecklistChoices(
+          checklist?.petChecklistChoices?.map((choice) => {
+            return Builder<PetChecklistChoiceDto>()
+              .petChecklistChoiceId(choice.petChecklistChoiceId)
+              .petChecklistChoiceContent(choice.petChecklistChoiceContent)
+              .checked(!!choice?.petChecklistChoiceAnswers)
+              .build();
+          }),
+        )
+        .petChecklistAnswer(
+          checklist.petChecklistAnswers
+            ? checklist?.petChecklistAnswers[0]?.petChecklistAnswer
+            : null,
+        )
+        .build();
 
-      dto.petChecklistChoices = checklist?.petChecklistChoices?.map(
-        (choice) => {
-          const choiceDto = toDto(PetChecklistChoiceDto, choice);
-          choiceDto.checked = choice?.petChecklistChoiceAnswer?.length > 0;
-          return choiceDto;
-        },
-      );
+      if (dto.petChecklistType === ChecklistType.ANSWER) {
+        dto.petChecklistChoices = null;
+      } else {
+        dto.petChecklistAnswer = null;
+      }
 
       return dto;
     });

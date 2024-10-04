@@ -115,6 +115,12 @@ export class PetChecklistDto {
     required: false,
   })
   petChecklistChoices: PetChecklistChoiceDto[];
+
+  @ApiProperty({
+    description: '체크리스트 답변입니다.',
+    required: false,
+  })
+  petChecklistAnswer: string;
 }
 
 export class PetChecklistChoiceDto {

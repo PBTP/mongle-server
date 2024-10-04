@@ -10,16 +10,13 @@ export class PetChecklistAnswer {
   @PrimaryColumn()
   petChecklistId: number;
 
-  @ManyToOne(
-    () => Pet,
-    (pet) => pet.petChecklistAnswer,
-  )
+  @ManyToOne(() => Pet, (pet) => pet.petChecklistAnswer)
   @JoinColumn({ name: 'pet_id' })
   pet: Pet;
 
   @ManyToOne(
     () => PetChecklist,
-    (petChecklist) => petChecklist.petChecklistAnswer,
+    (petChecklist) => petChecklist.petChecklistAnswers,
   )
   @JoinColumn({ name: 'pet_checklist_id' })
   petChecklist: PetChecklist;

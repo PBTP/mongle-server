@@ -14,7 +14,7 @@ export class PetChecklistChoiceAnswer {
 
   @ManyToOne(
     () => PetChecklistChoice,
-    (petChecklistChoice) => petChecklistChoice.petChecklistChoiceAnswer,
+    (petChecklistChoice) => petChecklistChoice.petChecklistChoiceAnswers,
   )
   @JoinColumn({ name: 'pet_checklist_choice_id' })
   petChecklistChoice: PetChecklistChoice;

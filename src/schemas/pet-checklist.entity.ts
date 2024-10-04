@@ -1,6 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { PetChecklistChoice } from "./pet-checklist-chocie.entity";
-import { PetChecklistAnswer } from "./pet-checklist-answer.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { PetChecklistChoice } from './pet-checklist-chocie.entity';
+import { PetChecklistAnswer } from './pet-checklist-answer.entity';
 
 export enum PetChecklistCategory {
   HEALTH = 'health',
@@ -44,5 +44,5 @@ export class PetChecklist {
     () => PetChecklistAnswer,
     (petChecklistAnswer) => petChecklistAnswer.petChecklist,
   )
-  petChecklistAnswer: PetChecklistAnswer[];
+  petChecklistAnswers: PetChecklistAnswer[];
 }

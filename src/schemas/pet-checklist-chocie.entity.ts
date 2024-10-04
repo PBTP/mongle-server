@@ -21,5 +21,5 @@ export class PetChecklistChoice {
     () => PetChecklistChoiceAnswer,
     (petChecklistChoiceAnswer) => petChecklistChoiceAnswer.petChecklistChoice,
   )
-  petChecklistChoiceAnswer: PetChecklistChoiceAnswer[];
+  petChecklistChoiceAnswers: PetChecklistChoiceAnswer[];
 }
