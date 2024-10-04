@@ -4,22 +4,22 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
   WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
-import { ForbiddenException, Logger, NotFoundException } from '@nestjs/common';
-import { ChatMessageDto, ChatRoomDto } from './chat.dto';
-import { AuthService } from '../../auth/application/auth.service';
-import { Subscribe } from '../decorator/socket.decorator';
-import { UnauthorizedException } from '@nestjs/common/exceptions';
-import { ChatService } from '../application/chat.service';
-import { UserDto } from '../../auth/presentation/user.dto';
+  WebSocketServer
+} from "@nestjs/websockets";
+import { Server, Socket } from "socket.io";
+import { ForbiddenException, Logger, NotFoundException } from "@nestjs/common";
+import { ChatMessageDto, ChatRoomDto } from "./chat.dto";
+import { AuthService } from "../../auth/application/auth.service";
+import { Subscribe } from "../decorator/socket.decorator";
+import { UnauthorizedException } from "@nestjs/common/exceptions";
+import { ChatService } from "../application/chat.service";
+import { UserDto } from "../../auth/presentation/user.dto";
 
 export class UserSocket extends Socket {
   user: UserDto;
 }
 
-@WebSocketGateway(5000, { namespace: 'chat' })
+@WebSocketGateway(5000)
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private readonly logger: Logger = new Logger(ChatGateway.name);
 
