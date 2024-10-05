@@ -22,7 +22,9 @@ export class UserSocket extends Socket {
 
 @WebSocketGateway(5000, {
   cors: {
+    credentials: true,
     origin: serviceWebUrls,
+    methods: ['GET', 'POST'],
   },
 })
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
