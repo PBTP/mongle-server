@@ -42,8 +42,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Client connected: ${client.id}`);
 
     try {
+      const token = client.handshake.headers?.authorization ?? client.handshake.auth?.authorization;
       const user = await this.authService.getUser(
-        client.handshake.headers.authorization.replace('Bearer ', ''),
+        token?.replace('Bearer ', ''),
       );
 
       client.user = {
