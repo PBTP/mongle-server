@@ -5,9 +5,13 @@ import { PetController } from './presentation/pet.controller';
 import { Pet } from 'src/schemas/pets.entity';
 import { Breed } from 'src/schemas/breed.entity';
 import { PetChecklist } from '../schemas/pet-checklist.entity';
+import { CustomerModule } from '../customer/customer.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pet, Breed, PetChecklist])],
+  imports: [
+    TypeOrmModule.forFeature([Pet, Breed, PetChecklist]),
+    CustomerModule,
+  ],
   controllers: [PetController],
   providers: [PetService],
   exports: [PetService],

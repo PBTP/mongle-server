@@ -22,10 +22,12 @@ import { PetChecklistChoice } from '../../schemas/pet-checklist-chocie.entity';
 import { PetChecklistAnswer } from '../../schemas/pet-checklist-answer.entity';
 import { PetChecklistChoiceAnswer } from '../../schemas/pet-checklist-chocie-answer.entity';
 import { Builder } from 'builder-pattern';
+import { CustomerService } from '../../customer/application/customer.service';
 
 @Injectable()
 export class PetService {
   constructor(
+    private customerService: CustomerService,
     @InjectRepository(Pet)
     private petRepository: Repository<Pet>,
     @InjectRepository(PetChecklist)
@@ -52,6 +54,14 @@ export class PetService {
     return await this.petRepository.save(newPet);
   }
 
+  async findAll(customer: Customer): Promise<Pet[]> {
+    return await this.customerService.findOne(customer).then((v) => {
+      return this.petRepository.find({
+        where: { customer: v },
+        relations: ['breed'],
+      });
+    });
+  }
   async findOne(id: number, customer: Customer): Promise<Pet> {
     const pet = await this.petRepository.findOneOrFail({
       where: { petId: id },
@@ -78,13 +88,13 @@ export class PetService {
       });
     }
 
-    pet.name = dto.name ?? pet.name;
-    pet.birthdate = dto.birthdate ?? pet.birthdate;
-    pet.weight = dto.weight ?? pet.weight;
+    pet.petName = dto.petName ?? pet.petName;
+    pet.petBirthdate = dto.petBirthDate ?? pet.petBirthdate;
+    pet.petWeight = dto.petWeight ?? pet.petWeight;
     pet.neuteredYn = dto.neuteredYn ?? pet.neuteredYn;
     pet.personality = dto.personality ?? pet.personality;
     pet.vaccinationStatus = dto.vaccinationStatus ?? pet.vaccinationStatus;
-    pet.gender = dto.gender ?? pet.gender;
+    pet.petGender = dto.petGender ?? pet.petGender;
 
     return await this.petRepository.save(pet);
   }
@@ -175,4 +185,6 @@ export class PetService {
       return dto;
     });
   }
+
+  // async checklistAnswer(petChecklistDto: PetChecklistDto, customer: Customer) {}
 }

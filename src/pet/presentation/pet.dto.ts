@@ -1,7 +1,20 @@
-import { IsBoolean, IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsUrl, Length } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
-import { Gender } from "../../schemas/pets.entity";
-import { ChecklistType, PetChecklistCategory } from "../../schemas/pet-checklist.entity";
+import {
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsUrl,
+  Length,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { Gender } from '../../schemas/pets.entity';
+import {
+  ChecklistType,
+  PetChecklistCategory,
+} from '../../schemas/pet-checklist.entity';
+import { CrudGroup } from '../../common/validation/validation.data';
 
 export class PetDto {
   @ApiProperty({
@@ -16,53 +29,72 @@ export class PetDto {
     description: '반려동물 이름',
     required: true,
   })
-  @IsNotEmpty()
-  @Length(1, 30)
-  public name: string;
+  @IsNotEmpty({
+    groups: [CrudGroup.create],
+  })
+  @Length(1, 30, {
+    groups: [CrudGroup.create],
+  })
+  public petName: string;
 
   @ApiProperty({
     description: '반려동물의 성별',
     required: true,
   })
-  @IsNotEmpty()
-  @IsEnum(Gender)
-  public gender: Gender;
+  @IsNotEmpty({
+    groups: [CrudGroup.create],
+  })
+  @IsEnum(Gender, {
+    groups: [CrudGroup.create],
+  })
+  public petGender: Gender;
 
   @ApiProperty({
     description: '반려동물의 생년월일',
     required: true,
   })
-  @IsNotEmpty()
-  @IsDate()
-  public birthdate: Date;
+  @IsNotEmpty({
+    groups: [CrudGroup.create],
+  })
+  @IsDate({
+    groups: [CrudGroup.create],
+  })
+  public petBirthDate: Date;
 
   @ApiProperty({
     description: '반려동물의 체중',
     required: true,
   })
-  @IsNotEmpty()
-  public weight: string;
+  @IsNotEmpty({
+    groups: [CrudGroup.create],
+  })
+  public petWeight: number;
 
   @ApiProperty({
     description: '중성화 여부',
     required: true,
   })
-  @IsNotEmpty()
-  @IsBoolean()
+  @IsNotEmpty({
+    groups: [CrudGroup.create],
+  })
+  @IsBoolean({
+    groups: [CrudGroup.create],
+  })
   public neuteredYn: boolean;
 
   @ApiProperty({
-    description: '반려동물의 성격',
+    description: '반려동물의 특성',
     required: true,
   })
-  @IsNotEmpty()
   public personality: string;
 
   @ApiProperty({
     description: '예방 접종 상태',
     required: true,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    groups: [CrudGroup.create],
+  })
   public vaccinationStatus: string;
 
   @ApiProperty({
@@ -77,7 +109,9 @@ export class PetDto {
     description: '견종 ID',
     required: true,
   })
-  @IsNotEmpty()
+  @IsNotEmpty({
+    groups: [CrudGroup.create],
+  })
   @IsNumber()
   public breedId: number;
 }

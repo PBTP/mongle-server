@@ -1,14 +1,26 @@
-import { PetService } from "../application/pet.service";
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
-import { PetChecklistDto, PetDto } from "./pet.dto";
-import { Pet } from "../../schemas/pets.entity";
-import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { GroupValidation } from "src/common/validation/validation.decorator";
-import { CrudGroup } from "src/common/validation/validation.data";
-import { Customer } from "src/schemas/customer.entity";
+import { PetService } from '../application/pet.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
+import { PetChecklistDto, PetDto } from './pet.dto';
+import { Pet } from '../../schemas/pets.entity';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { GroupValidation } from 'src/common/validation/validation.decorator';
+import { CrudGroup } from 'src/common/validation/validation.data';
+import { Customer } from 'src/schemas/customer.entity';
 // eslint-disable-next-line prettier/prettier
 import { Auth, CurrentCustomer } from "src/auth/decorator/auth.decorator";
-import { ChecklistType, PetChecklistCategory } from "../../schemas/pet-checklist.entity";
+import {
+  ChecklistType,
+  PetChecklistCategory,
+} from '../../schemas/pet-checklist.entity';
 
 @ApiTags('반려동물 관련 API')
 @Controller('/v1/pet')
@@ -36,6 +48,17 @@ export class PetController {
     @CurrentCustomer() customer: Customer,
   ): Promise<Pet> {
     return await this.petService.create(dto, customer);
+  }
+
+  @ApiOperation({
+    summary: '반려동물 정보 조회',
+    description: '고객의 모든 반려동물 정보를 조회합니다.',
+  })
+  @Auth()
+  @ApiOkResponse({ type: PetDto, description: '반려동물 정보 조회 성공' })
+  @Get('/my')
+  async getAll(@CurrentCustomer() customer: Customer): Promise<Pet[]> {
+    return await this.petService.findAll(customer);
   }
 
   @ApiOperation({
