@@ -61,15 +61,9 @@ export class PetService {
   }
 
   async findAll(customer: Customer): Promise<Pet[]> {
-    return await this.customerService.findOne(customer).then((v) => {
-      return this.petRepository.find({
-        where: {
-          customer: {
-            customerId: v.customerId,
-          },
-        },
-        relations: ['breed'],
-      });
+    return await this.petRepository.find({
+      where: { customer: { customerId: customer.customerId } },
+      relations: ['breed'],
     });
   }
   async findOne(id: number, customer: Customer): Promise<Pet> {
