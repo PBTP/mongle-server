@@ -7,13 +7,14 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
-  UpdateDateColumn
-} from "typeorm";
-import { Appointment } from "./appointments.entity";
-import { Breed } from "./breed.entity";
-import { Customer } from "./customer.entity";
-import { Review } from "./reviews.entity";
-import { HasUuid } from "../common/entity/parent.entity";
+  UpdateDateColumn,
+} from 'typeorm';
+import { Appointment } from './appointments.entity';
+import { Breed } from './breed.entity';
+import { Customer } from './customer.entity';
+import { Review } from './reviews.entity';
+import { HasUuid } from '../common/entity/parent.entity';
+import { PetChecklistAnswer } from './pet-checklist-answer.entity';
 
 export enum Gender {
   MALE = 'MALE',
@@ -26,20 +27,24 @@ export class Pet extends HasUuid {
   public petId: number;
 
   @Column()
-  public name: string;
+  public petName: string;
 
   @Column({
     type: 'enum',
     enum: Gender,
     default: Gender.MALE,
   })
-  public gender: string;
+  public petGender: string;
 
-  @Column({ type: 'date' })
-  public birthdate: Date;
+  @Column({
+    type: 'date',
+  })
+  public petBirthdate: Date;
 
-  @Column()
-  public weight: string;
+  @Column({
+    type: 'double precision',
+  })
+  public petWeight: number;
 
   @Column()
   public neuteredYn: boolean;
@@ -72,4 +77,11 @@ export class Pet extends HasUuid {
   @ManyToOne(() => Breed, (breed) => breed.pets)
   @JoinColumn({ name: 'breed_id' })
   public breed: Breed;
+
+  @ManyToOne(
+    () => PetChecklistAnswer,
+    (petChecklistAnswer) => petChecklistAnswer.pet,
+  )
+  @JoinColumn({ name: 'pet_id' })
+  petChecklistAnswer: PetChecklistAnswer;
 }
