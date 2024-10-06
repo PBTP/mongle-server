@@ -17,8 +17,6 @@ export const CurrentCustomer = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {
     const req: { user?: Customer } = context.switchToHttp().getRequest();
 
-    console.log(context.switchToHttp().getRequest());
-
     if (!req.user?.customerId) {
       throw new ForbiddenException('해당 계정은 고객 계정이 아닙니다.');
     }

@@ -9,9 +9,9 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { PetChecklistDto, PetDto } from './pet.dto';
+import { PetChecklistAnswerDto, PetChecklistDto, PetDto } from './pet.dto';
 import { Pet } from '../../schemas/pets.entity';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GroupValidation } from 'src/common/validation/validation.decorator';
 import { CrudGroup } from 'src/common/validation/validation.data';
 import { Customer } from 'src/schemas/customer.entity';
@@ -32,8 +32,41 @@ export class PetController {
   async getChecklist(
     @Query('category') category: PetChecklistCategory,
     @Query('type') type: ChecklistType,
+    @CurrentCustomer() customer: Customer,
   ): Promise<PetChecklistDto[]> {
-    return await this.petService.findCheckList(category, type, 1);
+    return await this.petService.findCheckList(category, type, null, customer);
+  }
+
+  @Get('/:petId/checklist')
+  @Auth()
+  async getPetChecklist(
+    @Param('petId') petId: number,
+    @Query('category') category: PetChecklistCategory,
+    @Query('type') type: ChecklistType,
+    @CurrentCustomer() customer: Customer,
+  ): Promise<PetChecklistDto[]> {
+    return await this.petService.findCheckList(category, type, petId, customer);
+  }
+
+  @ApiOperation({
+    summary: '반려동물 체크리스트 답변',
+    description: '반려동물 체크리스트 답변을 등록합니다.',
+  })
+  @ApiOkResponse({
+    description: '반려동물 체크리스트 답변 성공',
+  })
+  @ApiBody({ type: [PetChecklistAnswerDto] })
+  @Post('/:petId/checklist/answer')
+  @GroupValidation([CrudGroup.create])
+  @Auth()
+  async answerChecklist(
+    @Param('petId') petId: number,
+    @Body() dto: PetChecklistAnswerDto[],
+    @CurrentCustomer() customer: Customer,
+  ): Promise<PetChecklistAnswerDto[]> {
+    return await this.petService
+      .answerChecklist(petId, dto, customer)
+      .then(() => dto);
   }
 
   @ApiOperation({
@@ -41,8 +74,9 @@ export class PetController {
     description: '새로운 반려동물 정보를 생성합니다.',
   })
   @ApiOkResponse({ type: PetDto, description: '반려동물 정보 생성 성공' })
-  @Post()
   @GroupValidation([CrudGroup.create])
+  @Post()
+  @Auth()
   async create(
     @Body() dto: PetDto,
     @CurrentCustomer() customer: Customer,

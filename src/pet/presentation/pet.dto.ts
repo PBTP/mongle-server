@@ -7,6 +7,7 @@ import {
   IsOptional,
   IsUrl,
   Length,
+  ValidateIf,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender } from '../../schemas/pets.entity';
@@ -59,7 +60,7 @@ export class PetDto {
   @IsDate({
     groups: [CrudGroup.create],
   })
-  public petBirthDate: Date;
+  public petBirthdate: Date;
 
   @ApiProperty({
     description: '반려동물의 체중',
@@ -123,12 +124,17 @@ export class PetChecklistDto {
     readOnly: true,
   })
   @IsOptional()
+  @IsNumber()
+  @IsNotEmpty({
+    groups: [CrudGroup.create],
+  })
   petChecklistId?: number;
 
   @ApiProperty({
     description: `체크리스트의 타입입니다. type은 총 choice와 answer가 있습니다.
     choice는 선택지가 있는 체크리스트이며, answer는 답변이 있는 체크리스트입니다`,
     required: false,
+    readOnly: true,
   })
   petChecklistType: ChecklistType;
 
@@ -154,6 +160,50 @@ export class PetChecklistDto {
     description: '체크리스트 답변입니다.',
     required: false,
   })
+  petChecklistAnswer: string;
+}
+
+export class PetChecklistAnswerDto {
+  @ApiProperty({
+    description: '반려동물 체크리스트 ID',
+    required: true,
+  })
+  @IsNotEmpty()
+  petChecklistId: number;
+
+  @ApiProperty({
+    description:
+      '반려동물 체크리스트 선택지 ID\n' +
+      '선택지가 없는 체크리스트의 경우 nullable합니다.',
+    required: true,
+  })
+  @ValidateIf((o) => o.petChecklistAnswer === null)
+  @IsNumber()
+  @IsOptional()
+  @IsNotEmpty()
+  petChecklistChoiceId: number;
+
+  @ApiProperty({
+    description:
+      '반려동물 체크리스트 선택유무' +
+      '선택지가 없는 체크리스트의 경우 nullable합니다.',
+    required: true,
+  })
+  @ValidateIf((o) => o.petChecklistAnswer === null)
+  @IsBoolean()
+  @IsOptional()
+  @IsNotEmpty()
+  checked: boolean;
+
+  @ApiProperty({
+    description:
+      '반려동물 체크리스트 답변입니다.\n' +
+      '선택지가 있는 체크리스트의 경우 nullable합니다.',
+    required: false,
+  })
+  @IsNotEmpty()
+  @IsOptional()
+  @ValidateIf((o) => o.petChecklistChoiceId === null)
   petChecklistAnswer: string;
 }
 

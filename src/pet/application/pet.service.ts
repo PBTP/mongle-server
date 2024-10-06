@@ -4,11 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Pet } from '../../schemas/pets.entity';
 import { Breed } from '../../schemas/breed.entity';
 import { Customer } from '../../schemas/customer.entity';
 import {
+  PetChecklistAnswerDto,
   PetChecklistChoiceDto,
   PetChecklistDto,
   PetDto,
@@ -23,6 +24,7 @@ import { PetChecklistAnswer } from '../../schemas/pet-checklist-answer.entity';
 import { PetChecklistChoiceAnswer } from '../../schemas/pet-checklist-chocie-answer.entity';
 import { Builder } from 'builder-pattern';
 import { CustomerService } from '../../customer/application/customer.service';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class PetService {
@@ -32,6 +34,10 @@ export class PetService {
     private petRepository: Repository<Pet>,
     @InjectRepository(PetChecklist)
     private petChecklistRepository: Repository<PetChecklist>,
+    @InjectRepository(PetChecklistAnswer)
+    private petChecklistAnswerRepository: Repository<PetChecklistAnswer>,
+    @InjectRepository(PetChecklistChoiceAnswer)
+    private petChecklistChoiceAnswerRepository: Repository<PetChecklistChoiceAnswer>,
     @InjectRepository(Breed)
     private breedRepository: Repository<Breed>,
   ) {}
@@ -57,7 +63,11 @@ export class PetService {
   async findAll(customer: Customer): Promise<Pet[]> {
     return await this.customerService.findOne(customer).then((v) => {
       return this.petRepository.find({
-        where: { customer: v },
+        where: {
+          customer: {
+            customerId: v.customerId,
+          },
+        },
         relations: ['breed'],
       });
     });
@@ -89,7 +99,7 @@ export class PetService {
     }
 
     pet.petName = dto.petName ?? pet.petName;
-    pet.petBirthdate = dto.petBirthDate ?? pet.petBirthdate;
+    pet.petBirthdate = dto.petBirthdate ?? pet.petBirthdate;
     pet.petWeight = dto.petWeight ?? pet.petWeight;
     pet.neuteredYn = dto.neuteredYn ?? pet.neuteredYn;
     pet.personality = dto.personality ?? pet.personality;
@@ -109,15 +119,8 @@ export class PetService {
     category: PetChecklistCategory,
     type: ChecklistType,
     petId: number,
+    customer: Customer,
   ): Promise<PetChecklistDto[]> {
-    // SELECT *
-    //   FROM pet_checklist PC
-    //        LEFT JOIN pet_checklist_answers PCA ON pc.pet_checklist_id = pca.pet_checklist_id
-    //        LEFT JOIN pet_checklist_choices PCC ON pc.pet_checklist_id = pcc.pet_checklist_id
-    //        LEFT JOIN pet_checklist_choices_answers  PCCA ON PC.pet_checklist_id = PCCA.pet_checklist_id
-    //              AND PCC.pet_checklist_choice_id = PCCA.pet_checklist_choice_id
-    //  ORDER BY PC.pet_checklist_id, PCC.pet_checklist_choice_id
-
     let query = this.petChecklistRepository
       .createQueryBuilder('PC')
       .leftJoinAndMapMany(
@@ -128,6 +131,8 @@ export class PetService {
       );
 
     if (petId) {
+      await this.findOne(petId, customer);
+
       query = query
         .leftJoinAndMapOne(
           'PCC.petChecklistChoiceAnswers',
@@ -139,7 +144,7 @@ export class PetService {
           { petId },
         )
         .leftJoinAndMapMany(
-          'PC.petChecklistAnswer',
+          'PC.petChecklistAnswers',
           PetChecklistAnswer,
           'PCA',
           'PC.pet_checklist_id = PCA.pet_checklist_id AND PCA.pet_id = :petId',
@@ -186,5 +191,52 @@ export class PetService {
     });
   }
 
-  // async checklistAnswer(petChecklistDto: PetChecklistDto, customer: Customer) {}
+  async answerChecklist(
+    petId: number,
+    dto: PetChecklistAnswerDto[],
+    customer: Customer,
+  ) {
+    const pet = await this.findOne(petId, customer);
+
+    const checklist = await this.petChecklistRepository.find({
+      where: {
+        petChecklistId: In(dto.map((v) => v.petChecklistId)),
+      },
+    });
+
+    for (const v of checklist) {
+      const answer = dto.find((d) => d.petChecklistId === v.petChecklistId);
+
+      if (v.petChecklistType === ChecklistType.ANSWER) {
+        if (!answer.petChecklistAnswer) {
+          throw new BadRequestException('답변을 적어주세요');
+        }
+
+        await this.petChecklistAnswerRepository.save({
+          pet,
+          petChecklistId: v.petChecklistId,
+          petChecklistAnswer: answer.petChecklistAnswer,
+        });
+      } else {
+        if (!answer.petChecklistChoiceId || answer.checked == undefined) {
+          throw new BadRequestException('선택지를 선택해주세요');
+        }
+
+        if (answer.checked) {
+          await this.petChecklistChoiceAnswerRepository.save({
+            petId,
+            petChecklistId: v.petChecklistId,
+            petChecklistChoiceId: answer.petChecklistChoiceId,
+          });
+          return;
+        }
+
+        await this.petChecklistChoiceAnswerRepository.delete({
+          petId,
+          petChecklistId: v.petChecklistId,
+          petChecklistChoiceId: answer.petChecklistChoiceId,
+        });
+      }
+    }
+  }
 }
