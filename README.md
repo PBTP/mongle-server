@@ -1,30 +1,22 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+![image](https://github.com/user-attachments/assets/3d5385f2-48bd-4657-bdc0-0c0e89db6c1e)
+sadsad
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
+![image](https://github.com/user-attachments/assets/57c47bcf-2fbe-46c9-82a8-c53569610df8)
 <a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+## 주요 환경
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+| Nestjs | TypeScript | PostgreSQL |
+| --- | --- | --- |
+| <img width="100" height="100" src ="https://github.com/user-attachments/assets/139a0301-edc7-4612-8042-e10d4ea00f27"/>|<img width="100" height="100" src ="https://github.com/user-attachments/assets/1b6e6c9c-467a-4eeb-94b3-6608640b13d9"/> | <img width="100" height="100" src ="https://github.com/user-attachments/assets/68c86bff-db82-4da8-9f6a-911e04bed02c"/>
+![image](https://github.com/user-attachments/assets/5eafb092-78db-4c38-a075-e4432b7fde9d)
+
+![image](https://github.com/user-attachments/assets/5614fe8e-8a8e-44be-9589-7b0c62128cb5)
+![image](https://github.com/user-attachments/assets/3994bd84-78fe-497e-b415-e29bad771cf0)
+![image](https://github.com/user-attachments/assets/066b75ff-4223-4d77-b659-156174c6c81c)
+
+![image](https://github.com/user-attachments/assets/d3b94c3c-f3c6-44f2-910e-840e3a0e010b)
+![image](https://github.com/user-attachments/assets/e7dcba8e-c66a-4cb4-85fd-f669679438e8)
 
 ## Installation
 
@@ -36,7 +28,7 @@ $ yarn install
 
 ```bash
 # development
-$ yarn run start
+$ yarn run start:local
 
 # watch mode
 $ yarn run start:dev
@@ -71,3 +63,8 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+![image](https://github.com/user-attachments/assets/623316ad-73be-4044-9d74-658ed2cc9505)
+![image](https://github.com/user-attachments/assets/a6382e8d-ebdc-49f3-a147-a3e5d63dbdcf)
+
+![image](https://github.com/user-attachments/assets/95d98019-7f85-4278-9379-2881e5e26a88)
+
