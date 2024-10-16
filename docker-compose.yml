@@ -17,7 +17,7 @@ services:
           memory: 1.5G
 
   postgres:
-    image: postgres:16
+    image: postgis/postgis:16-3.4
     container_name: postgres
     environment:
       POSTGRES_USER: postgres
