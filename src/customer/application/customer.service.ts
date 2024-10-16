@@ -1,15 +1,15 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Customer } from "../../schemas/customer.entity";
-import { CustomerDto } from "../presentation/customer.dto";
-import { IUserService } from "../../auth/user.interface";
-import { AuthDto } from "../../auth/presentation/auth.dto";
-import { UserDto, UserType } from "../../auth/presentation/user.dto";
-import { SecurityService } from "../../auth/application/security.service";
-import { Image } from "../../schemas/image.entity";
-import { ImageService } from "../../common/image/application/image.service";
-import { toDto } from "../../common/function/util.function";
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Customer } from '../../schemas/customer.entity';
+import { CustomerDto } from '../presentation/customer.dto';
+import { IUserService } from '../../auth/user.interface';
+import { AuthDto } from '../../auth/presentation/auth.dto';
+import { UserDto, UserType } from '../../auth/presentation/user.dto';
+import { SecurityService } from '../../auth/application/security.service';
+import { Image } from '../../schemas/image.entity';
+import { ImageService } from '../../common/image/application/image.service';
+import { toDto } from '../../common/function/util.function';
 
 @Injectable()
 export class CustomerService implements IUserService {
@@ -54,16 +54,13 @@ export class CustomerService implements IUserService {
     const customer = await query.getOne();
 
     if (encrypt) {
-      customer.customerPhoneNumber = this.securityService.decrypt(
-        customer.customerPhoneNumber,
-      );
+      customer.customerPhoneNumber &&
+        this.securityService.decrypt(customer.customerPhoneNumber);
 
-      customer.customerAddress = this.securityService.decrypt(
-        customer.customerAddress,
-      );
-      customer.customerDetailAddress = this.securityService.decrypt(
-        customer.customerDetailAddress,
-      );
+      customer.customerAddress &&
+        this.securityService.decrypt(customer.customerAddress);
+      customer.customerDetailAddress &&
+        this.securityService.decrypt(customer.customerDetailAddress);
     }
 
     return customer;
