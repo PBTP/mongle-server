@@ -1,22 +1,5 @@
 
 services:
-  mongle-server:
-    container_name: mongle-server
-    build: .
-    ports:
-      - '3000:3000'
-      - '5000:5000'
-    depends_on:
-      - postgres
-      - redis
-    env_file:
-      - .env
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 1.5G
-
   postgres:
     image: postgis/postgis:16-3.4
     container_name: postgres
@@ -34,7 +17,6 @@ services:
           cpus: "2"
           memory: 1G
 
-
   redis:
     image: redis:alpine
     container_name: redis
@@ -46,21 +28,3 @@ services:
           cpus: "1"
           memory: 0.555G
 
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-    ports:
-      - '9090:9090'
-
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    ports:
-      - '3001:3000'
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
-    depends_on:
-      - prometheus

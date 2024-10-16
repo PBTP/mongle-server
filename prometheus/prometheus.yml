@@ -6,7 +6,7 @@ scrape_configs:
   - job_name: 'mongle-server'
     metrics_path: /metrics
     static_configs:
-      - targets: [ 'mongle-server:3000' ]  # Docker Compose의 NestJS 컨테이너와 포트 지정
+      - targets: [ 'host.docker.internal:3000' ]  # Docker Compose의 NestJS 컨테이너와 포트 지정
 
   # Prometheus 자체 메트릭 수집
   - job_name: 'prometheus'
