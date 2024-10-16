@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import * as crypto from "crypto";
-import { ConfigService } from "@nestjs/config";
+import { Injectable } from '@nestjs/common';
+import * as crypto from 'crypto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SecurityService {
@@ -29,6 +29,11 @@ export class SecurityService {
     if (!hash) return null;
 
     const [iv, encryptedText] = hash.split(':');
+
+    if (!iv || !encryptedText) {
+      return null;
+    }
+
     const decipher = crypto.createDecipheriv(
       this.algorithm,
       this.secretKey,
