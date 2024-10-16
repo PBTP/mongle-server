@@ -54,13 +54,17 @@ export class CustomerService implements IUserService {
     const customer = await query.getOne();
 
     if (encrypt) {
-      customer.customerPhoneNumber &&
-        this.securityService.decrypt(customer.customerPhoneNumber);
+      customer.customerPhoneNumber = this.securityService.decrypt(
+        customer.customerPhoneNumber,
+      );
 
-      customer.customerAddress &&
-        this.securityService.decrypt(customer.customerAddress);
-      customer.customerDetailAddress &&
-        this.securityService.decrypt(customer.customerDetailAddress);
+      customer.customerAddress = this.securityService.decrypt(
+        customer.customerAddress,
+      );
+
+      customer.customerDetailAddress = this.securityService.decrypt(
+        customer.customerDetailAddress,
+      );
     }
 
     return customer;
