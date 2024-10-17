@@ -28,3 +28,8 @@ services:
         limits:
           cpus: "1"
           memory: 0.555G
+
+networks:
+  default:
+    external:
+      name: dev_network

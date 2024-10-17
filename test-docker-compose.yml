@@ -1,5 +1,4 @@
 
-
 services:
 #  mongle-server:
 #    container_name: mongle-server
@@ -17,36 +16,6 @@ services:
 #        limits:
 #          cpus: "1"
 #          memory: 1.5G
-
-  postgres:
-    image: postgis/postgis:16-3.4
-    container_name: postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    volumes:
-      - ./postgres/data:/var/lib/postgresql/data
-      - ./postgres/sql/:/docker-entrypoint-initdb.d/
-    ports:
-      - "54321:5432"
-    deploy:
-      resources:
-        limits:
-          cpus: "2"
-          memory: 1G
-
-  redis:
-    image: redis:alpine
-    container_name: redis
-    ports:
-      - "6379:6379"
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 0.555G
-
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -73,7 +42,6 @@ services:
     depends_on:
       - prometheus
 
-
   k6:
     image: grafana/k6
     volumes:
@@ -84,3 +52,8 @@ services:
       - K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true
     depends_on:
       - prometheus
+
+networks:
+  default:
+    external:
+      name: dev_network

@@ -1,0 +1,14 @@
+apiVersion: 1
+
+datasources:
+  # PostgreSQL 데이터 소스 설정
+  - name: PostgreSQL
+    type: postgres
+    access: proxy
+    url: postgres:54321
+    database: postgres
+    user: postgres
+    password: postgres
+    jsonData:
+      sslmode: disable
+    isDefault: true
