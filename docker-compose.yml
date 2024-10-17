@@ -11,7 +11,7 @@ services:
       - ./postgres/data:/var/lib/postgresql/data
       - ./postgres/sql/:/docker-entrypoint-initdb.d/
     ports:
-      - "54321:5432"
+      - "5432:5432"
     deploy:
       resources:
         limits:
@@ -31,5 +31,4 @@ services:
 
 networks:
   default:
-    external:
-      name: dev_network
+    name: dev_net

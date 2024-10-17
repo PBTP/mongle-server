@@ -5,10 +5,11 @@ datasources:
   - name: PostgreSQL
     type: postgres
     access: proxy
-    url: postgres:54321
+    url: postgres:5432
     database: postgres
     user: postgres
-    password: postgres
+    secureJsonData:
+      password: postgres
     jsonData:
       sslmode: disable
-    isDefault: true
+
