@@ -1,51 +1,21 @@
 
-
 services:
-  mongle-server:
-    container_name: mongle-server
-    build: .
-    ports:
-      - '3000:3000'
-      - '5000:5000'
-    depends_on:
-      - postgres
-      - redis
-    env_file:
-      - .env
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 1.5G
-
-  postgres:
-    image: postgis/postgis:16-3.4
-    container_name: postgres
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    volumes:
-      - ./postgres/postgres-data:/var/lib/postgresql/data
-    ports:
-      - "54321:5432"
-    deploy:
-      resources:
-        limits:
-          cpus: "2"
-          memory: 1G
-
-  redis:
-    image: redis:alpine
-    container_name: redis
-    ports:
-      - "6379:6379"
-    deploy:
-      resources:
-        limits:
-          cpus: "1"
-          memory: 0.555G
-
+#  mongle-server:
+#    container_name: mongle-server
+#    build: .
+#    ports:
+#      - '3000:3000'
+#      - '5000:5000'
+#    depends_on:
+#      - postgres
+#      - redis
+#    env_file:
+#      - .env
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "1"
+#          memory: 1.5G
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -53,10 +23,17 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - '9090:9090'
+    command:
+      - --web.enable-remote-write-receiver
+      - --enable-feature=native-histograms
+      - --config.file=/etc/prometheus/prometheus.yml
 
   grafana:
     image: grafana/grafana
     container_name: grafana
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboard:/dashboard
     ports:
       - '3001:3000'
     environment:
@@ -64,3 +41,19 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     depends_on:
       - prometheus
+
+  k6:
+    image: grafana/k6
+    volumes:
+      - ./k6/script:/scripts
+    command: run -o experimental-prometheus-rw /scripts/stress.js
+    environment:
+      - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write
+      - K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true
+    depends_on:
+      - prometheus
+
+networks:
+  default:
+    external:
+      name: dev_network

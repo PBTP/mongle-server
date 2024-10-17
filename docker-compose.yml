@@ -8,7 +8,8 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     volumes:
-      - ./postgres/postgres-data:/var/lib/postgresql/data
+      - ./postgres/data:/var/lib/postgresql/data
+      - ./postgres/sql/:/docker-entrypoint-initdb.d/
     ports:
       - "54321:5432"
     deploy:
@@ -28,3 +29,7 @@ services:
           cpus: "1"
           memory: 0.555G
 
+networks:
+  default:
+    external:
+      name: dev_network
