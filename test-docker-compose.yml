@@ -1,0 +1,68 @@
+
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - '9090:9090'
+    command:
+      - --web.enable-remote-write-receiver
+      - --enable-feature=native-histograms
+      - --config.file=/etc/prometheus/prometheus.yml
+
+  postgres_exporter:
+    container_name: pg-exporter
+    image: prometheuscommunity/postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable"
+    ports:
+      - "9187:9187"
+
+  grafana:
+    image: grafana/grafana:11.0.6
+    container_name: grafana
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/dashboard
+      - ./grafana/data:/var/lib/grafana
+    ports:
+      - '3001:3000'
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=123456789a
+    depends_on:
+      - prometheus
+
+  k6:
+    image: grafana/k6
+    volumes:
+      - ./k6/script:/scripts
+    command: run -o experimental-prometheus-rw /scripts/stress.js
+    environment:
+      - K6_PROMETHEUS_RW_SERVER_URL=http://prometheus:9090/api/v1/write
+      - K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true
+    depends_on:
+      - prometheus
+
+#  mongle-server:
+#    container_name: mongle-server
+#    build: .
+#    ports:
+#      - '3000:3000'
+#      - '5000:5000'
+#    depends_on:
+#      - postgres
+#      - redis
+#    env_file:
+#      - .env
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "1"
+#          memory: 1.5G
+
+networks:
+  default:
+      name: dev_net

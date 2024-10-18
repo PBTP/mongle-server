@@ -1,0 +1,11 @@
+apiVersion: 1
+
+datasources:
+  - name: Redis
+    type: redis-datasource
+    access: proxy
+    url: redis:6379
+    jsonData:
+      tlsAuth: false
+      tlsSkipVerify: true
+      timeout: 30
