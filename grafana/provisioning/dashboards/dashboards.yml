@@ -8,7 +8,7 @@ providers:
     disableDeletion: false
     updateIntervalSeconds: 10
     options:
-      path: /dashboards/k6.json
+      path: /dashboard/k6.json
       foldersFromFilesStructure: true
   - name: "redis"
     orgId: 1
@@ -17,5 +17,5 @@ providers:
     disableDeletion: false
     updateIntervalSeconds: 10
     options:
-      path: /dashboards/redis.json
+      path: /dashboard/redis.json
       foldersFromFilesStructure: true

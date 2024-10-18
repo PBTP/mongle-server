@@ -12,12 +12,21 @@ services:
       - --enable-feature=native-histograms
       - --config.file=/etc/prometheus/prometheus.yml
 
+  postgres_exporter:
+    container_name: pg-exporter
+    image: prometheuscommunity/postgres-exporter
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:postgres@postgres:5432/postgres?sslmode=disable"
+    ports:
+      - "9187:9187"
+
   grafana:
     image: grafana/grafana:11.0.6
     container_name: grafana
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
-      - ./grafana/dashboard:/dashboard
+      - ./grafana/dashboards:/dashboard
+      - ./grafana/data:/var/lib/grafana
     ports:
       - '3001:3000'
     environment:

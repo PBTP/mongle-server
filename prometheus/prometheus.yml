@@ -12,3 +12,8 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: [ 'localhost:9090' ]
+
+  # Postgres Exporter 메트릭 수집
+  - job_name: 'postgres-exporter'
+    static_configs:
+      - targets: [ 'pg-exporter:9187' ]  # Docker Compose의 Postgres Exporter 컨테이너와 포트 지정

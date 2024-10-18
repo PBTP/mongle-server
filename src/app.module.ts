@@ -1,24 +1,25 @@
-import { Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from "@nestjs/config";
-import { AppController } from "./app.controller";
-import { AppService } from "./app.service";
-import { loadParameterStoreValue } from "./env/ssm-config.service";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { PreRegistrationServeyModule } from "./pre-registration-servey/pre-registration-servey.module";
-import { EmailModule } from "./email/email.module";
-import { CustomerModule } from "./customer/customer.module";
-import { SnakeNamingStrategy } from "typeorm-naming-strategies";
-import { AuthModule } from "./auth/auth.module";
-import { RedisModule } from "@liaoliaots/nestjs-redis";
-import { CacheModule } from "./common/cache/cache.module";
-import { LoggerModule } from "./config/logger/logger.module";
-import { SystemAlarmModule } from "./system/system.alarm.module";
-import { ImageModule } from "./common/image/image.module";
-import { CloudModule } from "./common/cloud/cloud.module";
-import { ChatModule } from "./chat/chat.module";
-import { PetModule } from "./pet/pet.module";
-import { MetricsModule } from "./system/matrics/metrics.module";
-import * as process from "node:process";
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { loadParameterStoreValue } from './env/ssm-config.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { PreRegistrationServeyModule } from './pre-registration-servey/pre-registration-servey.module';
+import { EmailModule } from './email/email.module';
+import { CustomerModule } from './customer/customer.module';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { AuthModule } from './auth/auth.module';
+import { RedisModule } from '@liaoliaots/nestjs-redis';
+import { CacheModule } from './common/cache/cache.module';
+import { LoggerModule } from './config/logger/logger.module';
+import { SystemAlarmModule } from './system/system.alarm.module';
+import { ImageModule } from './common/image/image.module';
+import { CloudModule } from './common/cloud/cloud.module';
+import { ChatModule } from './chat/chat.module';
+import { PetModule } from './pet/pet.module';
+import { MetricsModule } from './system/matrics/metrics.module';
+import * as process from 'node:process';
+import { TestModule } from './test/test.module';
 
 const appModules = [
   ConfigModule.forRoot({
@@ -70,6 +71,7 @@ const appModules = [
 
 // 환경별 모듈 추가
 profile('local', MetricsModule);
+profile('local', TestModule);
 
 @Module({
   imports: appModules,
