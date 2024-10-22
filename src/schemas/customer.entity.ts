@@ -6,7 +6,7 @@ import {
   OneToMany,
   Point,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { Favorite } from './favorites.entity';
@@ -16,7 +16,7 @@ import { CustomerChatRoom } from './customer-chat-room.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 import { AuthProvider } from '../auth/presentation/user.dto';
 import { ImageEntity } from './image.entity';
-import { TCustomer } from '../customer/customer.domain';
+import { Customer } from '../customer/customer.domain';
 import { Builder } from 'builder-pattern';
 
 export interface UUIDHolder {
@@ -28,7 +28,7 @@ export interface DateHolder {
 }
 
 @Entity({ name: 'customers' })
-export class CustomerEntity extends HasUuid implements TCustomer{
+export class CustomerEntity extends HasUuid implements Customer {
   @PrimaryGeneratedColumn()
   customerId: number;
 
@@ -85,7 +85,11 @@ export class CustomerEntity extends HasUuid implements TCustomer{
   // not column properties
   profileImage?: ImageEntity;
 
-  static from(customer: TCustomer, uuidHolder:UUIDHolder, dateHolder: DateHolder): CustomerEntity {
+  static from(
+    customer: Customer,
+    uuidHolder: UUIDHolder,
+    dateHolder: DateHolder,
+  ): CustomerEntity {
     return Builder<CustomerEntity>()
       .customerId(customer.customerId)
       .customerName(customer.customerName)
@@ -104,6 +108,24 @@ export class CustomerEntity extends HasUuid implements TCustomer{
       .pets(customer.pets)
       .chatRooms(customer.chatRooms)
       .uuid(uuidHolder.generatedUuid())
-      .build()
+      .build();
+  }
+
+  toModel() {
+    return Builder<Customer>()
+      .customerId(this.customerId)
+      .customerName(this.customerName)
+      .customerPhoneNumber(this.customerPhoneNumber)
+      .customerAddress(this.customerAddress)
+      .customerDetailAddress(this.customerDetailAddress)
+      .customerLocation(this.customerLocation)
+      .authProvider(this.authProvider)
+      .refreshToken(this.refreshToken)
+      .favorites(this.favorites)
+      .reviews(this.reviews)
+      .appointments(this.appointments)
+      .pets(this.pets)
+      .chatRooms(this.chatRooms)
+      .build();
   }
 }

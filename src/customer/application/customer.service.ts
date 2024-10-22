@@ -6,8 +6,12 @@ import { AuthDto } from '../../auth/presentation/auth.dto';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
 import { SecurityService } from '../../auth/application/security.service';
 import { ImageService } from '../../common/image/application/image.service';
+import {
+  CUSTOMER_REPOSITORY,
+  ICustomerRepository,
+} from '../port/customer.repository';
+import { Customer } from '../customer.domain';
 import { toDto } from '../../common/function/util.function';
-import { CUSTOMER_REPOSITORY, ICustomerRepository } from '../port/customer.repository';
 
 @Injectable()
 export class CustomerService implements IUserService {
@@ -21,8 +25,7 @@ export class CustomerService implements IUserService {
     private readonly imageService: ImageService,
   ) {}
 
-  async create(dto: CustomerDto): Promise<CustomerEntity> {
-
+  async create(dto: Customer): Promise<Customer> {
     this.personalInfoEncrypt(dto);
 
     return await this.customerRepository.save(
@@ -33,7 +36,7 @@ export class CustomerService implements IUserService {
   async findOne(
     dto: Partial<AuthDto>,
     decrypt: boolean = false,
-  ): Promise<CustomerEntity> {
+  ): Promise<Customer> {
     const customer = await this.customerRepository.findOne(dto);
 
     if (decrypt) {
@@ -53,7 +56,7 @@ export class CustomerService implements IUserService {
     return customer;
   }
 
-  async update(dto: Partial<CustomerDto>): Promise<CustomerDto> {
+  async update(dto: Partial<CustomerDto>): Promise<Partial<Customer>> {
     this.personalInfoEncrypt(dto);
 
     return await this.findOne(dto)
@@ -89,13 +92,13 @@ export class CustomerService implements IUserService {
   private personalInfoEncrypt(dto: Partial<CustomerDto>) {
     if (dto.phoneNumber || dto.customerPhoneNumber) {
       dto.phoneNumber = this.securityService.encrypt(
-        dto.phoneNumber ?? dto.customerPhoneNumber
+        dto.phoneNumber ?? dto.customerPhoneNumber,
       );
     }
 
     if (dto.customerDetailAddress) {
       dto.customerDetailAddress = this.securityService.encrypt(
-        dto.customerDetailAddress
+        dto.customerDetailAddress,
       );
     }
 

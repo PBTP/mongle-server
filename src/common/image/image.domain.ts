@@ -1,7 +1,6 @@
-
-export class Image {
-  imageId: number
-  uuid: string
-  imageUrl: string
-  createdAt: Date
-}
+export type Image = {
+  imageId: number;
+  uuid: string;
+  imageUrl: string;
+  createdAt: Date;
+};

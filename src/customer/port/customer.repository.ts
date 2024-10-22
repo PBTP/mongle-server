@@ -1,27 +1,24 @@
 import { CustomerEntity } from '../../schemas/customer.entity';
-import { CustomerDto } from '../presentation/customer.dto';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { AuthDto } from '../../auth/presentation/auth.dto';
 import { ImageEntity } from '../../schemas/image.entity';
+import { Customer } from '../customer.domain';
 
 export const CUSTOMER_REPOSITORY = Symbol('ICustomerRepository');
 
 export interface ICustomerRepository {
-  create(customer: CustomerDto): CustomerEntity
-  findOne(customer: Partial<CustomerEntity>): Promise<CustomerEntity>
-  save(customer: CustomerEntity): Promise<CustomerEntity>
+  create(customer: Customer): Customer;
+  findOne(customer: Partial<AuthDto>): Promise<Customer>;
+  save(customer: Customer): Promise<Customer>;
 }
 
 @Injectable()
 export class CustomerRepository implements ICustomerRepository {
-  constructor(
-    private readonly customerDB: Repository<CustomerEntity>
-  ) {
-  }
+  constructor(private readonly customerDB: Repository<CustomerEntity>) {}
 
-  create(customer: CustomerDto): CustomerEntity {
-    return this.customerDB.create(customer);
+  create(customer: Customer): Customer {
+    return this.customerDB.create(customer).toModel();
   }
 
   async findOne(dto: Partial<AuthDto>): Promise<CustomerEntity> {
@@ -32,7 +29,7 @@ export class CustomerRepository implements ICustomerRepository {
 
     if (dto.userId) {
       query.andWhere('C.customer_id = :customer_id', {
-        customer_id: dto.userId
+        customer_id: dto.userId,
       });
     }
 
@@ -49,6 +46,4 @@ export class CustomerRepository implements ICustomerRepository {
   async save(customer: CustomerEntity): Promise<CustomerEntity> {
     return await this.customerDB.save(customer);
   }
-
-
 }

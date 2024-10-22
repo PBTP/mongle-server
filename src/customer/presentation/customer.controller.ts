@@ -4,6 +4,7 @@ import { CustomerDto } from './customer.dto';
 import { CustomerEntity } from '../../schemas/customer.entity';
 import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Customer } from '../customer.domain';
 
 @ApiTags('고객 관련 API')
 @Controller('/v1/customer')
@@ -19,7 +20,7 @@ export class CustomerController {
   @Get('my')
   async getMyCustomer(
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<Omit<CustomerDto, 'refreshToken' | 'accessToken'>> {
+  ): Promise<Omit<Customer, 'refreshToken' | 'accessToken'>> {
     return await this.customerService
       .findOne({ userId: customer.customerId }, true)
       .then((v) => {
@@ -27,7 +28,7 @@ export class CustomerController {
         delete v['refreshToken'];
         return {
           ...v,
-          profileImageUrl: v?.profileImage?.imageUrl,
+          // profileImageUrl: v?.profileImage?.imageUrl,
         };
       });
   }
@@ -56,7 +57,7 @@ export class CustomerController {
           customerId: v.customerId,
           authProvider: v.authProvider,
           customerName: v.customerName,
-          presignedUrlDto: v.presignedUrlDto,
+          // presignedUrlDto: v.presignedUrlDto,
         };
       });
   }

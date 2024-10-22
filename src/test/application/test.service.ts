@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Customer } from '../../schemas/customer.entity';
 import { Repository } from 'typeorm';
-import { CustomerDto } from '../../customer/presentation/customer.dto';
 import { Builder } from 'builder-pattern';
 import { UserDto } from '../../auth/presentation/user.dto';
+import { CustomerEntity } from '../../schemas/customer.entity';
 
 @Injectable()
 export class TestService {
   constructor(
-    @InjectRepository(Customer)
-    private readonly customerRepository: Repository<Customer>,
+    @InjectRepository(CustomerEntity)
+    private readonly customerRepository: Repository<CustomerEntity>,
   ) {}
 
   async randomUserUuid(): Promise<UserDto> {

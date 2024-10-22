@@ -5,8 +5,9 @@ import { Review } from '../schemas/reviews.entity';
 import { Appointment } from '../schemas/appointments.entity';
 import { Pet } from '../schemas/pets.entity';
 import { CustomerChatRoom } from '../schemas/customer-chat-room.entity';
+import { AuthDto } from '../auth/presentation/auth.dto';
 
-export type TCustomer = {
+export type Customer = AuthDto &{
   customerId: number;
   customerName: string;
   customerPhoneNumber?: string;
