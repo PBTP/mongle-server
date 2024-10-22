@@ -1,18 +1,28 @@
 import {
-  Entity,
-  PrimaryColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
   CreateDateColumn,
   DeleteDateColumn,
-  UpdateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { Business } from './business.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 
+export type TBusinessNotice = {
+  businessNoticeId: number;
+  title: string;
+  content: string;
+  createdAt: Date;
+  modifiedAt: Date;
+  deletedAt: Date;
+  business: Business;
+};
+
 @Entity({ name: 'business_notices', orderBy: { createdAt: 'ASC' } })
-export class BusinessNotice extends HasUuid {
+export class BusinessNotice extends HasUuid implements TBusinessNotice {
   @PrimaryColumn()
   public businessNoticeId: number;
 

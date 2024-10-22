@@ -1,8 +1,13 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional } from "class-validator";
-import { UserDto } from "./user.dto";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional } from 'class-validator';
+import { TUserDto } from './user.dto';
 
-export class AuthDto extends UserDto {
+export type TAuthDto = TUserDto & {
+  accessToken?: string;
+  refreshToken?: string;
+};
+
+export class AuthDto implements TAuthDto {
   @ApiProperty({
     description: 'Access Token',
     type: String,

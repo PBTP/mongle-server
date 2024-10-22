@@ -1,18 +1,22 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  OneToMany,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CustomerChatRoom } from './customer-chat-room.entity';
 import { DriverChatRoom } from './driver-chat-room.entity';
 import { BusinessChatRoom } from './business-chat-room.entity';
 import { ChatMessage } from './chat-message.entity';
 import { HasTsid } from '../common/entity/parent.entity';
 
+export type TChatRoom = {
+  chatRoomId: number;
+  chatRoomName: string;
+  createdAt: Date;
+  customerChatRooms: CustomerChatRoom[];
+  driverChatRooms: DriverChatRoom[];
+  businessChatRooms: BusinessChatRoom[];
+  messages: ChatMessage[];
+};
+
 @Entity('chat_rooms')
-export class ChatRoom extends HasTsid {
+export class ChatRoom extends HasTsid implements TChatRoom {
   @PrimaryGeneratedColumn()
   chatRoomId: number;
 

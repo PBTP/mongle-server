@@ -1,13 +1,13 @@
 import {
-  Entity,
-  PrimaryColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
   CreateDateColumn,
   DeleteDateColumn,
-  UpdateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { Business } from './business.entity';
@@ -15,8 +15,21 @@ import { DriverChatRoom } from './driver-chat-room.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 import { AuthProvider } from '../auth/presentation/user.dto';
 
+export type TDriver = {
+  uuid: string;
+  driverId: number;
+  driverName: string;
+  driverPhoneNumber: string;
+  createdAt: Date;
+  modifiedAt: Date;
+  deletedAt: Date;
+  business: Business;
+  authProvider: AuthProvider;
+  refreshToken?: string;
+};
+
 @Entity({ name: 'drivers' })
-export class Driver extends HasUuid {
+export class Driver extends HasUuid implements TDriver {
   @PrimaryColumn()
   driverId: number;
 

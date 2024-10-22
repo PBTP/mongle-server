@@ -1,5 +1,11 @@
-import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { BusinessTag } from './business-tags.entity';
+
+export type TTag = {
+  tagId: number;
+  tagName: string;
+  businessTags: BusinessTag[];
+};
 
 @Entity({ name: 'tags' })
 export class Tag {

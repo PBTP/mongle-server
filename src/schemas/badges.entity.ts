@@ -1,8 +1,15 @@
-import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { BusinessBadge } from './business-badges.entity';
 
+export type TBadge = {
+  badgeId: number;
+  badgeName: string;
+  badgeDescription: string;
+  businessBadges: BusinessBadge[];
+};
+
 @Entity({ name: 'badges' })
-export class Badge {
+export class Badge implements TBadge {
   @PrimaryColumn()
   public badgeId: number;
 

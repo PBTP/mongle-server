@@ -1,12 +1,12 @@
 import {
-  Entity,
-  PrimaryColumn,
   Column,
-  OneToMany,
   CreateDateColumn,
   DeleteDateColumn,
-  UpdateDateColumn,
+  Entity,
+  OneToMany,
   Point,
+  PrimaryColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { BusinessBadge } from './business-badges.entity';
@@ -20,8 +20,32 @@ import { BusinessChatRoom } from './business-chat-room.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 import { AuthProvider } from '../auth/presentation/user.dto';
 
+export type TBusiness = {
+  businessId: number;
+  businessName: string;
+  businessPhoneNumber: string;
+  businessLocation: Point;
+  businessPriceGuide: string;
+  businessRule: string;
+  openingDate: Date;
+  createdAt: Date;
+  modifiedAt: Date;
+  deletedAt: Date;
+  favorites: Favorite[];
+  reviews: Review[];
+  appointments: Appointment[];
+  drivers: Driver[];
+  serviceOptions: ServiceOption[];
+  businessBadges: BusinessBadge[];
+  businessTags: BusinessTag[];
+  businessNotices: BusinessNotice[];
+  chatRooms: BusinessChatRoom[];
+  authProvider: AuthProvider;
+  refreshToken?: string;
+};
+
 @Entity({ name: 'business' })
-export class Business extends HasUuid {
+export class Business extends HasUuid implements TBusiness {
   @PrimaryColumn()
   businessId: number;
 

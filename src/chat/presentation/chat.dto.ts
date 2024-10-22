@@ -1,18 +1,19 @@
 import { UserDto } from '../../auth/presentation/user.dto';
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  ValidateIf,
-  ValidateNested,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateIf, ValidateNested } from 'class-validator';
 import { MessageType } from '../../schemas/chat-message.entity';
 import { CrudGroup, RUD } from '../../common/validation/validation.data';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ChatMessageDto {
+export type TChatMessageDto = {
+  chatRoomId: number;
+  chatMessageId: number;
+  senderUuid: string;
+  chatMessageType: MessageType;
+  user: UserDto;
+  chatMessageContent: string;
+};
+
+export class ChatMessageDto implements TChatMessageDto {
   @ApiProperty({
     description: '채팅방 ID 입니다.',
     nullable: false,
@@ -67,7 +68,16 @@ export class ChatMessageDto {
   chatMessageContent: string;
 }
 
-export class ChatRoomDto {
+export type TChatRoomDto = {
+  chatRoomId: number;
+  tsid: string;
+  chatRoomName: string;
+  inviteUser: UserDto;
+  createdAt: Date;
+  lastMessage?: ChatMessageDto;
+};
+
+export class ChatRoomDto implements TChatRoomDto {
   @ApiProperty({
     description:
       '채팅방 ID 입니다. 채팅방 ID가 없을 경우 tsid를 사용합니다.\n' +

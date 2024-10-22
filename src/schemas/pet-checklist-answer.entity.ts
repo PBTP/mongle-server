@@ -1,9 +1,17 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { PetChecklist } from "./pet-checklist.entity";
-import { Pet } from "./pets.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { PetChecklist } from './pet-checklist.entity';
+import { Pet } from './pets.entity';
+
+export type TPetChecklistAnswer = {
+  petId: number;
+  petChecklistId: number;
+  pet: Pet;
+  petChecklist: PetChecklist;
+  petChecklistAnswer: string;
+};
 
 @Entity('pet_checklist_answers')
-export class PetChecklistAnswer {
+export class PetChecklistAnswer implements TPetChecklistAnswer {
   @PrimaryColumn()
   petId: number;
 

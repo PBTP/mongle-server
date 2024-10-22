@@ -7,15 +7,28 @@ import {
   ManyToOne,
   PrimaryColumn,
   UpdateDateColumn
-} from "typeorm";
-import { Appointment } from "./appointments.entity";
-import { Business } from "./business.entity";
-import { Customer } from "./customer.entity";
-import { Pet } from "./pets.entity";
-import { HasUuid } from "../common/entity/parent.entity";
+} from 'typeorm';
+import { Appointment } from './appointments.entity';
+import { Business } from './business.entity';
+import { Customer } from './customer.entity';
+import { Pet } from './pets.entity';
+import { HasUuid } from '../common/entity/parent.entity';
+
+export type TReview = {
+  reviewId: number;
+  rating: number;
+  content: string;
+  createdAt: Date;
+  modifiedAt: Date;
+  deletedAt: Date;
+  appointment: Appointment;
+  customer: Customer;
+  business: Business;
+  pet: Pet;
+};
 
 @Entity({ name: 'reviews' })
-export class Review extends HasUuid {
+export class Review extends HasUuid implements TReview {
   @PrimaryColumn()
   public reviewId: number;
 

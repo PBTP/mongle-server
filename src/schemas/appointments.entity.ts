@@ -8,17 +8,37 @@ import {
   OneToMany,
   PrimaryColumn,
   UpdateDateColumn
-} from "typeorm";
-import { Business } from "./business.entity";
-import { Customer } from "./customer.entity";
-import { Driver } from "./drivers.entity";
-import { Pet } from "./pets.entity";
-import { Review } from "./reviews.entity";
-import { ServiceOption } from "./service-options.entity";
-import { HasUuid } from "../common/entity/parent.entity";
+} from 'typeorm';
+import { Business } from './business.entity';
+import { Customer } from './customer.entity';
+import { Driver } from './drivers.entity';
+import { Pet } from './pets.entity';
+import { Review } from './reviews.entity';
+import { ServiceOption } from './service-options.entity';
+import { HasUuid } from '../common/entity/parent.entity';
+
+export type TAppointment = {
+  appointmentId: number;
+  appointmentDate: Date;
+  appointmentStartTime: Date;
+  appointmentEndTime: Date;
+  appointmentStatus: string;
+  specialRequest: string;
+  visitParkingLocation: string;
+  visitParkingLocationDetail: string;
+  createdAt: Date;
+  modifiedAt: Date;
+  deletedAt: Date;
+  reviews: Review[];
+  customer: Customer;
+  business: Business;
+  driver: Driver;
+  pet: Pet;
+  serviceOption: ServiceOption;
+};
 
 @Entity({ name: 'appointments' })
-export class Appointment extends HasUuid {
+export class Appointment extends HasUuid implements TAppointment {
   @PrimaryColumn()
   public appointmentId: number;
 

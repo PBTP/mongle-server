@@ -1,15 +1,18 @@
-import {
-  Entity,
-  PrimaryColumn,
-  ManyToOne,
-  CreateDateColumn,
-  Column,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { ChatRoom } from './chat-room.entity';
 import { Business } from './business.entity';
 
+export type TBusinessChatRoom = {
+  businessId: number;
+  chatRoomId: number;
+  createdAt: Date;
+  deletedAt: Date;
+  business: Business;
+  chatRoom: Promise<ChatRoom>;
+};
+
 @Entity('business_chat_rooms')
-export class BusinessChatRoom {
+export class BusinessChatRoom implements TBusinessChatRoom {
   @PrimaryColumn()
   businessId: number;
 

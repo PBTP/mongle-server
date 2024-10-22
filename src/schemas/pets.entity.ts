@@ -7,7 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { Breed } from './breed.entity';
@@ -21,8 +21,27 @@ export enum Gender {
   FEMALE = 'FEMALE',
 }
 
+export type TPet = {
+  petId: number;
+  petName: string;
+  petGender: Gender;
+  petBirthdate: Date;
+  petWeight: number;
+  neuteredYn: boolean;
+  personality: string;
+  vaccinationStatus: string;
+  createdAt: Date;
+  modifiedAt: Date;
+  deletedAt: Date;
+  customer: Customer;
+  breed: Breed;
+  reviews: Review[];
+  appointments: Appointment[];
+  petChecklistAnswer: PetChecklistAnswer;
+};
+
 @Entity({ name: 'pets' })
-export class Pet extends HasUuid {
+export class Pet extends HasUuid implements TPet {
   @PrimaryColumn()
   public petId: number;
 
@@ -34,7 +53,7 @@ export class Pet extends HasUuid {
     enum: Gender,
     default: Gender.MALE,
   })
-  public petGender: string;
+  public petGender: Gender;
 
   @Column({
     type: 'date',

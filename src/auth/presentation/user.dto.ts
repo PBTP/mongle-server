@@ -17,7 +17,16 @@ export enum AuthProvider {
   BASIC = 'BASIC',
 }
 
-export class UserDto {
+export type TUserDto = {
+  authProvider?: AuthProvider;
+  userType?: UserType;
+  userId?: number;
+  phoneNumber?: string;
+  uuid?: string;
+  name?: string;
+};
+
+export class UserDto implements TUserDto {
   @ApiProperty({
     description: '인증 제공자 타입',
     required: true,

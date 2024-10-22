@@ -1,9 +1,9 @@
-import { CustomerService } from "../application/customer.service";
-import { Body, Controller, Get, Put } from "@nestjs/common";
-import { CustomerDto } from "./customer.dto";
-import { Customer } from "../../schemas/customer.entity";
-import { Auth, CurrentCustomer } from "../../auth/decorator/auth.decorator";
-import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { CustomerService } from '../application/customer.service';
+import { Body, Controller, Get, Put } from '@nestjs/common';
+import { CustomerDto, TCustomerDto } from './customer.dto';
+import { Customer } from '../../schemas/customer.entity';
+import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('고객 관련 API')
 @Controller('/v1/customer')
@@ -41,8 +41,8 @@ export class CustomerController {
   @Put()
   async updateProfile(
     @CurrentCustomer() customer: Customer,
-    @Body() dto: CustomerDto,
-  ): Promise<Omit<CustomerDto, 'refreshToken'>> {
+    @Body() dto: TCustomerDto,
+  ): Promise<Omit<TCustomerDto, 'refreshToken'>> {
     dto.userId = customer.customerId;
 
     return await this.customerService

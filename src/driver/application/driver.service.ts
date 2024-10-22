@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Driver } from '../../schemas/drivers.entity';
+import { Driver, TDriver } from '../../schemas/drivers.entity';
 import { Repository } from 'typeorm';
 import { IUserService } from '../../auth/user.interface';
-import { UserDto, UserType } from '../../auth/presentation/user.dto';
-import { AuthDto } from '../../auth/presentation/auth.dto';
+import { TUserDto, UserType } from '../../auth/presentation/user.dto';
+import { TAuthDto } from '../../auth/presentation/auth.dto';
 
 @Injectable()
 export class DriverService implements IUserService {
@@ -22,7 +22,7 @@ export class DriverService implements IUserService {
     return await this.driverRepository.save(newDriver);
   }
 
-  async findOne(dto: Partial<AuthDto>): Promise<Driver> {
+  async findOne(dto: Partial<TAuthDto>): Promise<Driver> {
     const where = {};
 
     dto.userId && (where['driverId'] = dto.userId);
@@ -34,7 +34,7 @@ export class DriverService implements IUserService {
     });
   }
 
-  async create(dto: UserDto): Promise<Driver> {
+  async create(dto: TUserDto): Promise<Driver> {
     return await this.driverRepository
       .save(this.driverRepository.create(dto))
       .then((driver) => {
@@ -45,7 +45,7 @@ export class DriverService implements IUserService {
       });
   }
 
-  async update(dto: AuthDto): Promise<Driver> {
+  async update(dto: TAuthDto): Promise<Driver> {
     return this.findOne(dto).then(async (driver) => {
       if (driver) {
         driver.driverName = dto.name;
@@ -57,7 +57,7 @@ export class DriverService implements IUserService {
     });
   }
 
-  toUserDto(driver: Driver): UserDto {
+  toUserDto(driver: TDriver): TUserDto {
     return {
       uuid: driver.uuid,
       name: driver.driverName,

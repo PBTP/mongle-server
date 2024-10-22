@@ -1,14 +1,26 @@
-import { IsNotEmpty, IsNumber, IsOptional, Matches, Max } from "class-validator";
-import { Type } from "class-transformer";
-import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsNumber, IsOptional, Matches, Max } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class ImageDto {
+export type TImageDto = {
+  uuid: string;
+  imageUrl: string;
+  createdAt: Date;
+};
+
+export class ImageDto implements TImageDto {
   uuid: string;
   imageUrl: string;
   createdAt: Date;
 }
 
-export class ImageMetaDataDto {
+export type TImageMetaDataDto = {
+  fileSize: number;
+  fileName: string;
+  expiredTime?: number;
+};
+
+export class ImageMetaDataDto implements TImageMetaDataDto {
   @ApiProperty({
     description:
       '파일의 크기는 Byte 단위로 전달합니다.\n' + '최대 크기는 10MB입니다.',
