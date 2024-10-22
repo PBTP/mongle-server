@@ -1,15 +1,16 @@
-import {
-  Entity,
-  ManyToOne,
-  JoinColumn,
-  CreateDateColumn,
-  PrimaryColumn,
-} from 'typeorm';
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Business } from './business.entity';
 import { Tag } from './tags.entity';
 
+export type TBusinessTag = {
+  tag: Tag;
+  business: Business;
+  createdAt: Date;
+  businessId: number;
+};
+
 @Entity({ name: 'business_tags' })
-export class BusinessTag {
+export class BusinessTag implements TBusinessTag {
   @CreateDateColumn()
   public createdAt: Date;
 

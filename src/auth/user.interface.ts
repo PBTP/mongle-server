@@ -1,10 +1,10 @@
 import { UserDto, UserType } from './presentation/user.dto';
-import { AuthDto } from './presentation/auth.dto';
+import { TAuthDto } from './presentation/auth.dto';
 
 export interface IUserService {
   readonly userType: UserType;
 
-  findOne(dto: Partial<AuthDto>): Promise<UserDto>;
+  findOne(dto: Partial<TAuthDto>): Promise<UserDto>;
 
   create(dto: UserDto): Promise<UserDto>;
 

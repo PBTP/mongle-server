@@ -1,18 +1,23 @@
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsEnum,
-  Length,
-  IsNumber,
-  ValidateIf,
-} from 'class-validator';
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, Length, ValidateIf } from 'class-validator';
 import { Point } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { AuthDto } from '../../auth/presentation/auth.dto';
+import { TAuthDto } from '../../auth/presentation/auth.dto';
 import { AuthProvider, UserGroup } from '../../auth/presentation/user.dto';
 import { CRUD } from '../../common/validation/validation.data';
 
-export class BusinessDto extends AuthDto {
+export type TBusinessDto = TAuthDto & {
+  businessId?: number;
+  uuid: string;
+  businessName: string;
+  businessPhoneNumber?: string;
+  businessLocation?: Point;
+  businessPriceGuide?: string;
+  businessRule?: string;
+  openingDate?: Date;
+  authProvider: AuthProvider;
+};
+
+export class BusinessDto implements TBusinessDto {
   @ApiProperty({
     description: 'Mongle Server에서의 업체 식별자',
     required: false,

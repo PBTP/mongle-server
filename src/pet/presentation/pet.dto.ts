@@ -7,17 +7,27 @@ import {
   IsOptional,
   IsUrl,
   Length,
-  ValidateIf,
+  ValidateIf
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Gender } from '../../schemas/pets.entity';
-import {
-  ChecklistType,
-  PetChecklistCategory,
-} from '../../schemas/pet-checklist.entity';
+import { ChecklistType, PetChecklistCategory } from '../../schemas/pet-checklist.entity';
 import { CrudGroup } from '../../common/validation/validation.data';
 
-export class PetDto {
+export type TPetDto = {
+  petId?: number;
+  petName: string;
+  petGender: Gender;
+  petBirthdate: Date;
+  petWeight: number;
+  neuteredYn: boolean;
+  personality: string;
+  vaccinationStatus: string;
+  photoUrl?: string;
+  breedId: number;
+};
+
+export class PetDto implements TPetDto {
   @ApiProperty({
     description: '반려동물의 고유 ID',
     required: false,
@@ -117,7 +127,16 @@ export class PetDto {
   public breedId: number;
 }
 
-export class PetChecklistDto {
+export type TPetChecklistDto = {
+  petChecklistId?: number;
+  petChecklistType: ChecklistType;
+  petChecklistCategory: PetChecklistCategory;
+  petChecklistContent: string;
+  petChecklistChoices?: PetChecklistChoiceDto[];
+  petChecklistAnswer?: string;
+};
+
+export class PetChecklistDto implements TPetChecklistDto {
   @ApiProperty({
     description: '반려동물 체크리스트 ID',
     required: false,
@@ -163,7 +182,14 @@ export class PetChecklistDto {
   petChecklistAnswer: string;
 }
 
-export class PetChecklistAnswerDto {
+export type TPetChecklistAnswerDto = {
+  petChecklistId: number;
+  petChecklistChoiceId: number;
+  checked: boolean;
+  petChecklistAnswer: string;
+};
+
+export class PetChecklistAnswerDto implements TPetChecklistAnswerDto {
   @ApiProperty({
     description: '반려동물 체크리스트 ID',
     required: true,
@@ -207,7 +233,13 @@ export class PetChecklistAnswerDto {
   petChecklistAnswer: string;
 }
 
-export class PetChecklistChoiceDto {
+export type TPetChecklistChoiceDto = {
+  petChecklistChoiceId?: number;
+  petChecklistChoiceContent: string;
+  checked: boolean;
+};
+
+export class PetChecklistChoiceDto implements TPetChecklistChoiceDto {
   @ApiProperty({
     description: '체크리스트 선택지 ID',
     required: false,

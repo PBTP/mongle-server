@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { IUserService } from '../../auth/user.interface';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
 import { Business } from '../../schemas/business.entity';
-import { AuthDto } from '../../auth/presentation/auth.dto';
+import { TAuthDto } from '../../auth/presentation/auth.dto';
 
 @Injectable()
 export class BusinessService implements IUserService {
@@ -16,7 +16,7 @@ export class BusinessService implements IUserService {
     private readonly businessRepository: Repository<Business>,
   ) {}
 
-  async findOne(dto: Partial<AuthDto>): Promise<Business> {
+  async findOne(dto: Partial<TAuthDto>): Promise<Business> {
     const where = {};
 
     dto.userId && (where['businessId'] = dto.userId ?? dto['businessId']);
@@ -43,7 +43,7 @@ export class BusinessService implements IUserService {
       });
   }
 
-  async update(dto: AuthDto): Promise<Business> {
+  async update(dto: TAuthDto): Promise<Business> {
     return this.findOne(dto).then(async (business) => {
       if (business) {
         business.businessName = dto.name;

@@ -1,10 +1,18 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne } from "typeorm";
-import { Business } from "./business.entity";
-import { Customer } from "./customer.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Business } from './business.entity';
+import { Customer } from './customer.entity';
 
 //TODO: 추후 UUID -> TSID로 변경
+
+export type TFavorite = {
+  uuid: string;
+  createdAt: Date;
+  customer: Customer;
+  business: Business;
+};
+
 @Entity({ name: 'favorites' })
-export class Favorite {
+export class Favorite implements TFavorite {
   @Column({ primary: true, unique: true, type: 'uuid' })
   public uuid: string;
 

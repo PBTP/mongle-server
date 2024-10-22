@@ -1,8 +1,15 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { HasUuid } from "../common/entity/parent.entity";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { HasUuid } from '../common/entity/parent.entity';
+
+export type TImage = {
+  imageId: number;
+  uuid: string;
+  imageUrl: string;
+  createdAt: Date;
+};
 
 @Entity({ name: 'images', orderBy: { imageUrl: 'ASC' } })
-export class Image extends HasUuid {
+export class Image extends HasUuid implements TImage {
   @PrimaryGeneratedColumn()
   imageId: number;
 

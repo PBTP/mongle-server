@@ -7,18 +7,37 @@ import {
   Point,
   PrimaryGeneratedColumn,
   UpdateDateColumn
-} from "typeorm";
-import { Appointment } from "./appointments.entity";
-import { Favorite } from "./favorites.entity";
-import { Pet } from "./pets.entity";
-import { Review } from "./reviews.entity";
-import { CustomerChatRoom } from "./customer-chat-room.entity";
-import { HasUuid } from "../common/entity/parent.entity";
-import { AuthProvider } from "../auth/presentation/user.dto";
-import { Image } from "./image.entity";
+} from 'typeorm';
+import { Appointment } from './appointments.entity';
+import { Favorite } from './favorites.entity';
+import { Pet } from './pets.entity';
+import { Review } from './reviews.entity';
+import { CustomerChatRoom } from './customer-chat-room.entity';
+import { HasUuid } from '../common/entity/parent.entity';
+import { AuthProvider } from '../auth/presentation/user.dto';
+import { Image } from './image.entity';
+
+export type TCustomer = {
+  customerId: number;
+  customerName: string;
+  customerPhoneNumber?: string;
+  customerAddress?: string;
+  customerDetailAddress?: string;
+  customerLocation?: Point;
+  authProvider: AuthProvider;
+  createdAt: Date;
+  modifiedAt: Date;
+  deletedAt?: Date;
+  refreshToken?: string;
+  favorites: Favorite[];
+  reviews: Review[];
+  appointments: Appointment[];
+  pets: Pet[];
+  chatRooms: CustomerChatRoom[];
+};
 
 @Entity({ name: 'customers' })
-export class Customer extends HasUuid {
+export class Customer extends HasUuid implements TCustomer {
   @PrimaryGeneratedColumn()
   customerId: number;
 

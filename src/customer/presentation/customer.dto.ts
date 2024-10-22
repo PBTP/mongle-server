@@ -1,11 +1,24 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, Length, Matches, ValidateNested } from "class-validator";
-import { Point } from "typeorm";
-import { ApiProperty } from "@nestjs/swagger";
-import { AuthDto } from "../../auth/presentation/auth.dto";
-import { AuthProvider } from "../../auth/presentation/user.dto";
-import { PresignedUrlDto } from "../../common/cloud/aws/s3/presentation/presigned-url.dto";
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, Length, Matches, ValidateNested } from 'class-validator';
+import { Point } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+import { TAuthDto } from '../../auth/presentation/auth.dto';
+import { AuthProvider } from '../../auth/presentation/user.dto';
+import { PresignedUrlDto } from '../../common/cloud/aws/s3/presentation/presigned-url.dto';
 
-export class CustomerDto extends AuthDto {
+export type TCustomerDto = TAuthDto & {
+  customerId?: number;
+  uuid: string;
+  customerName: string;
+  customerPhoneNumber?: string;
+  customerLocation?: Point;
+  customerAddress?: string;
+  customerDetailAddress?: string;
+  authProvider: AuthProvider;
+  profileImageUrl?: string;
+  presignedUrlDto?: PresignedUrlDto;
+};
+
+export class CustomerDto implements TCustomerDto {
   @ApiProperty({
     description: 'Mongle Server에서의 고객 식별자',
     required: false,

@@ -1,17 +1,17 @@
 import {
-  Entity,
-  PrimaryColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
   CreateDateColumn,
   DeleteDateColumn,
-  UpdateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { Business } from './business.entity';
-import { HasUuid } from "../common/entity/parent.entity";
+import { HasUuid } from '../common/entity/parent.entity';
 
 export enum PetSize {
   SMALL = 'SMALL',
@@ -19,12 +19,23 @@ export enum PetSize {
   LARGE = 'LARGE',
 }
 
+export type TServiceOption = {
+  serviceOptionId: number;
+  serviceOptionDescription: string;
+  serviceOptionPrice: string;
+  petSize: PetSize;
+  createdAt: Date;
+  modifiedAt: Date;
+  deletedAt: Date;
+  appointments: Appointment[];
+  business: Business;
+};
+
 @Entity({ name: 'service_options' })
 //TODO: 추후 UUID -> TSID로 변경
-export class ServiceOption extends HasUuid {
+export class ServiceOption extends HasUuid implements TServiceOption {
   @PrimaryColumn()
   public serviceOptionId: number;
-
 
   public serviceOptionDescription: string;
 

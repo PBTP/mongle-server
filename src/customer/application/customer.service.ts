@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Customer } from '../../schemas/customer.entity';
-import { CustomerDto } from '../presentation/customer.dto';
+import { CustomerDto, TCustomerDto } from '../presentation/customer.dto';
 import { IUserService } from '../../auth/user.interface';
-import { AuthDto } from '../../auth/presentation/auth.dto';
+import { TAuthDto } from '../../auth/presentation/auth.dto';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
 import { SecurityService } from '../../auth/application/security.service';
 import { Image } from '../../schemas/image.entity';
@@ -30,7 +30,7 @@ export class CustomerService implements IUserService {
   }
 
   async findOne(
-    dto: Partial<AuthDto>,
+    dto: Partial<TAuthDto>,
     encrypt: boolean = false,
   ): Promise<Customer> {
     const query = this.customerRepository
@@ -70,7 +70,7 @@ export class CustomerService implements IUserService {
     return customer;
   }
 
-  async update(dto: Partial<CustomerDto>): Promise<CustomerDto> {
+  async update(dto: Partial<TCustomerDto>): Promise<CustomerDto> {
     if (dto.phoneNumber || dto.customerPhoneNumber) {
       dto.phoneNumber = this.securityService.encrypt(
         dto.phoneNumber ?? dto.customerPhoneNumber,

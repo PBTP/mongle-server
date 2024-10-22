@@ -1,11 +1,4 @@
-import {
-  Entity,
-  Column,
-  CreateDateColumn,
-  ManyToOne,
-  JoinColumn,
-  PrimaryColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { ChatRoom } from './chat-room.entity';
 import { HasTsid } from '../common/entity/parent.entity';
 
@@ -16,8 +9,18 @@ export enum MessageType {
   // 필요한 다른 메시지 타입들
 }
 
+export type TChatMessage = {
+  chatMessageId: number;
+  chatRoomId: number;
+  senderUuid: string;
+  chatMessageType: MessageType;
+  chatMessageContent: string;
+  createdAt: Date;
+  chatRoom: ChatRoom;
+};
+
 @Entity('chat_messages')
-export class ChatMessage extends HasTsid {
+export class ChatMessage extends HasTsid implements TChatMessage {
   @PrimaryColumn({ type: 'int', nullable: false })
   chatMessageId: number;
 

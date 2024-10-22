@@ -14,8 +14,18 @@ export enum ChecklistType {
   CHOICE = 'choice',
   ANSWER = 'answer',
 }
+
+export type TPetChecklist = {
+  petChecklistId: number;
+  petChecklistType: ChecklistType;
+  petChecklistCategory: PetChecklistCategory;
+  petChecklistContent: string;
+  petChecklistChoices: PetChecklistChoice[];
+  petChecklistAnswers: PetChecklistAnswer[];
+};
+
 @Entity('pet_checklist')
-export class PetChecklist {
+export class PetChecklist implements TPetChecklist {
   @PrimaryGeneratedColumn()
   petChecklistId: number;
 

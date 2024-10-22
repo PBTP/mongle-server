@@ -1,9 +1,16 @@
-import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
 import { Pet } from './pets.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 
+export type TBreed = {
+  breedId: number;
+  breedName: string;
+  breedDescription: string;
+  pets: Pet[];
+};
+
 @Entity({ name: 'breed' })
-export class Breed extends HasUuid {
+export class Breed extends HasUuid implements TBreed {
   @PrimaryColumn()
   public breedId: number;
 

@@ -1,15 +1,15 @@
-import {
-  Entity,
-  ManyToOne,
-  JoinColumn,
-  CreateDateColumn,
-  PrimaryColumn,
-} from 'typeorm';
+import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { Business } from './business.entity';
 import { Badge } from './badges.entity';
 
+export type TBusinessBadge = {
+  createdAt: Date;
+  business: Business;
+  badge: Badge;
+};
+
 @Entity({ name: 'business_badges' })
-export class BusinessBadge {
+export class BusinessBadge implements TBusinessBadge {
   @CreateDateColumn()
   public createdAt: Date;
 
