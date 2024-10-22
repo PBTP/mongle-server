@@ -1,21 +1,21 @@
-import { ForbiddenException, Injectable, Logger } from "@nestjs/common";
-import { Repository } from "typeorm";
-import { ChatRoom } from "../../schemas/chat-room.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { ChatMessage } from "../../schemas/chat-message.entity";
-import { CustomerChatService } from "./customer-chat.service";
-import { DriverChatService } from "./driver-chat.service";
-import { BusinessChatService } from "./business-chat.service";
-import { ChatMessageDto, ChatRoomDto } from "../presentation/chat.dto";
-import { UserDto, UserType } from "../../auth/presentation/user.dto";
-import { UserSocket } from "../presentation/chat.gateway";
-import { CacheService } from "../../common/cache/cache.service";
-import { Customer } from "../../schemas/customer.entity";
-import { Driver } from "../../schemas/drivers.entity";
-import { CursorDto } from "../../common/dto/cursor.dto";
-import { Business } from "../../schemas/business.entity";
-import { IChatService } from "./chat.interface";
-import { BadRequestException } from "@nestjs/common/exceptions";
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { ChatRoom } from '../../schemas/chat-room.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ChatMessage } from '../../schemas/chat-message.entity';
+import { CustomerChatService } from './customer-chat.service';
+import { DriverChatService } from './driver-chat.service';
+import { BusinessChatService } from './business-chat.service';
+import { ChatMessageDto, ChatRoomDto } from '../presentation/chat.dto';
+import { UserDto, UserType } from '../../auth/presentation/user.dto';
+import { UserSocket } from '../presentation/chat.gateway';
+import { CacheService } from '../../common/cache/cache.service';
+import { CustomerEntity } from '../../schemas/customer.entity';
+import { Driver } from '../../schemas/drivers.entity';
+import { CursorDto } from '../../common/dto/cursor.dto';
+import { Business } from '../../schemas/business.entity';
+import { IChatService } from './chat.interface';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class ChatService {
@@ -71,7 +71,7 @@ export class ChatService {
 
   async createChatRoom(
     dto: ChatRoomDto,
-    customer: Customer,
+    customer: CustomerEntity,
   ): Promise<ChatRoomDto> {
     if (dto.inviteUser.userId === customer.customerId) {
       throw new BadRequestException('You cannot invite yourself');
@@ -120,7 +120,7 @@ export class ChatService {
   async findMessages(
     chatRoomId: number,
     cursor: CursorDto<ChatMessageDto>,
-    customer: Customer,
+    customer: CustomerEntity,
   ): Promise<CursorDto<ChatMessageDto>> {
     const chatRoom = await this.customerChatService.exitsUserRoom(
       { userId: customer.customerId },
@@ -136,7 +136,7 @@ export class ChatService {
       .leftJoinAndSelect('CM.chatRoom', 'chatRoom')
       .leftJoinAndMapOne(
         'CM.customer',
-        Customer,
+        CustomerEntity,
         'customer',
         'CM.senderUuid = customer.uuid',
       )

@@ -1,6 +1,6 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne } from "typeorm";
-import { Business } from "./business.entity";
-import { Customer } from "./customer.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Business } from './business.entity';
+import { CustomerEntity } from './customer.entity';
 
 //TODO: 추후 UUID -> TSID로 변경
 @Entity({ name: 'favorites' })
@@ -11,9 +11,9 @@ export class Favorite {
   @CreateDateColumn()
   public createdAt: Date;
 
-  @ManyToOne(() => Customer, (customers) => customers.favorites)
+  @ManyToOne(() => CustomerEntity, (customers) => customers.favorites)
   @JoinColumn({ name: 'customer_id' })
-  public customer: Customer;
+  public customer: CustomerEntity;
 
   @ManyToOne(() => Business, (business) => business.favorites)
   @JoinColumn({ name: 'business_id' })

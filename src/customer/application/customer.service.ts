@@ -1,15 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Customer } from '../../schemas/customer.entity';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { CustomerEntity } from '../../schemas/customer.entity';
 import { CustomerDto } from '../presentation/customer.dto';
 import { IUserService } from '../../auth/user.interface';
 import { AuthDto } from '../../auth/presentation/auth.dto';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
 import { SecurityService } from '../../auth/application/security.service';
-import { Image } from '../../schemas/image.entity';
 import { ImageService } from '../../common/image/application/image.service';
 import { toDto } from '../../common/function/util.function';
+import { CUSTOMER_REPOSITORY, ICustomerRepository } from '../port/customer.repository';
 
 @Injectable()
 export class CustomerService implements IUserService {
@@ -17,13 +15,16 @@ export class CustomerService implements IUserService {
   private readonly logger = new Logger(CustomerService.name);
 
   constructor(
-    @InjectRepository(Customer)
-    private readonly customerRepository: Repository<Customer>,
+    @Inject(CUSTOMER_REPOSITORY)
+    private readonly customerRepository: ICustomerRepository,
     private readonly securityService: SecurityService,
     private readonly imageService: ImageService,
   ) {}
 
-  async create(dto: CustomerDto): Promise<Customer> {
+  async create(dto: CustomerDto): Promise<CustomerEntity> {
+
+    this.personalInfoEncrypt(dto);
+
     return await this.customerRepository.save(
       this.customerRepository.create(dto),
     );
@@ -31,29 +32,11 @@ export class CustomerService implements IUserService {
 
   async findOne(
     dto: Partial<AuthDto>,
-    encrypt: boolean = false,
-  ): Promise<Customer> {
-    const query = this.customerRepository
-      .createQueryBuilder('C')
-      .leftJoinAndMapOne('C.profileImage', Image, 'I', 'C.uuid =  I.uuid')
-      .addSelect('I.image_url', 'profileImage');
+    decrypt: boolean = false,
+  ): Promise<CustomerEntity> {
+    const customer = await this.customerRepository.findOne(dto);
 
-    if (dto.userId) {
-      query.andWhere('C.customer_id = :customer_id', {
-        customer_id: dto.userId,
-      });
-    }
-
-    if (dto.uuid) {
-      query.andWhere('C.uuid = :uuid', { uuid: dto.uuid });
-    }
-
-    query.orderBy('C.modified_at', 'DESC');
-    query.addOrderBy('I.created_at', 'DESC');
-
-    const customer = await query.getOne();
-
-    if (encrypt) {
+    if (decrypt) {
       customer.customerPhoneNumber = this.securityService.decrypt(
         customer.customerPhoneNumber,
       );
@@ -71,21 +54,7 @@ export class CustomerService implements IUserService {
   }
 
   async update(dto: Partial<CustomerDto>): Promise<CustomerDto> {
-    if (dto.phoneNumber || dto.customerPhoneNumber) {
-      dto.phoneNumber = this.securityService.encrypt(
-        dto.phoneNumber ?? dto.customerPhoneNumber,
-      );
-    }
-
-    if (dto.customerDetailAddress) {
-      dto.customerDetailAddress = this.securityService.encrypt(
-        dto.customerDetailAddress,
-      );
-    }
-
-    if (dto.customerAddress) {
-      dto.customerAddress = this.securityService.encrypt(dto.customerAddress);
-    }
+    this.personalInfoEncrypt(dto);
 
     return await this.findOne(dto)
       .then(async (customer) => {
@@ -117,7 +86,25 @@ export class CustomerService implements IUserService {
       });
   }
 
-  toUserDto(customer: Customer): UserDto {
+  private personalInfoEncrypt(dto: Partial<CustomerDto>) {
+    if (dto.phoneNumber || dto.customerPhoneNumber) {
+      dto.phoneNumber = this.securityService.encrypt(
+        dto.phoneNumber ?? dto.customerPhoneNumber
+      );
+    }
+
+    if (dto.customerDetailAddress) {
+      dto.customerDetailAddress = this.securityService.encrypt(
+        dto.customerDetailAddress
+      );
+    }
+
+    if (dto.customerAddress) {
+      dto.customerAddress = this.securityService.encrypt(dto.customerAddress);
+    }
+  }
+
+  toUserDto(customer: CustomerEntity): UserDto {
     return {
       uuid: customer.uuid,
       name: customer.customerName,

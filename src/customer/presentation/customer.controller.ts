@@ -1,9 +1,9 @@
-import { CustomerService } from "../application/customer.service";
-import { Body, Controller, Get, Put } from "@nestjs/common";
-import { CustomerDto } from "./customer.dto";
-import { Customer } from "../../schemas/customer.entity";
-import { Auth, CurrentCustomer } from "../../auth/decorator/auth.decorator";
-import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { CustomerService } from '../application/customer.service';
+import { Body, Controller, Get, Put } from '@nestjs/common';
+import { CustomerDto } from './customer.dto';
+import { CustomerEntity } from '../../schemas/customer.entity';
+import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('고객 관련 API')
 @Controller('/v1/customer')
@@ -18,7 +18,7 @@ export class CustomerController {
   @Auth()
   @Get('my')
   async getMyCustomer(
-    @CurrentCustomer() customer: Customer,
+    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<Omit<CustomerDto, 'refreshToken' | 'accessToken'>> {
     return await this.customerService
       .findOne({ userId: customer.customerId }, true)
@@ -40,7 +40,7 @@ export class CustomerController {
   @Auth()
   @Put()
   async updateProfile(
-    @CurrentCustomer() customer: Customer,
+    @CurrentCustomer() customer: CustomerEntity,
     @Body() dto: CustomerDto,
   ): Promise<Omit<CustomerDto, 'refreshToken'>> {
     dto.userId = customer.customerId;

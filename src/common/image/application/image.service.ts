@@ -1,10 +1,9 @@
-import { Inject, Injectable, Logger } from "@nestjs/common";
-import { ImageDto, ImageMetaDataDto } from "../presentation/image.dto";
-import { ICloudStorage } from "../../cloud/cloud-storage.interface";
-import { Image } from "../../../schemas/image.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { PresignedUrlDto } from "../../cloud/aws/s3/presentation/presigned-url.dto";
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ImageDto, ImageMetaDataDto } from '../presentation/image.dto';
+import { ICloudStorage } from '../../cloud/cloud-storage.interface';
+import { PresignedUrlDto } from '../../cloud/aws/s3/presentation/presigned-url.dto';
+import { IImageRepository, IMAGE_REPOSITORY } from '../port/image.repository';
+import { Image } from '../image.domain';
 
 @Injectable()
 export class ImageService {
@@ -13,8 +12,8 @@ export class ImageService {
   constructor(
     @Inject('CloudStorageService')
     private readonly cloudStorageService: ICloudStorage,
-    @InjectRepository(Image)
-    private readonly imageRepository: Repository<Image>,
+    @Inject(IMAGE_REPOSITORY)
+    private readonly imageRepository: IImageRepository,
   ) {}
 
   async generatePreSignedUrls(
@@ -26,7 +25,7 @@ export class ImageService {
 
   async create(dto: Partial<ImageDto>): Promise<Image> {
     return this.imageRepository
-      .findOne({ where: { imageUrl: dto.imageUrl } })
+      .findOne(dto)
       .then((v) => {
         if (!v) {
           const newImage = this.imageRepository.create(dto);

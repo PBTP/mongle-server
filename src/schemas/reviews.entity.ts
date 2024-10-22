@@ -7,12 +7,12 @@ import {
   ManyToOne,
   PrimaryColumn,
   UpdateDateColumn
-} from "typeorm";
-import { Appointment } from "./appointments.entity";
-import { Business } from "./business.entity";
-import { Customer } from "./customer.entity";
-import { Pet } from "./pets.entity";
-import { HasUuid } from "../common/entity/parent.entity";
+} from 'typeorm';
+import { Appointment } from './appointments.entity';
+import { Business } from './business.entity';
+import { CustomerEntity } from './customer.entity';
+import { Pet } from './pets.entity';
+import { HasUuid } from '../common/entity/parent.entity';
 
 @Entity({ name: 'reviews' })
 export class Review extends HasUuid {
@@ -38,9 +38,9 @@ export class Review extends HasUuid {
   @JoinColumn({ name: 'appointment_id' })
   public appointment: Appointment;
 
-  @ManyToOne(() => Customer, (customers) => customers.reviews)
+  @ManyToOne(() => CustomerEntity, (customers) => customers.reviews)
   @JoinColumn({ name: 'customer_id' })
-  public customer: Customer;
+  public customer: CustomerEntity;
 
   @ManyToOne(() => Business, (business) => business.reviews)
   @JoinColumn({ name: 'business_id' })

@@ -7,18 +7,28 @@ import {
   Point,
   PrimaryGeneratedColumn,
   UpdateDateColumn
-} from "typeorm";
-import { Appointment } from "./appointments.entity";
-import { Favorite } from "./favorites.entity";
-import { Pet } from "./pets.entity";
-import { Review } from "./reviews.entity";
-import { CustomerChatRoom } from "./customer-chat-room.entity";
-import { HasUuid } from "../common/entity/parent.entity";
-import { AuthProvider } from "../auth/presentation/user.dto";
-import { Image } from "./image.entity";
+} from 'typeorm';
+import { Appointment } from './appointments.entity';
+import { Favorite } from './favorites.entity';
+import { Pet } from './pets.entity';
+import { Review } from './reviews.entity';
+import { CustomerChatRoom } from './customer-chat-room.entity';
+import { HasUuid } from '../common/entity/parent.entity';
+import { AuthProvider } from '../auth/presentation/user.dto';
+import { ImageEntity } from './image.entity';
+import { TCustomer } from '../customer/customer.domain';
+import { Builder } from 'builder-pattern';
+
+export interface UUIDHolder {
+  generatedUuid(): string;
+}
+
+export interface DateHolder {
+  now(): Date;
+}
 
 @Entity({ name: 'customers' })
-export class Customer extends HasUuid {
+export class CustomerEntity extends HasUuid implements TCustomer{
   @PrimaryGeneratedColumn()
   customerId: number;
 
@@ -73,5 +83,27 @@ export class Customer extends HasUuid {
   chatRooms: CustomerChatRoom[];
 
   // not column properties
-  profileImage?: Image;
+  profileImage?: ImageEntity;
+
+  static from(customer: TCustomer, uuidHolder:UUIDHolder, dateHolder: DateHolder): CustomerEntity {
+    return Builder<CustomerEntity>()
+      .customerId(customer.customerId)
+      .customerName(customer.customerName)
+      .customerPhoneNumber(customer.customerPhoneNumber)
+      .customerAddress(customer.customerAddress)
+      .customerDetailAddress(customer.customerDetailAddress)
+      .customerLocation(customer.customerLocation)
+      .authProvider(customer.authProvider)
+      .createdAt(dateHolder.now())
+      .modifiedAt(dateHolder.now())
+      .deletedAt(null)
+      .refreshToken(customer.refreshToken)
+      .favorites(customer.favorites)
+      .reviews(customer.reviews)
+      .appointments(customer.appointments)
+      .pets(customer.pets)
+      .chatRooms(customer.chatRooms)
+      .uuid(uuidHolder.generatedUuid())
+      .build()
+  }
 }

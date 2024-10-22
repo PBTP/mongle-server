@@ -1,26 +1,14 @@
 import { PetService } from '../application/pet.service';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { PetChecklistAnswerDto, PetChecklistDto, PetDto } from './pet.dto';
 import { Pet } from '../../schemas/pets.entity';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GroupValidation } from 'src/common/validation/validation.decorator';
 import { CrudGroup } from 'src/common/validation/validation.data';
-import { Customer } from 'src/schemas/customer.entity';
+import { CustomerEntity } from 'src/schemas/customer.entity';
 // eslint-disable-next-line prettier/prettier
-import { Auth, CurrentCustomer } from "src/auth/decorator/auth.decorator";
-import {
-  ChecklistType,
-  PetChecklistCategory,
-} from '../../schemas/pet-checklist.entity';
+import { Auth, CurrentCustomer } from 'src/auth/decorator/auth.decorator';
+import { ChecklistType, PetChecklistCategory } from '../../schemas/pet-checklist.entity';
 
 @ApiTags('반려동물 관련 API')
 @Controller('/v1/pet')
@@ -32,7 +20,7 @@ export class PetController {
   async getChecklist(
     @Query('category') category: PetChecklistCategory,
     @Query('type') type: ChecklistType,
-    @CurrentCustomer() customer: Customer,
+    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<PetChecklistDto[]> {
     return await this.petService.findCheckList(category, type, null, customer);
   }
@@ -43,7 +31,7 @@ export class PetController {
     @Param('petId') petId: number,
     @Query('category') category: PetChecklistCategory,
     @Query('type') type: ChecklistType,
-    @CurrentCustomer() customer: Customer,
+    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<PetChecklistDto[]> {
     return await this.petService.findCheckList(category, type, petId, customer);
   }
@@ -62,7 +50,7 @@ export class PetController {
   async answerChecklist(
     @Param('petId') petId: number,
     @Body() dto: PetChecklistAnswerDto[],
-    @CurrentCustomer() customer: Customer,
+    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<PetChecklistAnswerDto[]> {
     return await this.petService
       .answerChecklist(petId, dto, customer)
@@ -79,7 +67,7 @@ export class PetController {
   @Auth()
   async create(
     @Body() dto: PetDto,
-    @CurrentCustomer() customer: Customer,
+    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<Pet> {
     return await this.petService.create(dto, customer);
   }
@@ -91,7 +79,7 @@ export class PetController {
   @Auth()
   @ApiOkResponse({ type: PetDto, description: '반려동물 정보 조회 성공' })
   @Get('/my')
-  async getAll(@CurrentCustomer() customer: Customer): Promise<Pet[]> {
+  async getAll(@CurrentCustomer() customer: CustomerEntity): Promise<Pet[]> {
     return await this.petService.findAll(customer);
   }
 
@@ -104,7 +92,7 @@ export class PetController {
   @GroupValidation([CrudGroup.read])
   async getOne(
     @Param('id') id: number,
-    @CurrentCustomer() customer: Customer,
+    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<Pet> {
     return await this.petService.findOne(id, customer);
   }
@@ -119,7 +107,7 @@ export class PetController {
   async update(
     @Param('id') id: number,
     @Body() dto: Omit<PetDto, 'petId'>,
-    @CurrentCustomer() customer: Customer,
+    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<Pet> {
     return await this.petService.update(id, dto, customer);
   }
@@ -133,7 +121,7 @@ export class PetController {
   @GroupValidation([CrudGroup.delete])
   async delete(
     @Param('id') id: number,
-    @CurrentCustomer() customer: Customer,
+    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<void> {
     return await this.petService.delete(id, customer);
   }
