@@ -29,7 +29,7 @@ const appModules = [
   }),
   TypeOrmModule.forRootAsync({
     useFactory: async (configService: ConfigService) => {
-      const datasource = JSON.parse(configService.get('datasource/db'));
+      const datasource = JSON.parse(<string>configService.get('datasource/db'));
 
       return {
         type: 'postgres',
@@ -48,7 +48,9 @@ const appModules = [
   }),
   RedisModule.forRootAsync({
     useFactory: async (configService: ConfigService) => {
-      const datasource = JSON.parse(configService.get('datasource/redis'));
+      const datasource = JSON.parse(
+        <string>configService.get('datasource/redis'),
+      );
       return {
         config: datasource,
         readyLog: true,

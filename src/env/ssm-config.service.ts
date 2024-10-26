@@ -17,35 +17,43 @@ export default class SSMConfigService {
   private readonly prefix: string = `/mgmg/server/${process.env.NODE_ENV}/`;
 
   constructor(private readonly configService: ConfigService) {
+    const region = this.configService.get('AWS_REGION');
+    const accessKeyId = this.configService.get('AWS_IAM_ACCESS_KEY_ID');
+    const secretAccessKey = this.configService.get('AWS_IAM_SECRET_ACCESS_KEY');
+
+    if (!region || !accessKeyId || !secretAccessKey) {
+      throw new Error('AWS Config is not set');
+    }
+
     this.ssmClientConfig = {
-      region: this.configService.get('AWS_REGION'),
+      region: region,
       credentials: {
-        accessKeyId: this.configService.get('AWS_IAM_ACCESS_KEY_ID'),
-        secretAccessKey: this.configService.get('AWS_IAM_SECRET_ACCESS_KEY'),
+        accessKeyId: accessKeyId,
+        secretAccessKey: secretAccessKey,
       },
     };
 
     this.ssmClient = new SSMClient(this.ssmClientConfig);
   }
 
-  async initEnvironmentValues(): Promise<void> {
-    const parameters = await this.ssmClient
-      .send(
-        new GetParametersByPathCommand({
-          Path: this.prefix,
-        }),
-      )
-      .then((v) => {
-        return v.Parameters;
-      });
+  // async initEnvironmentValues(): Promise<void> {
+  //   const parameters = await this.ssmClient
+  //     .send(
+  //       new GetParametersByPathCommand({
+  //         Path: this.prefix,
+  //       }),
+  //     )
+  //     .then((v) => {
+  //       return v.Parameters;
+  //     });
+  //
+  //   for (const parameter of parameters) {
+  //     const split: string[] = parameter.Name.split('/');
+  //     this.configService.set(split[split.length - 1], parameter.Value);
+  //   }
+  // }
 
-    for (const parameter of parameters) {
-      const split: string[] = parameter.Name.split('/');
-      this.configService.set(split[split.length - 1], parameter.Value);
-    }
-  }
-
-  async getParameter(parameterName: string): Promise<string> {
+  async getParameter(parameterName: string): Promise<string | undefined> {
     const value = this.configService.get(parameterName);
     if (value) {
       return value;
@@ -59,7 +67,7 @@ export default class SSMConfigService {
     return this.ssmClient
       .send(new GetParameterCommand(params))
       .then((response) => {
-        return response.Parameter.Value;
+        return response?.Parameter?.Value;
       })
       .catch((error) => {
         this.logger.error(error);
@@ -75,15 +83,22 @@ export default class SSMConfigService {
 
 export const loadParameterStoreValue = async () => {
   const regex = /\/mgmg\/server\/[^/]*\//;
-  const nodeEnv = process.env.NODE_ENV;
   let nextToken: string | undefined;
   const parameters: Parameter[] = [];
 
+  const region = process.env.AWS_REGION;
+  const nodeEnv = process.env.NODE_ENV;
+  const accessKeyId = process.env.AWS_IAM_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.AWS_IAM_SECRET_ACCESS_KEY;
+
+  if (!region || !accessKeyId || !secretAccessKey) {
+    throw new Error('AWS Config is not set');
+  }
   const ssmClient = new SSMClient({
-    region: process.env.AWS_REGION,
+    region: region,
     credentials: {
-      accessKeyId: process.env.AWS_IAM_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_IAM_SECRET_ACCESS_KEY,
+      accessKeyId: accessKeyId,
+      secretAccessKey: secretAccessKey,
     },
   });
 
@@ -98,7 +113,7 @@ export const loadParameterStoreValue = async () => {
       }),
     );
 
-    parameters.push(...response.Parameters);
+    parameters.push(...response.Parameters!);
     nextToken = response.NextToken;
   } while (nextToken);
 
@@ -111,12 +126,12 @@ export const loadParameterStoreValue = async () => {
       return 3;
     };
 
-    return getWeight(b.Name) - getWeight(a.Name);
+    return getWeight(b!.Name!) - getWeight(a.Name!);
   });
 
   for (const parameter of parameters) {
     const name = parameter.Name;
-    const key = name.replace(regex, '');
+    const key = name!.replace(regex, '');
 
     key.indexOf('/') === 0
       ? (process.env[key.substring(1)] = parameter.Value)

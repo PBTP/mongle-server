@@ -59,4 +59,8 @@ export class UserDto {
     description: '사용자 이름입니다.',
   })
   name?: string;
+
+  customerId?: number;
+  driverId?: number;
+  businessId?: number;
 }

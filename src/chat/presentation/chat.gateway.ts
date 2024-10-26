@@ -42,7 +42,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     this.logger.log(`Client connected: ${client.id}`);
 
     try {
-      const token = client.handshake.headers?.authorization ?? client.handshake.auth?.authorization;
+      const token =
+        client.handshake.headers?.authorization ??
+        client.handshake.auth?.authorization;
       const user = await this.authService.getUser(
         token?.replace('Bearer ', ''),
       );
@@ -53,6 +55,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
         userId: user.customerId,
         userType: user.userType ?? 'customer',
       };
+
+      this.getUser(client);
 
       await this.chatService.getUserChatRoomIds(client).then((v) => {
         v.forEach((chatRoomId) => {
@@ -87,8 +91,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       throw new NotFoundException(`Room ${dto.chatRoomId} not found`);
     }
 
+    const user = client.user;
     const userChatRoomExsits = await this.chatService.exitsUserChatRoom(
-      client.user,
+      user,
       dto.chatRoomId,
     );
 
@@ -142,7 +147,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   getUser(client: UserSocket): UserDto {
     const user = client.user;
     if (!user) {
-      throw new UnauthorizedException('Unauthorized user');
+      throw new UnauthorizedException('유저 정보가 없습니다.');
     }
 
     return user;

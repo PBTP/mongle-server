@@ -16,15 +16,15 @@ export class LoggerService extends ConsoleLogger {
     super();
   }
 
-  debug(message: any, ...optionalParams: any[]) {
+  override debug(message: any, ...optionalParams: any[]) {
     super.debug(`🐛 ${message}`, ...optionalParams);
   }
 
-  log(message: any, ...optionalParams: any[]) {
+  override log(message: any, ...optionalParams: any[]) {
     super.log(`🪵 ${message}`, ...optionalParams);
   }
 
-  warn(message: any, ...optionalParams: any[]) {
+  override warn(message: any, ...optionalParams: any[]) {
     super.warn(`⚠️ ${message}`, ...optionalParams);
 
     this.cacheCheck('warn', message) &&
@@ -35,7 +35,7 @@ export class LoggerService extends ConsoleLogger {
       );
   }
 
-  error(message: any, ...optionalParams: any[]) {
+  override error(message: any, ...optionalParams: any[]) {
     super.error(`💥 ${message}`, ...optionalParams);
 
     this.cacheCheck('error', message) &&
@@ -62,8 +62,8 @@ export class LoggerService extends ConsoleLogger {
     const cacheKey = `${logLevel}:${message}`;
     const now = Date.now();
 
-    if (this.logCache.has(cacheKey)) {
-      const lastSent = this.logCache.get(cacheKey);
+    const lastSent = this.logCache.get(cacheKey);
+    if (lastSent) {
       if (now - lastSent < this.cacheDuration) {
         // 동일한 메시지가 캐시 지속 시간 내에 이미 전송된 경우 전송 생략
         return false;

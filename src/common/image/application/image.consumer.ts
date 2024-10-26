@@ -1,13 +1,14 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { SqsConsumerEventHandler, SqsMessageHandler } from "@ssut/nestjs-sqs";
-import { Message } from "aws-sdk/clients/sqs";
-import { S3EventDetailDto } from "../../cloud/aws/sqs/presentation/s3-image-created-event-message.dto";
-import { ImageService } from "./image.service";
-import { Image } from "../../../schemas/image.entity";
-import { validateOrReject as validation } from "class-validator";
-import { ConfigService } from "@nestjs/config";
-import { SQS } from "aws-sdk";
-import { toDto } from "../../function/util.function";
+import { Injectable, Logger } from '@nestjs/common';
+import { SqsConsumerEventHandler, SqsMessageHandler } from '@ssut/nestjs-sqs';
+import { Message } from 'aws-sdk/clients/sqs';
+import { S3EventDetailDto } from '../../cloud/aws/sqs/presentation/s3-image-created-event-message.dto';
+import { ImageService } from './image.service';
+import { Image } from '../../../schemas/image.entity';
+import { validateOrReject as validation } from 'class-validator';
+import { ConfigService } from '@nestjs/config';
+import { SQS } from 'aws-sdk';
+import { toDto } from '../../function/util.function';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 export const sqsName = {
   s3ImageCreated: 's3-image-object-created',
@@ -16,20 +17,22 @@ export const sqsName = {
 @Injectable()
 export class ImageConsumer {
   private readonly logger: Logger = new Logger(ImageConsumer.name);
-  private readonly sqs: SQS = new SQS({
-    region: this.configService.get<string>('AWS_REGION'),
-    credentials: {
-      accessKeyId: this.configService.get<string>('AWS_IAM_ACCESS_KEY_ID'),
-      secretAccessKey: this.configService.get<string>(
-        'AWS_IAM_SECRET_ACCESS_KEY',
-      ),
-    },
-  });
+  private readonly sqs: SQS;
 
   constructor(
     private readonly imageService: ImageService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.sqs = new SQS({
+      region: this.configService.get<string>('AWS_REGION'),
+      credentials: {
+        accessKeyId: this.configService.get<string>('AWS_IAM_ACCESS_KEY_ID')!,
+        secretAccessKey: this.configService.get<string>(
+          'AWS_IAM_SECRET_ACCESS_KEY',
+        )!,
+      },
+    });
+  }
 
   @SqsMessageHandler(sqsName.s3ImageCreated, false)
   public async consumeMessage(message: Message): Promise<Image> {
@@ -37,14 +40,23 @@ export class ImageConsumer {
 
     if (!message.Body) {
       this.logger.warn(`Message body is empty`);
-      return;
+      throw new BadRequestException('Message body is empty');
     }
 
     const s3Event = toDto(S3EventDetailDto, JSON.parse(message.Body));
     await validation(s3Event);
 
     const imageKey = s3Event.detail.object.key;
-    const uuid = imageKey.match(/images\/([^/]+)\//)[1];
+    const match = imageKey.match(/images\/([^/]+)\//);
+
+    if (!match) {
+      this.logger.warn(`Image key does not match the expected pattern`);
+      throw new BadRequestException(
+        'Image key does not match the expected pattern',
+      );
+    }
+
+    const uuid = match[1];
 
     return await this.imageService
       .create({
@@ -61,8 +73,8 @@ export class ImageConsumer {
   private deleteMessage(queueName: string, message: SQS.Message) {
     this.sqs.deleteMessage(
       {
-        QueueUrl: this.configService.get<string>(`sqs/url/${queueName}`),
-        ReceiptHandle: message.ReceiptHandle,
+        QueueUrl: <string>this.configService.get(`sqs/url/${queueName}`),
+        ReceiptHandle: message.ReceiptHandle!,
       },
       (err, data) => {
         if (err) {

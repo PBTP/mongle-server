@@ -1,9 +1,10 @@
-import { CustomerService } from "../application/customer.service";
-import { Body, Controller, Get, Put } from "@nestjs/common";
-import { CustomerDto } from "./customer.dto";
-import { Customer } from "../../schemas/customer.entity";
-import { Auth, CurrentCustomer } from "../../auth/decorator/auth.decorator";
-import { ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { CustomerService } from '../application/customer.service';
+import { Body, Controller, Get, Put } from '@nestjs/common';
+import { CustomerDto } from './customer.dto';
+import { Customer } from '../../schemas/customer.entity';
+import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
+import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Builder } from 'builder-pattern';
 
 @ApiTags('고객 관련 API')
 @Controller('/v1/customer')
@@ -23,12 +24,20 @@ export class CustomerController {
     return await this.customerService
       .findOne({ userId: customer.customerId }, true)
       .then((v) => {
-        delete v['accessToken'];
-        delete v['refreshToken'];
-        return {
-          ...v,
-          profileImageUrl: v?.profileImage?.imageUrl,
-        };
+        return Builder<CustomerDto>()
+          .uuid(v.uuid)
+          .userType('customer')
+          .userId(v.customerId)
+          .name(v.customerName)
+          .customerId(v.customerId)
+          .customerName(v.customerName)
+          .customerPhoneNumber(v.customerPhoneNumber)
+          .customerLocation(v.customerLocation)
+          .customerAddress(v.customerAddress)
+          .customerDetailAddress(v.customerDetailAddress)
+          .authProvider(v.authProvider)
+          .profileImageUrl(v?.profileImage?.imageUrl)
+          .build();
       });
   }
 

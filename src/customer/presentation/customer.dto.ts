@@ -1,9 +1,17 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, Length, Matches, ValidateNested } from "class-validator";
-import { Point } from "typeorm";
-import { ApiProperty } from "@nestjs/swagger";
-import { AuthDto } from "../../auth/presentation/auth.dto";
-import { AuthProvider } from "../../auth/presentation/user.dto";
-import { PresignedUrlDto } from "../../common/cloud/aws/s3/presentation/presigned-url.dto";
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  Length,
+  Matches,
+  ValidateNested,
+} from 'class-validator';
+import { Point } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+import { AuthDto } from '../../auth/presentation/auth.dto';
+import { AuthProvider } from '../../auth/presentation/user.dto';
+import { PresignedUrlDto } from '../../common/cloud/aws/s3/presentation/presigned-url.dto';
 
 export class CustomerDto extends AuthDto {
   @ApiProperty({
@@ -13,7 +21,7 @@ export class CustomerDto extends AuthDto {
   })
   @IsNumber()
   @IsOptional()
-  customerId?: number;
+  override customerId?: number;
 
   @ApiProperty({
     description: 'ResourceServer에서 제공한 유저 식별자',
@@ -22,7 +30,7 @@ export class CustomerDto extends AuthDto {
   })
   @IsNotEmpty()
   @Length(1, 44)
-  uuid: string;
+  override uuid: string;
 
   @ApiProperty({
     description: '고객 이름',
@@ -76,7 +84,7 @@ export class CustomerDto extends AuthDto {
   })
   @IsNotEmpty()
   @IsEnum(AuthProvider)
-  authProvider: AuthProvider;
+  override authProvider: AuthProvider;
 
   @ApiProperty({
     description: '프로필 이미지 URL',

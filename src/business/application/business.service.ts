@@ -5,6 +5,7 @@ import { IUserService } from '../../auth/user.interface';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
 import { Business } from '../../schemas/business.entity';
 import { AuthDto } from '../../auth/presentation/auth.dto';
+import { Builder } from 'builder-pattern';
 
 @Injectable()
 export class BusinessService implements IUserService {
@@ -17,21 +18,21 @@ export class BusinessService implements IUserService {
   ) {}
 
   async findOne(dto: Partial<AuthDto>): Promise<Business> {
-    const where = {};
-
-    dto.userId && (where['businessId'] = dto.userId ?? dto['businessId']);
-    dto.uuid && (where['uuid'] = dto.uuid);
-
-    return await this.businessRepository.findOne({
-      where: where,
+    return await this.businessRepository.findOneOrFail({
+      where: {
+        businessId: dto.userId,
+        uuid: dto.uuid,
+      },
     });
   }
 
   async create(dto: UserDto): Promise<Business> {
     const business = new Business();
-    business.uuid = dto.uuid;
-    business.businessName = dto.name;
-    business.authProvider = dto.authProvider;
+    Builder<Business>()
+      .uuid(dto.uuid!)
+      .businessName(dto.name!)
+      .authProvider(dto.authProvider!)
+      .build();
 
     return await this.businessRepository
       .save(this.businessRepository.create(business))
@@ -45,13 +46,12 @@ export class BusinessService implements IUserService {
 
   async update(dto: AuthDto): Promise<Business> {
     return this.findOne(dto).then(async (business) => {
-      if (business) {
-        business.businessName = dto.name;
-        business.businessPhoneNumber = dto.phoneNumber;
-        business.refreshToken = dto.refreshToken ?? business.refreshToken;
+      business.businessName = dto.name ?? business.businessName;
+      business.businessPhoneNumber =
+        dto.phoneNumber ?? business.businessPhoneNumber;
+      business.refreshToken = dto.refreshToken ?? business.refreshToken;
 
-        return await this.businessRepository.save(business);
-      }
+      return await this.businessRepository.save(business);
     });
   }
 

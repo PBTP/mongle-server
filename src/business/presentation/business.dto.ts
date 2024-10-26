@@ -21,7 +21,7 @@ export class BusinessDto extends AuthDto {
   @IsNumber()
   @IsOptional()
   @ValidateIf((o) => !o.uuid, { groups: CRUD })
-  businessId?: number;
+  override businessId?: number;
 
   @ApiProperty({
     description: 'ResourceServer에서 제공한 업체 식별자',
@@ -32,7 +32,7 @@ export class BusinessDto extends AuthDto {
   @IsNotEmpty({ groups: CRUD })
   @IsOptional()
   @ValidateIf((o) => !o.businessId, { groups: CRUD })
-  uuid: string;
+  override uuid: string;
 
   @ApiProperty({
     description: '업체 이름',
@@ -96,5 +96,5 @@ export class BusinessDto extends AuthDto {
   @IsNotEmpty()
   @IsOptional()
   @IsEnum(AuthProvider, { groups: [UserGroup.login] })
-  authProvider: AuthProvider;
+  override authProvider: AuthProvider;
 }

@@ -54,6 +54,7 @@ export class ChatMessageDto {
     required: true,
     nullable: false,
   })
+  @IsOptional()
   @IsNotEmpty()
   user: UserDto;
 
