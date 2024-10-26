@@ -14,7 +14,7 @@ export class SystemAlarmService {
 
   constructor(private readonly configService: ConfigService) {
     this.logAlarmInfo = JSON.parse(
-      configService.get<string>('system/alarm'),
+      <string>configService.get('system/alarm'),
     ) as Channel;
   }
 
@@ -23,11 +23,13 @@ export class SystemAlarmService {
       (v) => v.channel === channelName,
     );
 
-    await axios.post(channel.url, { content: message }).catch((error) => {
-      this.logger.error(
-        `Error sending message to ${this.logAlarmInfo.provider}:`,
-        error,
-      );
-    });
+    if (channel) {
+      await axios.post(channel.url, { content: message }).catch((error) => {
+        this.logger.error(
+          `Error sending message to ${this.logAlarmInfo.provider}:`,
+          error,
+        );
+      });
+    }
   }
 }

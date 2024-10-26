@@ -23,14 +23,12 @@ export class DriverService implements IUserService {
   }
 
   async findOne(dto: Partial<AuthDto>): Promise<Driver> {
-    const where = {};
-
-    dto.userId && (where['driverId'] = dto.userId);
-    dto.uuid && (where['uuid'] = dto.uuid);
-    dto.refreshToken && (where['refreshToken'] = dto.refreshToken);
-
-    return await this.driverRepository.findOne({
-      where: where,
+    return await this.driverRepository.findOneOrFail({
+      where: {
+        driverId: dto.userId,
+        uuid: dto.uuid,
+        refreshToken: dto.refreshToken,
+      },
     });
   }
 
@@ -47,13 +45,15 @@ export class DriverService implements IUserService {
 
   async update(dto: AuthDto): Promise<Driver> {
     return this.findOne(dto).then(async (driver) => {
-      if (driver) {
+      if (dto.name) {
         driver.driverName = dto.name;
-        driver.driverPhoneNumber = dto.phoneNumber;
-        driver.refreshToken = dto.refreshToken ?? driver.refreshToken;
-
-        return await this.driverRepository.save(driver);
       }
+      if (dto.phoneNumber) {
+        driver.driverPhoneNumber = dto.phoneNumber;
+      }
+      driver.refreshToken = dto.refreshToken ?? driver.refreshToken;
+
+      return await this.driverRepository.save(driver);
     });
   }
 

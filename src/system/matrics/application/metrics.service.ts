@@ -1,5 +1,5 @@
-import { Injectable, OnModuleInit } from "@nestjs/common";
-import { Counter, Histogram, register } from "prom-client";
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Counter, Histogram, register } from 'prom-client';
 
 @Injectable()
 export class MetricsService implements OnModuleInit {
@@ -63,17 +63,17 @@ export class MetricsService implements OnModuleInit {
 
   // 성공 시에 시간재기
   startSuccessTimer(labels: Record<string, string>): () => void {
-    return this.requestSuccessHistogram.startTimer(labels);
+    return this.requestSuccessHistogram!.startTimer(labels);
   }
 
   // 실패시에 시간재기
   startFailTimer(labels: Record<string, string>): () => void {
-    return this.requestFailHistogram.startTimer(labels);
+    return this.requestFailHistogram!.startTimer(labels);
   }
 
   // 실패 횟수 상승시키기
   incrementFailureCounter(labels: Record<string, string>) {
-    this.failureCounter.labels(labels).inc(1);
+    this.failureCounter!.labels(labels).inc(1);
   }
 
   // metrics 수집한거 등록하기

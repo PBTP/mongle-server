@@ -154,13 +154,13 @@ export class PetChecklistDto {
     description: '체크리스트 선택지입니다.',
     required: false,
   })
-  petChecklistChoices: PetChecklistChoiceDto[];
+  petChecklistChoices: PetChecklistChoiceDto[] | null;
 
   @ApiProperty({
     description: '체크리스트 답변입니다.',
     required: false,
   })
-  petChecklistAnswer: string;
+  petChecklistAnswer?: string | null;
 }
 
 export class PetChecklistAnswerDto {

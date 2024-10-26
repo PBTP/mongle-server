@@ -1,11 +1,11 @@
-import { Injectable, Logger } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { BusinessChatRoom } from "../../schemas/business-chat-room.entity";
-import { IChatService } from "./chat.interface";
-import { UserDto } from "../../auth/presentation/user.dto";
-import { ChatRoomDto } from "../presentation/chat.dto";
-import { toDto } from "../../common/function/util.function";
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { BusinessChatRoom } from '../../schemas/business-chat-room.entity';
+import { IChatService } from './chat.interface';
+import { UserDto } from '../../auth/presentation/user.dto';
+import { ChatRoomDto } from '../presentation/chat.dto';
+import { toDto } from '../../common/function/util.function';
 
 @Injectable()
 export class BusinessChatService implements IChatService {
@@ -40,7 +40,7 @@ export class BusinessChatService implements IChatService {
     businessId: number,
     chatRoomId: number,
   ): Promise<BusinessChatRoom> {
-    return await this.businessChatRoomRepository.findOne({
+    return await this.businessChatRoomRepository.findOneOrFail({
       where: { businessId, chatRoomId },
     });
   }

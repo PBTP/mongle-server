@@ -24,11 +24,11 @@ export class TestService {
       })
       .then((customer) => {
         return Builder<UserDto>()
-          .userId(customer.customerId)
+          .userId(customer!.customerId)
           .userType('customer')
-          .uuid(customer.uuid)
-          .name(customer.customerName)
-          .authProvider(customer.authProvider)
+          .uuid(customer!.uuid)
+          .name(customer!.customerName)
+          .authProvider(customer!.authProvider)
           .build();
       });
   }

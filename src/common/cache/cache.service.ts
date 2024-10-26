@@ -11,11 +11,11 @@ export class CacheService {
     this.redis = this.redisService.getClient();
   }
 
-  async get(key: string): Promise<string> {
+  async get(key: string): Promise<string | null> {
     return this.redis.get(`${this.prefix}${key}`);
   }
 
-  async getData<T>(key: string): Promise<T> {
+  async getData<T>(key: string): Promise<T | undefined> {
     const obj = await this.redis.get(`${this.prefix}${key}`);
     return obj ? (JSON.parse(obj) as T) : undefined;
   }

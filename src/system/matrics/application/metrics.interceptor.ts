@@ -1,7 +1,13 @@
-import { MetricsService } from "./metrics.service";
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, OnModuleInit } from "@nestjs/common";
-import { Counter, Gauge, Histogram } from "prom-client";
-import { catchError, Observable, tap } from "rxjs";
+import { MetricsService } from './metrics.service';
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+  OnModuleInit,
+} from '@nestjs/common';
+import { Counter, Gauge, Histogram } from 'prom-client';
+import { catchError, Observable, tap } from 'rxjs';
 
 @Injectable()
 export class MetricsInterceptor implements NestInterceptor, OnModuleInit {
@@ -84,10 +90,9 @@ export class MetricsInterceptor implements NestInterceptor, OnModuleInit {
     };
 
     try {
-      const requestSuccessTimer =
-        this.requestSuccessHistogram.startTimer(labels);
+      this.requestSuccessHistogram.startTimer(labels);
+      this.requestFailHistogram.startTimer(labels);
 
-      const requestFailTimer = this.requestFailHistogram.startTimer(labels);
       return next.handle().pipe(
         tap(() => {
           if (this.isAvailableMetricsUrl(originUrl)) {
@@ -102,6 +107,8 @@ export class MetricsInterceptor implements NestInterceptor, OnModuleInit {
           throw err;
         }),
       );
-    } catch (error) {}
+    } catch (error) {
+      return next.handle();
+    }
   }
 }

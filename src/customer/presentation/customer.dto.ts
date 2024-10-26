@@ -21,7 +21,7 @@ export class CustomerDto extends AuthDto {
   })
   @IsNumber()
   @IsOptional()
-  customerId?: number;
+  override customerId?: number;
 
   @ApiProperty({
     description: 'ResourceServer에서 제공한 유저 식별자',
@@ -30,7 +30,7 @@ export class CustomerDto extends AuthDto {
   })
   @IsNotEmpty()
   @Length(1, 44)
-  uuid: string;
+  override uuid: string;
 
   @ApiProperty({
     description: '고객 이름',
@@ -84,7 +84,7 @@ export class CustomerDto extends AuthDto {
   })
   @IsNotEmpty()
   @IsEnum(AuthProvider)
-  authProvider: AuthProvider;
+  override authProvider: AuthProvider;
 
   @ApiProperty({
     description: '프로필 이미지 URL',

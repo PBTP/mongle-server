@@ -1,11 +1,24 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Pet } from '../../schemas/pets.entity';
 import { Breed } from '../../schemas/breed.entity';
-import { CustomerEntity } from '../../schemas/customer.entity';
-import { PetChecklistAnswerDto, PetChecklistChoiceDto, PetChecklistDto, PetDto } from '../presentation/pet.dto';
-import { ChecklistType, PetChecklist, PetChecklistCategory } from '../../schemas/pet-checklist.entity';
+import { Customer } from '../../schemas/customer.entity';
+import {
+  PetChecklistAnswerDto,
+  PetChecklistChoiceDto,
+  PetChecklistDto,
+  PetDto,
+} from '../presentation/pet.dto';
+import {
+  ChecklistType,
+  PetChecklist,
+  PetChecklistCategory,
+} from '../../schemas/pet-checklist.entity';
 import { PetChecklistChoice } from '../../schemas/pet-checklist-chocie.entity';
 import { PetChecklistAnswer } from '../../schemas/pet-checklist-answer.entity';
 import { PetChecklistChoiceAnswer } from '../../schemas/pet-checklist-chocie-answer.entity';
@@ -29,7 +42,7 @@ export class PetService {
     private breedRepository: Repository<Breed>,
   ) {}
 
-  async create(dto: PetDto, customer: CustomerEntity): Promise<Pet> {
+  async create(dto: PetDto, customer: Customer): Promise<Pet> {
     const breed = await this.breedRepository.findOneOrFail({
       where: { breedId: dto.breedId },
     });
@@ -47,13 +60,13 @@ export class PetService {
     return await this.petRepository.save(newPet);
   }
 
-  async findAll(customer: CustomerEntity): Promise<Pet[]> {
+  async findAll(customer: Customer): Promise<Pet[]> {
     return await this.petRepository.find({
       where: { customer: { customerId: customer.customerId } },
       relations: ['breed'],
     });
   }
-  async findOne(id: number, customer: CustomerEntity): Promise<Pet> {
+  async findOne(id: number, customer: Customer): Promise<Pet> {
     const pet = await this.petRepository.findOneOrFail({
       where: { petId: id },
       relations: ['breed', 'customer'],
@@ -69,7 +82,7 @@ export class PetService {
   async update(
     id: number,
     dto: Partial<PetDto>,
-    customer: CustomerEntity,
+    customer: Customer,
   ): Promise<Pet> {
     const pet = await this.findOne(id, customer);
 
@@ -90,7 +103,7 @@ export class PetService {
     return await this.petRepository.save(pet);
   }
 
-  async delete(id: number, customer: CustomerEntity): Promise<void> {
+  async delete(id: number, customer: Customer): Promise<void> {
     const pet = await this.findOne(id, customer);
 
     await this.petRepository.softDelete(pet.petId);
@@ -99,8 +112,8 @@ export class PetService {
   async findCheckList(
     category: PetChecklistCategory,
     type: ChecklistType,
-    petId: number,
-    customer: CustomerEntity,
+    petId: number | null,
+    customer: Customer,
   ): Promise<PetChecklistDto[]> {
     let query = this.petChecklistRepository
       .createQueryBuilder('PC')
@@ -175,7 +188,7 @@ export class PetService {
   async answerChecklist(
     petId: number,
     dto: PetChecklistAnswerDto[],
-    customer: CustomerEntity,
+    customer: Customer,
   ) {
     const pet = await this.findOne(petId, customer);
 
@@ -189,17 +202,17 @@ export class PetService {
       const answer = dto.find((d) => d.petChecklistId === v.petChecklistId);
 
       if (v.petChecklistType === ChecklistType.ANSWER) {
-        if (!answer.petChecklistAnswer) {
+        if (!answer?.petChecklistAnswer) {
           throw new BadRequestException('답변을 적어주세요');
         }
 
         await this.petChecklistAnswerRepository.save({
           pet,
           petChecklistId: v.petChecklistId,
-          petChecklistAnswer: answer.petChecklistAnswer,
+          petChecklistAnswer: answer?.petChecklistAnswer,
         });
       } else {
-        if (!answer.petChecklistChoiceId || answer.checked == undefined) {
+        if (!answer?.petChecklistChoiceId) {
           throw new BadRequestException('선택지를 선택해주세요');
         }
 
