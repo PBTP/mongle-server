@@ -1,17 +1,18 @@
-import { Injectable } from "@nestjs/common";
-import { S3 } from "aws-sdk";
-import { ConfigService } from "@nestjs/config";
-import { BadRequestException } from "@nestjs/common/exceptions";
-import { ICloudStorage } from "../../../cloud-storage.interface";
-import { ImageMetaDataDto } from "../../../../image/presentation/image.dto";
-import { PresignedUrlDto } from "../presentation/presigned-url.dto";
+import { Injectable } from '@nestjs/common';
+import { S3 } from 'aws-sdk';
+import { ConfigService } from '@nestjs/config';
+import { BadRequestException } from '@nestjs/common/exceptions';
+import { ICloudStorage } from '../../../cloud-storage.interface';
+import { ImageMetaDataDto } from '../../../../image/presentation/image.dto';
+import { PresignedUrlDto } from '../presentation/presigned-url.dto';
 
 @Injectable()
 export class S3Service implements ICloudStorage {
   private readonly s3Client: S3;
-  private readonly bucketName: string =
-    this.configService.get('s3/bucket_name');
-  private readonly env: string = this.configService.get('NODE_ENV');
+  private readonly bucketName: string = <string>(
+    this.configService.get('s3/bucket_name')
+  );
+  private readonly env: string = <string>this.configService.get('NODE_ENV');
   private readonly supportExtensions: string[] = [
     'png',
     'jpg',

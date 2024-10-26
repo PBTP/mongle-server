@@ -112,7 +112,7 @@ export class PetService {
   async findCheckList(
     category: PetChecklistCategory,
     type: ChecklistType,
-    petId: number,
+    petId: number | null,
     customer: Customer,
   ): Promise<PetChecklistDto[]> {
     let query = this.petChecklistRepository
@@ -202,17 +202,17 @@ export class PetService {
       const answer = dto.find((d) => d.petChecklistId === v.petChecklistId);
 
       if (v.petChecklistType === ChecklistType.ANSWER) {
-        if (!answer.petChecklistAnswer) {
+        if (!answer?.petChecklistAnswer) {
           throw new BadRequestException('답변을 적어주세요');
         }
 
         await this.petChecklistAnswerRepository.save({
           pet,
           petChecklistId: v.petChecklistId,
-          petChecklistAnswer: answer.petChecklistAnswer,
+          petChecklistAnswer: answer?.petChecklistAnswer,
         });
       } else {
-        if (!answer.petChecklistChoiceId || answer.checked == undefined) {
+        if (!answer?.petChecklistChoiceId) {
           throw new BadRequestException('선택지를 선택해주세요');
         }
 

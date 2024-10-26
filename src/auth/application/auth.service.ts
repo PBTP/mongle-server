@@ -1,17 +1,18 @@
-import { Injectable } from "@nestjs/common";
-import { JwtService, JwtSignOptions } from "@nestjs/jwt";
-import { ConfigService } from "@nestjs/config";
-import { CacheService } from "../../common/cache/cache.service";
-import { UnauthorizedException } from "@nestjs/common/exceptions";
-import { UserService } from "./user.service";
-import { UserDto } from "../presentation/user.dto";
-import { AuthDto } from "../presentation/auth.dto";
+import { Injectable, Logger } from '@nestjs/common';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { CacheService } from '../../common/cache/cache.service';
+import { UnauthorizedException } from '@nestjs/common/exceptions';
+import { UserService } from './user.service';
+import { UserDto } from '../presentation/user.dto';
+import { AuthDto } from '../presentation/auth.dto';
 
 @Injectable()
 export class AuthService {
   private readonly accessTokenOption: JwtSignOptions;
   private readonly refreshTokenOption: JwtSignOptions;
   private readonly accessTokenStrategy: string;
+  private readonly logger = new Logger(AuthService.name);
 
   constructor(
     private readonly jwtService: JwtService,
@@ -29,17 +30,24 @@ export class AuthService {
       expiresIn: this.configService.get<number>('jwt/refresh/expire'),
     };
 
-    this.accessTokenStrategy = this.configService.get<string>(
-      'jwt/access/strategy',
+    this.accessTokenStrategy = <string>(
+      this.configService.get('jwt/access/strategy')
     );
   }
 
   async login(dto: UserDto): Promise<AuthDto> {
     let user: UserDto = await this.userService.findOne(dto);
     user = user ?? (await this.userService.create(dto));
+    user.userId = user.customerId ?? user.driverId ?? user.businessId;
 
-    user.userId = user['customerId'] ?? user['driverId'] ?? user['businessId'];
     user.userType = dto.userType;
+
+    if (!user.userType) {
+      throw new UnauthorizedException('사용자 타입이 없습니다.');
+    }
+    if (!user.userId) {
+      throw new UnauthorizedException('사용자 아이디가 없습니다.');
+    }
 
     const accessToken = this.jwtService.sign(
       {
@@ -79,10 +87,22 @@ export class AuthService {
     };
   }
 
-  async tokenRefresh(request: Request): Promise<AuthDto> {
-    const token = request.headers['authorization'].replace('Bearer ', '');
+  async tokenRefresh(
+    request: Request & { headers: { authorization?: string } },
+  ): Promise<AuthDto> {
+    const token = request.headers.authorization?.replace('Bearer ', '');
+
+    if (!token) {
+      throw new UnauthorizedException('Authorization 헤더에 토큰이 없습니다.');
+    }
 
     const payload = this.jwtService.decode(token);
+
+    console.log('payload', payload);
+
+    if (!payload) {
+      throw new UnauthorizedException('토큰이 유효하지 않습니다.');
+    }
 
     const user: UserDto = await this.userService.findOne({
       userType: payload.userType,
@@ -101,7 +121,7 @@ export class AuthService {
     const refreshToken = this.jwtService.sign(
       {
         tokenType: 'refresh',
-        subject: user.userId,
+        subject: user.userId!,
         userType: user.userType,
       },
       this.refreshTokenOption,
@@ -124,6 +144,11 @@ export class AuthService {
   }
 
   private async saveAccessToken(user: UserDto, accessToken: string) {
+    if (!user.userType && !user.userId) {
+      this.logger.error('사용자 정보가 없습니다.');
+      throw new UnauthorizedException('사용자 정보가 없습니다.');
+    }
+
     const key = `${user.userType}:${user.userId}:accessToken`;
 
     if (this.accessTokenStrategy?.toLowerCase() === 'unique') {
@@ -157,7 +182,7 @@ export class AuthService {
   async getUser(token: string): Promise<any> {
     const payload = await this.jwtService.verify(token);
     if (!payload) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('토큰이 유효하지 않습니다.');
     }
 
     return await this.userService.findOne({

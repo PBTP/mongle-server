@@ -22,7 +22,10 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
     });
   }
 
-  async validate(req: Request, payload: any): Promise<UserDto> {
+  async validate(
+    req: Request & { headers: { authorization?: string } },
+    payload: any,
+  ): Promise<UserDto> {
     if (!payload) {
       throw new UnauthorizedException();
     }
@@ -31,7 +34,11 @@ export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
       throw new BadRequestException();
     }
 
-    const token = req.headers['authorization'].replace('Bearer ', '');
-    return JSON.parse(await this.cacheService.get(token)) as UserDto;
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    if (!token) {
+      throw new UnauthorizedException('Authorization 헤더에 토큰이 없습니다.');
+    }
+
+    return JSON.parse(<string>await this.cacheService.get(token)) as UserDto;
   }
 }

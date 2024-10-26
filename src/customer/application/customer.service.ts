@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Customer } from '../../schemas/customer.entity';
@@ -10,6 +10,7 @@ import { SecurityService } from '../../auth/application/security.service';
 import { Image } from '../../schemas/image.entity';
 import { ImageService } from '../../common/image/application/image.service';
 import { toDto } from '../../common/function/util.function';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class CustomerService implements IUserService {
@@ -24,6 +25,7 @@ export class CustomerService implements IUserService {
   ) {}
 
   async create(dto: CustomerDto): Promise<Customer> {
+    this.logger.log(`Create new customer id:${dto.customerId}`);
     return await this.customerRepository.save(
       this.customerRepository.create(dto),
     );
@@ -33,6 +35,10 @@ export class CustomerService implements IUserService {
     dto: Partial<AuthDto>,
     encrypt: boolean = false,
   ): Promise<Customer> {
+    if (dto.userId && dto.uuid) {
+      throw new BadRequestException('식별할 수 없는 사용자입니다.');
+    }
+
     const query = this.customerRepository
       .createQueryBuilder('C')
       .leftJoinAndMapOne('C.profileImage', Image, 'I', 'C.uuid =  I.uuid')
@@ -40,7 +46,7 @@ export class CustomerService implements IUserService {
 
     if (dto.userId) {
       query.andWhere('C.customer_id = :customer_id', {
-        customer_id: dto.userId,
+        customer_id: dto.userId ?? dto.customerId,
       });
     }
 
@@ -53,18 +59,28 @@ export class CustomerService implements IUserService {
 
     const customer = await query.getOne();
 
-    if (encrypt) {
-      customer.customerPhoneNumber = this.securityService.decrypt(
-        customer.customerPhoneNumber,
-      );
+    if (!customer) {
+      throw new NotFoundException('존재하지 않는 사용자입니다.');
+    }
 
-      customer.customerAddress = this.securityService.decrypt(
-        customer.customerAddress,
-      );
+    if (encrypt && customer) {
+      if (customer?.customerPhoneNumber) {
+        customer.customerPhoneNumber = this.securityService.decrypt(
+          customer?.customerPhoneNumber,
+        );
+      }
 
-      customer.customerDetailAddress = this.securityService.decrypt(
-        customer.customerDetailAddress,
-      );
+      if (customer?.customerAddress) {
+        customer.customerAddress = this.securityService.decrypt(
+          customer.customerAddress,
+        );
+      }
+
+      if (customer?.customerDetailAddress) {
+        customer.customerDetailAddress = this.securityService.decrypt(
+          customer.customerDetailAddress,
+        );
+      }
     }
 
     return customer;
@@ -72,9 +88,9 @@ export class CustomerService implements IUserService {
 
   async update(dto: Partial<CustomerDto>): Promise<CustomerDto> {
     if (dto.phoneNumber || dto.customerPhoneNumber) {
-      dto.phoneNumber = this.securityService.encrypt(
-        dto.phoneNumber ?? dto.customerPhoneNumber,
-      );
+      const phoneNumber = dto.phoneNumber ?? dto.customerPhoneNumber;
+
+      dto.phoneNumber = this.securityService.encrypt(phoneNumber!);
     }
 
     if (dto.customerDetailAddress) {
@@ -89,18 +105,16 @@ export class CustomerService implements IUserService {
 
     return await this.findOne(dto)
       .then(async (customer) => {
-        if (customer) {
-          customer.customerName = dto.customerName ?? customer.customerName;
-          customer.customerPhoneNumber =
-            dto.phoneNumber ?? customer.customerPhoneNumber;
-          customer.customerAddress =
-            dto.customerAddress ?? customer.customerAddress;
-          customer.customerDetailAddress =
-            dto.customerDetailAddress ?? customer.customerDetailAddress;
-          customer.refreshToken = dto.refreshToken ?? customer.refreshToken;
+        customer.customerName = dto.customerName ?? customer.customerName;
+        customer.customerPhoneNumber =
+          dto.phoneNumber ?? customer.customerPhoneNumber;
+        customer.customerAddress =
+          dto.customerAddress ?? customer.customerAddress;
+        customer.customerDetailAddress =
+          dto.customerDetailAddress ?? customer.customerDetailAddress;
+        customer.refreshToken = dto.refreshToken ?? customer.refreshToken;
 
-          return await this.customerRepository.save(customer);
-        }
+        return await this.customerRepository.save(customer);
       })
       .then(async (customer) => {
         if (customer && dto.presignedUrlDto) {
@@ -113,7 +127,7 @@ export class CustomerService implements IUserService {
           customerDto.presignedUrlDto = presignedUrlDto.find(() => true); // The first truthy vo (!undefined, !null ...)
           return customerDto;
         }
-        return customer;
+        return customer!;
       });
   }
 

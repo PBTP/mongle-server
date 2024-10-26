@@ -23,18 +23,18 @@ export class UserService {
   }
 
   async findOne(dto: UserDto): Promise<any> {
-    const user = await this.userServices[dto.userType].findOne(dto);
+    const user = await this.userServices[dto.userType!].findOne(dto);
 
     user && (user.userType = dto.userType);
     return user;
   }
 
   async create(dto: UserDto) {
-    return this.userServices[dto.userType].create(dto);
+    return this.userServices[dto.userType!].create(dto);
   }
 
   async update(dto: AuthDto) {
-    return await this.userServices[dto.userType].update(dto);
+    return await this.userServices[dto.userType!].update(dto);
   }
 
   toUserDto(user: any) {

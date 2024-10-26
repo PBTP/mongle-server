@@ -3,18 +3,21 @@ import { ConfigService } from '@nestjs/config';
 import { SqsModule } from '@ssut/nestjs-sqs';
 import { SQSClient } from '@aws-sdk/client-sqs';
 import { sqsName } from '../../image/application/image.consumer';
+import { SqsOptions } from '@ssut/nestjs-sqs/dist/sqs.types';
 
 @Module({
   imports: [
     SqsModule.registerAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
+      useFactory: (configService: ConfigService): SqsOptions => {
         const sqsClient = new SQSClient({
-          region: configService.get<string>('AWS_REGION'),
+          region: <string>configService.get('AWS_REGION'),
           credentials: {
-            accessKeyId: configService.get<string>('AWS_IAM_ACCESS_KEY_ID'),
-            secretAccessKey: configService.get<string>(
-              'AWS_IAM_SECRET_ACCESS_KEY',
+            accessKeyId: <string>(
+              configService.get<string>('AWS_IAM_ACCESS_KEY_ID')
+            ),
+            secretAccessKey: <string>(
+              configService.get<string>('AWS_IAM_SECRET_ACCESS_KEY')
             ),
           },
         });
@@ -23,10 +26,10 @@ import { sqsName } from '../../image/application/image.consumer';
           consumers: [
             {
               name: 's3-image-object-created',
-              queueUrl: configService.get<string>(
-                `sqs/url/${sqsName.s3ImageCreated}`,
+              queueUrl: <string>(
+                configService.get(`sqs/url/${sqsName.s3ImageCreated}`)
               ),
-              region: configService.get<string>('AWS_REGION'),
+              region: <string>configService.get('AWS_REGION'),
               sqs: sqsClient,
             },
           ],

@@ -1,21 +1,21 @@
-import { ForbiddenException, Injectable, Logger } from "@nestjs/common";
-import { Repository } from "typeorm";
-import { ChatRoom } from "../../schemas/chat-room.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { ChatMessage } from "../../schemas/chat-message.entity";
-import { CustomerChatService } from "./customer-chat.service";
-import { DriverChatService } from "./driver-chat.service";
-import { BusinessChatService } from "./business-chat.service";
-import { ChatMessageDto, ChatRoomDto } from "../presentation/chat.dto";
-import { UserDto, UserType } from "../../auth/presentation/user.dto";
-import { UserSocket } from "../presentation/chat.gateway";
-import { CacheService } from "../../common/cache/cache.service";
-import { Customer } from "../../schemas/customer.entity";
-import { Driver } from "../../schemas/drivers.entity";
-import { CursorDto } from "../../common/dto/cursor.dto";
-import { Business } from "../../schemas/business.entity";
-import { IChatService } from "./chat.interface";
-import { BadRequestException } from "@nestjs/common/exceptions";
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { ChatRoom } from '../../schemas/chat-room.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ChatMessage } from '../../schemas/chat-message.entity';
+import { CustomerChatService } from './customer-chat.service';
+import { DriverChatService } from './driver-chat.service';
+import { BusinessChatService } from './business-chat.service';
+import { ChatMessageDto, ChatRoomDto } from '../presentation/chat.dto';
+import { UserDto, UserType } from '../../auth/presentation/user.dto';
+import { UserSocket } from '../presentation/chat.gateway';
+import { CacheService } from '../../common/cache/cache.service';
+import { Customer } from '../../schemas/customer.entity';
+import { Driver } from '../../schemas/drivers.entity';
+import { CursorDto } from '../../common/dto/cursor.dto';
+import { Business } from '../../schemas/business.entity';
+import { IChatService } from './chat.interface';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class ChatService {
@@ -39,34 +39,34 @@ export class ChatService {
 
   // 사용자 채팅방 목록
   async findChatRooms(user: UserDto): Promise<ChatRoomDto[]> {
-    return await this.roomServices.get(user.userType).findChatRooms(user);
+    return await this.roomServices.get(user.userType!)!.findChatRooms(user);
   }
 
   // 유저가 채팅방에 존재하는지 확인
   async exitsUserChatRoom(user: UserDto, chatRoomId: number): Promise<boolean> {
-    return this.roomServices.get(user.userType).exitsUserRoom(user, chatRoomId);
+    return this.roomServices
+      .get(user.userType!)!
+      .exitsUserRoom(user, chatRoomId);
   }
 
   // 채팅방 존재 유무
   async exists(chatRoom: Partial<ChatRoom>): Promise<boolean> {
-    const where = {};
-
-    chatRoom.chatRoomId && (where['chatRoomId'] = chatRoom.chatRoomId);
-    chatRoom.tsid && (where['tsid'] = chatRoom.tsid);
-
     return this.chatRepository.exists({
-      where,
+      where: {
+        chatRoomId: chatRoom.chatRoomId,
+        tsid: chatRoom.tsid,
+      },
     });
   }
 
   // 특정 채팅방 조회
   async findOne(chatRoom: Partial<ChatRoom>): Promise<ChatRoom> {
-    const where = {};
-
-    chatRoom.chatRoomId && (where['chatRoomId'] = chatRoom.chatRoomId);
-    chatRoom.tsid && (where['tsid'] = chatRoom.tsid);
-
-    return await this.chatRepository.findOneOrFail({ where });
+    return await this.chatRepository.findOneOrFail({
+      where: {
+        chatRoomId: chatRoom.chatRoomId,
+        tsid: chatRoom.tsid,
+      },
+    });
   }
 
   async createChatRoom(
@@ -82,7 +82,7 @@ export class ChatService {
     );
 
     dto.chatRoomId = newRoom.chatRoomId;
-    await this.roomServices.get(dto.inviteUser.userType)!.createChatRoom(dto);
+    await this.roomServices.get(dto.inviteUser.userType!)!.createChatRoom(dto);
 
     dto.inviteUser.userId = customer.customerId;
     await this.customerChatService.createChatRoom(dto);
@@ -92,7 +92,7 @@ export class ChatService {
     roomDto.tsid = newRoom.tsid;
     roomDto.chatRoomName = newRoom.chatRoomName;
     roomDto.inviteUser = dto.inviteUser;
-    roomDto.lastMessage = null;
+    roomDto.lastMessage = undefined;
     roomDto.createdAt = newRoom.createdAt;
     return roomDto;
   }
@@ -167,12 +167,9 @@ export class ChatService {
 
     return {
       data: chatMessages.map((message) => {
-        const userType: UserType = message['customer']
-          ? 'customer'
-          : message['driver']
-            ? 'driver'
-            : 'business';
+        const userType: UserType = 'customer';
 
+        // @ts-ignore
         const user = message[userType];
 
         return {

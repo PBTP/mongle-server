@@ -7,7 +7,7 @@ export class Image extends HasUuid {
   imageId: number;
 
   @Column({ type: 'varchar', length: 44, nullable: false })
-  uuid: string;
+  override uuid: string;
 
   @Column({ type: 'varchar', length: 100, unique: true, nullable: false })
   imageUrl: string;

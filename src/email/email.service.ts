@@ -3,6 +3,7 @@ import * as nodemailer from 'nodemailer';
 import * as AWS from 'aws-sdk';
 import { ConfigService } from '@nestjs/config';
 import { SystemAlarmService } from '../system/system.alarm.service';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class EmailService {
@@ -12,11 +13,19 @@ export class EmailService {
     private readonly configService: ConfigService,
     private readonly systemAlarmService: SystemAlarmService,
   ) {
+    const region = this.configService.get('AWS_REGION');
+    const accessKeyId = this.configService.get('AWS_IAM_ACCESS_KEY_ID');
+    const secretAccessKey = this.configService.get('AWS_IAM_SECRET_ACCESS_KEY');
+
+    if (!region || !accessKeyId || !secretAccessKey) {
+      throw new BadRequestException('AWS Config is not set');
+    }
+
     const ses = new AWS.SES({
-      region: this.configService.get('AWS_REGION'),
+      region: region,
       credentials: {
-        accessKeyId: this.configService.get('AWS_IAM_ACCESS_KEY_ID'),
-        secretAccessKey: this.configService.get('AWS_IAM_SECRET_ACCESS_KEY'),
+        accessKeyId: accessKeyId,
+        secretAccessKey: secretAccessKey,
       },
     });
 
