@@ -4,24 +4,28 @@ import { Repository } from 'typeorm';
 import { AuthDto } from '../../auth/presentation/auth.dto';
 import { ImageEntity } from '../../schemas/image.entity';
 import { Customer } from '../customer.domain';
+import { InjectRepository } from '@nestjs/typeorm';
 
 export const CUSTOMER_REPOSITORY = Symbol('ICustomerRepository');
 
 export interface ICustomerRepository {
   create(customer: Customer): Customer;
-  findOne(customer: Partial<AuthDto>): Promise<Customer>;
+  findOne(customer: Partial<Customer>): Promise<Customer>;
   save(customer: Customer): Promise<Customer>;
 }
 
 @Injectable()
 export class CustomerRepository implements ICustomerRepository {
-  constructor(private readonly customerDB: Repository<CustomerEntity>) {}
+  constructor(
+    @InjectRepository(CustomerEntity)
+    private readonly customerDB: Repository<CustomerEntity>,
+  ) {}
 
   create(customer: Customer): Customer {
-    return this.customerDB.create(customer).toModel();
+    return CustomerEntity.toModel(this.customerDB.create(customer));
   }
 
-  async findOne(dto: Partial<AuthDto>): Promise<CustomerEntity> {
+  async findOne(dto: Partial<AuthDto>): Promise<Customer> {
     const query = this.customerDB
       .createQueryBuilder('C')
       .leftJoinAndMapOne('C.profileImage', ImageEntity, 'I', 'C.uuid =  I.uuid')
@@ -40,10 +44,12 @@ export class CustomerRepository implements ICustomerRepository {
     query.orderBy('C.modified_at', 'DESC');
     query.addOrderBy('I.created_at', 'DESC');
 
-    return await query.getOne();
+    const customerEntity: CustomerEntity = await query.getOneOrFail();
+    return CustomerEntity.toModel(customerEntity);
   }
 
-  async save(customer: CustomerEntity): Promise<CustomerEntity> {
-    return await this.customerDB.save(customer);
+  async save(customer: Customer): Promise<Customer> {
+    const customerEntity: CustomerEntity = await this.customerDB.save(customer);
+    return CustomerEntity.toModel(customerEntity);
   }
 }

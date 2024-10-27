@@ -1,15 +1,15 @@
 import { Global, Module } from '@nestjs/common';
-import { S3Service } from './aws/s3/application/s3.service';
+import { CLOUD_STORAGE, S3Service } from './aws/s3/application/s3.service';
 import { ConsumerModule } from '../broker/consumer/consumer.module';
 @Global()
 @Module({
   imports: [ConsumerModule],
   providers: [
     {
-      provide: 'CloudStorageService',
+      provide: CLOUD_STORAGE,
       useClass: S3Service,
     },
   ],
-  exports: ['CloudStorageService'],
+  exports: [CLOUD_STORAGE],
 })
 export class CloudModule {}

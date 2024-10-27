@@ -10,12 +10,13 @@ import { ChatMessageDto, ChatRoomDto } from '../presentation/chat.dto';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
 import { UserSocket } from '../presentation/chat.gateway';
 import { CacheService } from '../../common/cache/cache.service';
-import { Customer } from '../../schemas/customer.entity';
 import { Driver } from '../../schemas/drivers.entity';
 import { CursorDto } from '../../common/dto/cursor.dto';
 import { Business } from '../../schemas/business.entity';
 import { IChatService } from './chat.interface';
 import { BadRequestException } from '@nestjs/common/exceptions';
+import { Customer, ICustomer } from '../../customer/customer.domain';
+import { CustomerEntity } from '../../schemas/customer.entity';
 
 @Injectable()
 export class ChatService {
@@ -71,7 +72,7 @@ export class ChatService {
 
   async createChatRoom(
     dto: ChatRoomDto,
-    customer: Customer,
+    customer: ICustomer,
   ): Promise<ChatRoomDto> {
     if (dto.inviteUser.userId === customer.customerId) {
       throw new BadRequestException('You cannot invite yourself');
@@ -136,7 +137,7 @@ export class ChatService {
       .leftJoinAndSelect('CM.chatRoom', 'chatRoom')
       .leftJoinAndMapOne(
         'CM.customer',
-        Customer,
+        CustomerEntity,
         'customer',
         'CM.senderUuid = customer.uuid',
       )

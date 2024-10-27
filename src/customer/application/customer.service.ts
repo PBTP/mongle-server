@@ -1,16 +1,18 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Customer } from '../../schemas/customer.entity';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CustomerDto } from '../presentation/customer.dto';
 import { IUserService } from '../../auth/user.interface';
 import { AuthDto } from '../../auth/presentation/auth.dto';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
 import { SecurityService } from '../../auth/application/security.service';
-import { Image } from '../../schemas/image.entity';
 import { ImageService } from '../../common/image/application/image.service';
-import { toDto } from '../../common/function/util.function';
 import { BadRequestException } from '@nestjs/common/exceptions';
+import { Customer, ICustomer } from '../customer.domain';
+import {
+  CUSTOMER_REPOSITORY,
+  ICustomerRepository,
+} from '../port/customer.repository';
+import { IUUIDHolder, UUID_HOLDER } from '../../common/holder/uuid.holders';
+import { DATE_HOLDER, IDateHolder } from '../../common/holder/date.holder';
 
 @Injectable()
 export class CustomerService implements IUserService {
@@ -18,52 +20,53 @@ export class CustomerService implements IUserService {
   private readonly logger = new Logger(CustomerService.name);
 
   constructor(
-    @InjectRepository(Customer)
-    private readonly customerRepository: Repository<Customer>,
+    @Inject(CUSTOMER_REPOSITORY)
+    private readonly customerRepository: ICustomerRepository,
     private readonly securityService: SecurityService,
     private readonly imageService: ImageService,
+    @Inject(UUID_HOLDER)
+    private readonly uuidHolder: IUUIDHolder,
+    @Inject(DATE_HOLDER)
+    private readonly dateHolder: IDateHolder,
   ) {}
 
-  async create(dto: CustomerDto): Promise<Customer> {
-    this.logger.log(`Create new customer id:${dto.customerId}`);
+  async create(dto: CustomerDto): Promise<ICustomer> {
+    if (dto.phoneNumber) {
+      dto.phoneNumber = this.securityService.encrypt(dto.phoneNumber);
+    }
+
+    if (dto.customerDetailAddress) {
+      dto.customerDetailAddress = this.securityService.encrypt(
+        dto.customerDetailAddress,
+      );
+    }
+
+    if (dto.customerAddress) {
+      dto.customerAddress = this.securityService.encrypt(dto.customerAddress);
+    }
+
     return await this.customerRepository.save(
-      this.customerRepository.create(dto),
+      this.customerRepository.create(
+        Customer.from(dto, this.uuidHolder, this.dateHolder),
+      ),
     );
   }
 
   async findOne(
     dto: Partial<AuthDto>,
-    encrypt: boolean = false,
+    decrypt: boolean = false,
   ): Promise<Customer> {
     if (dto.userId && dto.uuid) {
       throw new BadRequestException('식별할 수 없는 사용자입니다.');
     }
 
-    const query = this.customerRepository
-      .createQueryBuilder('C')
-      .leftJoinAndMapOne('C.profileImage', Image, 'I', 'C.uuid =  I.uuid')
-      .addSelect('I.image_url', 'profileImage');
-
-    if (dto.userId) {
-      query.andWhere('C.customer_id = :customer_id', {
-        customer_id: dto.userId ?? dto.customerId,
-      });
-    }
-
-    if (dto.uuid) {
-      query.andWhere('C.uuid = :uuid', { uuid: dto.uuid });
-    }
-
-    query.orderBy('C.modified_at', 'DESC');
-    query.addOrderBy('I.created_at', 'DESC');
-
-    const customer = await query.getOne();
+    const customer = await this.customerRepository.findOne(dto);
 
     if (!customer) {
       throw new NotFoundException('존재하지 않는 사용자입니다.');
     }
 
-    if (encrypt && customer) {
+    if (decrypt && customer) {
       if (customer?.customerPhoneNumber) {
         customer.customerPhoneNumber = this.securityService.decrypt(
           customer?.customerPhoneNumber,
@@ -86,7 +89,7 @@ export class CustomerService implements IUserService {
     return customer;
   }
 
-  async update(dto: Partial<CustomerDto>): Promise<CustomerDto> {
+  async update(dto: Partial<CustomerDto>): Promise<Customer> {
     if (dto.phoneNumber || dto.customerPhoneNumber) {
       const phoneNumber = dto.phoneNumber ?? dto.customerPhoneNumber;
 
@@ -119,19 +122,18 @@ export class CustomerService implements IUserService {
       .then(async (customer) => {
         if (customer && dto.presignedUrlDto) {
           const presignedUrlDto = await this.imageService.generatePreSignedUrls(
-            customer.uuid,
+            customer.uuid!,
             [dto.presignedUrlDto],
           );
 
-          const customerDto = toDto(CustomerDto, customer);
-          customerDto.presignedUrlDto = presignedUrlDto.find(() => true); // The first truthy vo (!undefined, !null ...)
-          return customerDto;
+          customer.presignedUrlDto = presignedUrlDto.find(() => true); // The first truthy vo (!undefined, !null ...)
+          return customer;
         }
         return customer!;
       });
   }
 
-  toUserDto(customer: Customer): UserDto {
+  toUserDto(customer: ICustomer): UserDto {
     return {
       uuid: customer.uuid,
       name: customer.customerName,

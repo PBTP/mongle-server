@@ -9,30 +9,26 @@ export const IMAGE_REPOSITORY = Symbol('IImageRepository');
 export interface IImageRepository {
   create(image: Partial<Image>): Image;
 
-  findOne(image: Partial<Image>): Promise<Image>;
+  findOne(image: Partial<Image>): Promise<Image | undefined>;
 
   save(image: Image): Promise<Image>;
 }
 
-
 @Injectable()
 export class ImageRepository implements IImageRepository {
-
-  constructor(
-    private readonly imageDB: Repository<ImageEntity>
-  ) {
-  }
+  constructor(private readonly imageDB: Repository<ImageEntity>) {}
 
   create(image: Partial<ImageDto>): Image {
     return this.imageDB.create(image).toModel();
   }
 
-  async findOne(image: Partial<ImageDto>): Promise<Image> {
-    return this.imageDB.findOne({ where: { imageUrl: image.imageUrl } }).then((v) => v.toModel());
+  async findOne(image: Partial<ImageDto>): Promise<Image | undefined> {
+    return this.imageDB
+      .findOne({ where: { imageUrl: image.imageUrl } })
+      .then((v) => v?.toModel());
   }
 
   async save(image: ImageEntity): Promise<Image> {
-    return this.imageDB.save(image).then((v) => v.toModel())
+    return this.imageDB.save(image).then((v) => v.toModel());
   }
-
 }

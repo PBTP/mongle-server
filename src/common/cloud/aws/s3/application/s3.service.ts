@@ -4,7 +4,11 @@ import { ConfigService } from '@nestjs/config';
 import { BadRequestException } from '@nestjs/common/exceptions';
 import { ICloudStorage } from '../../../cloud-storage.interface';
 import { ImageMetaDataDto } from '../../../../image/presentation/image.dto';
-import { PresignedUrlDto } from '../presentation/presigned-url.dto';
+import {
+  defaultExpiredTime,
+  PresignedUrlDto,
+} from '../presentation/presigned-url.dto';
+export const CLOUD_STORAGE = Symbol('CloudStorageService');
 
 @Injectable()
 export class S3Service implements ICloudStorage {
@@ -33,7 +37,7 @@ export class S3Service implements ICloudStorage {
   async generatePreSignedUrl(
     key: string,
     metadata: ImageMetaDataDto,
-    expiredTime: number = 60,
+    expiredTime: number = defaultExpiredTime,
   ): Promise<PresignedUrlDto> {
     const split = metadata.fileName.split('.');
     const fileExtension = split[split.length - 1];
@@ -66,7 +70,7 @@ export class S3Service implements ICloudStorage {
       const metadata = metadataArray[i];
       const split = metadata.fileName.split('.');
       const fileExtension = split[split.length - 1];
-      const expiredTime = metadata.expiredTime ?? 60;
+      const expiredTime = metadata.expiredTime ?? defaultExpiredTime;
 
       if (!this.supportExtensions.includes(fileExtension)) {
         throw new BadRequestException('지원하지 않는 확장자입니다.');

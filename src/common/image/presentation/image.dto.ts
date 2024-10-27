@@ -1,6 +1,13 @@
-import { IsNotEmpty, IsNumber, IsOptional, Matches, Max } from "class-validator";
-import { Type } from "class-transformer";
-import { ApiProperty } from "@nestjs/swagger";
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  Matches,
+  Max,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { ApiProperty } from '@nestjs/swagger';
+import { defaultExpiredTime } from '../../cloud/aws/s3/presentation/presigned-url.dto';
 
 export class ImageDto {
   uuid: string;
@@ -37,5 +44,5 @@ export class ImageMetaDataDto {
     required: false,
   })
   @IsOptional()
-  expiredTime?: number = 60;
+  expiredTime?: number = defaultExpiredTime;
 }

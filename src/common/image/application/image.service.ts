@@ -4,13 +4,14 @@ import { ICloudStorage } from '../../cloud/cloud-storage.interface';
 import { PresignedUrlDto } from '../../cloud/aws/s3/presentation/presigned-url.dto';
 import { IImageRepository, IMAGE_REPOSITORY } from '../port/image.repository';
 import { Image } from '../image.domain';
+import { CLOUD_STORAGE } from '../../cloud/aws/s3/application/s3.service';
 
 @Injectable()
 export class ImageService {
   private readonly logger = new Logger(ImageService.name);
 
   constructor(
-    @Inject('CloudStorageService')
+    @Inject(CLOUD_STORAGE)
     private readonly cloudStorageService: ICloudStorage,
     @Inject(IMAGE_REPOSITORY)
     private readonly imageRepository: IImageRepository,
@@ -24,17 +25,15 @@ export class ImageService {
   }
 
   async create(dto: Partial<ImageDto>): Promise<Image> {
-    return this.imageRepository
-      .findOne(dto)
-      .then((v) => {
-        if (!v) {
-          const newImage = this.imageRepository.create(dto);
-          return this.imageRepository.save(newImage).then((v) => {
-            this.logger.log(`Image(${v.imageUrl}) created`);
-            return v;
-          });
-        }
-        return v;
-      });
+    return this.imageRepository.findOne(dto).then((v) => {
+      if (!v) {
+        const newImage = this.imageRepository.create(dto);
+        return this.imageRepository.save(newImage).then((v) => {
+          this.logger.log(`Image(${v.imageUrl}) created`);
+          return v;
+        });
+      }
+      return v;
+    });
   }
 }

@@ -16,19 +16,13 @@ import { CustomerChatRoom } from './customer-chat-room.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 import { AuthProvider } from '../auth/presentation/user.dto';
 import { ImageEntity } from './image.entity';
-import { Customer } from '../customer/customer.domain';
+import { Customer, ICustomer } from '../customer/customer.domain';
 import { Builder } from 'builder-pattern';
-
-export interface UUIDHolder {
-  generatedUuid(): string;
-}
-
-export interface DateHolder {
-  now(): Date;
-}
+import { IUUIDHolder } from '../common/holder/uuid.holders';
+import { IDateHolder } from '../common/holder/date.holder';
 
 @Entity({ name: 'customers' })
-export class CustomerEntity extends HasUuid implements Customer {
+export class CustomerEntity extends HasUuid {
   @PrimaryGeneratedColumn()
   customerId: number;
 
@@ -87,11 +81,10 @@ export class CustomerEntity extends HasUuid implements Customer {
 
   static from(
     customer: Customer,
-    uuidHolder: UUIDHolder,
-    dateHolder: DateHolder,
+    uuidHolder: IUUIDHolder,
+    dateHolder: IDateHolder,
   ): CustomerEntity {
     return Builder<CustomerEntity>()
-      .customerId(customer.customerId)
       .customerName(customer.customerName)
       .customerPhoneNumber(customer.customerPhoneNumber)
       .customerAddress(customer.customerAddress)
@@ -100,32 +93,27 @@ export class CustomerEntity extends HasUuid implements Customer {
       .authProvider(customer.authProvider)
       .createdAt(dateHolder.now())
       .modifiedAt(dateHolder.now())
-      .deletedAt(null)
+      .deletedAt(undefined)
+      .refreshToken(customer.refreshToken)
+      .uuid(uuidHolder.generatedUuid())
+      .build();
+  }
+
+  static toModel(customer: CustomerEntity): Customer {
+    return Builder<Customer>()
+      .customerId(customer.customerId)
+      .customerName(customer.customerName)
+      .customerPhoneNumber(customer.customerPhoneNumber)
+      .customerAddress(customer.customerAddress)
+      .customerDetailAddress(customer.customerDetailAddress)
+      .customerLocation(customer.customerLocation)
+      .authProvider(customer.authProvider)
       .refreshToken(customer.refreshToken)
       .favorites(customer.favorites)
       .reviews(customer.reviews)
       .appointments(customer.appointments)
       .pets(customer.pets)
       .chatRooms(customer.chatRooms)
-      .uuid(uuidHolder.generatedUuid())
-      .build();
-  }
-
-  toModel() {
-    return Builder<Customer>()
-      .customerId(this.customerId)
-      .customerName(this.customerName)
-      .customerPhoneNumber(this.customerPhoneNumber)
-      .customerAddress(this.customerAddress)
-      .customerDetailAddress(this.customerDetailAddress)
-      .customerLocation(this.customerLocation)
-      .authProvider(this.authProvider)
-      .refreshToken(this.refreshToken)
-      .favorites(this.favorites)
-      .reviews(this.reviews)
-      .appointments(this.appointments)
-      .pets(this.pets)
-      .chatRooms(this.chatRooms)
       .build();
   }
 }
