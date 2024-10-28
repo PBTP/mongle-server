@@ -5,8 +5,6 @@ import { ImageService } from '../../../../src/common/image/application/image.ser
 import { FakeCloudStorageService } from '../../../mock/fake.cloud-storage.service';
 import { FakeImageRepository } from '../../../mock/fake.image.repository';
 import { FakeDateHolder, FakeUuidHolder } from '../../../mock/fake.holder';
-import { ConfigService } from '@nestjs/config';
-import { FakeConfigService } from '../../../mock/fake.config.service';
 import { Builder } from 'builder-pattern';
 import { Customer } from '../../../../src/customer/customer.domain';
 import { AuthProvider } from '../../../../src/auth/presentation/user.dto';
@@ -15,12 +13,9 @@ import { FakeSecurityService } from '../../../mock/fake.security.service';
 
 describe('CustomerController', () => {
   let customerController: CustomerController;
-  let configService: ConfigService;
   const date = new Date();
 
   beforeEach(async () => {
-    configService = new FakeConfigService();
-
     const customerService = new CustomerService(
       new FakeCustomerRepository(),
       new FakeSecurityService(),

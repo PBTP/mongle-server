@@ -6,7 +6,6 @@ import { UserDto, UserType } from '../../auth/presentation/user.dto';
 import {
   ISecurityService,
   SECURITY_SERVICE,
-  SecurityService
 } from '../../auth/application/security.service';
 import { ImageService } from '../../common/image/application/image.service';
 import { BadRequestException } from '@nestjs/common/exceptions';

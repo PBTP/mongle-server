@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as crypto from 'crypto';
 import { ConfigService } from '@nestjs/config';
 
-export  const SECURITY_SERVICE = 'SECURITY_SERVICE';
+export const SECURITY_SERVICE = 'SECURITY_SERVICE';
 
 export interface ISecurityService {
   encrypt(text: string): string | undefined;
