@@ -5,7 +5,7 @@ import {
   ForbiddenException,
   HttpCode,
   HttpStatus,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import { CustomerEntity } from '../../schemas/customer.entity';
 import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
@@ -20,7 +20,7 @@ export const CurrentCustomer = createParamDecorator(
     if (!req.user?.customerId) {
       throw new ForbiddenException('해당 계정은 고객 계정이 아닙니다.');
     }
-    return req.user;
+    return CustomerEntity.toModel(req.user);
   },
 );
 

@@ -3,7 +3,11 @@ import { CustomerDto } from '../presentation/customer.dto';
 import { IUserService } from '../../auth/user.interface';
 import { AuthDto } from '../../auth/presentation/auth.dto';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
-import { SecurityService } from '../../auth/application/security.service';
+import {
+  ISecurityService,
+  SECURITY_SERVICE,
+  SecurityService
+} from '../../auth/application/security.service';
 import { ImageService } from '../../common/image/application/image.service';
 import { BadRequestException } from '@nestjs/common/exceptions';
 import { Customer, ICustomer } from '../customer.domain';
@@ -22,7 +26,8 @@ export class CustomerService implements IUserService {
   constructor(
     @Inject(CUSTOMER_REPOSITORY)
     private readonly customerRepository: ICustomerRepository,
-    private readonly securityService: SecurityService,
+    @Inject(SECURITY_SERVICE)
+    private readonly securityService: ISecurityService,
     private readonly imageService: ImageService,
     @Inject(UUID_HOLDER)
     private readonly uuidHolder: IUUIDHolder,

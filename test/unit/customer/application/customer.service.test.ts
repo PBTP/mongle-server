@@ -19,12 +19,6 @@ describe('CustomerService', () => {
   beforeEach(() => {
     configService = new FakeConfigService();
 
-    configService.set('security/crypto/algorithm', 'aes-256-cbc');
-    configService.set(
-      'security/crypto/key',
-      'mgmg_crypto_HSphC1OlzYwJmSS1Or1K',
-    );
-
     const date = new Date();
     service = new CustomerService(
       new FakeCustomerRepository(),

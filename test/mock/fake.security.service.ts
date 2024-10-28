@@ -1,9 +1,11 @@
 export class FakeSecurityService {
-  encrypt(text: string): string {
+  constructor() {}
+
+  encrypt(text: string): string | undefined {
     return 'encrypted';
   }
 
-  decrypt(hash: string): string {
+  decrypt(hash: string): string | undefined {
     return 'decrypted';
   }
 }

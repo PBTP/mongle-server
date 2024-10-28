@@ -3,9 +3,9 @@ import { Body, Controller, Get, Put } from '@nestjs/common';
 import { CustomerDto } from './customer.dto';
 import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Builder, StrictBuilder } from 'builder-pattern';
+import { Builder } from 'builder-pattern';
 import { Customer } from '../customer.domain';
-import { CustomerEntity } from '../../schemas/customer.entity';
+import { ResponseEntity } from '../../common/dto/response.entity';
 
 @ApiTags('고객 관련 API')
 @Controller('/v1/customer')
@@ -20,26 +20,30 @@ export class CustomerController {
   @Auth()
   @Get('my')
   async getMyCustomer(
-    @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<Omit<CustomerDto, 'refreshToken' | 'accessToken'>> {
-    return await this.customerService
-      .findOne({ userId: customer.customerId }, true)
-      .then((v) => {
-        return StrictBuilder<CustomerDto>()
-          .uuid(v.uuid)
-          .userType('customer')
-          .userId(v.customerId)
-          .name(v.customerName)
-          .customerId(v.customerId)
-          .customerName(v.customerName)
-          .customerPhoneNumber(v.customerPhoneNumber)
-          .customerLocation(v.customerLocation)
-          .customerAddress(v.customerAddress)
-          .customerDetailAddress(v.customerDetailAddress)
-          .authProvider(v.authProvider)
-          .profileImageUrl(v.profileImage?.imageUrl)
-          .build();
-      });
+    @CurrentCustomer() customer: Customer,
+  ): Promise<
+    ResponseEntity<Omit<CustomerDto, 'refreshToken' | 'accessToken'>>
+  > {
+    return ResponseEntity.OK(
+      await this.customerService
+        .findOne({ userId: customer.customerId }, true)
+        .then((v) => {
+          return Builder<CustomerDto>()
+            .uuid(v.uuid)
+            .userType('customer')
+            .userId(v.customerId)
+            .name(v.customerName)
+            .customerId(v.customerId)
+            .customerName(v.customerName)
+            .customerPhoneNumber(v.customerPhoneNumber)
+            .customerLocation(v.customerLocation)
+            .customerAddress(v.customerAddress)
+            .customerDetailAddress(v.customerDetailAddress)
+            .authProvider(v.authProvider)
+            .profileImageUrl(v.profileImage?.imageUrl)
+            .build();
+        }),
+    );
   }
 
   @ApiOperation({
@@ -52,29 +56,31 @@ export class CustomerController {
   async updateProfile(
     @CurrentCustomer() customer: Customer,
     @Body() dto: CustomerDto,
-  ): Promise<Omit<CustomerDto, 'refreshToken'>> {
+  ): Promise<ResponseEntity<Omit<CustomerDto, 'refreshToken'>>> {
     dto.userId = customer.customerId;
 
-    return await this.customerService
-      .update({
-        ...customer,
-        ...dto,
-      })
-      .then((v) => {
-        return Builder<CustomerDto>()
-          .uuid(v.uuid)
-          .userType('customer')
-          .userId(v.customerId)
-          .name(v.customerName)
-          .customerId(v.customerId)
-          .customerName(v.customerName)
-          .customerPhoneNumber(v.customerPhoneNumber)
-          .customerLocation(v.customerLocation)
-          .customerAddress(v.customerAddress)
-          .customerDetailAddress(v.customerDetailAddress)
-          .authProvider(v.authProvider)
-          .profileImageUrl(v?.profileImage?.imageUrl)
-          .build();
-      });
+    return ResponseEntity.OK(
+      await this.customerService
+        .update({
+          ...customer,
+          ...dto,
+        })
+        .then((v) => {
+          return Builder<CustomerDto>()
+            .uuid(v.uuid)
+            .userType('customer')
+            .userId(v.customerId)
+            .name(v.customerName)
+            .customerId(v.customerId)
+            .customerName(v.customerName)
+            .customerPhoneNumber(v.customerPhoneNumber)
+            .customerLocation(v.customerLocation)
+            .customerAddress(v.customerAddress)
+            .customerDetailAddress(v.customerDetailAddress)
+            .authProvider(v.authProvider)
+            .profileImageUrl(v?.profileImage?.imageUrl)
+            .build();
+        }),
+    );
   }
 }
