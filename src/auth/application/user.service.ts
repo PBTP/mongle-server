@@ -29,7 +29,7 @@ export class UserService {
     return user;
   }
 
-  async findOne(dto: UserDto): Promise<UserDto> {
+  async findOne(dto: UserDto): Promise<UserDto | null> {
     const user = await this.userServices[dto.userType!].findOne(dto);
 
     user && (user.userType = dto.userType);
