@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
-import { Business } from './business.entity';
+import { BusinessEntity } from './business.entity';
 import { HasUuid } from "../common/entity/parent.entity";
 
 export enum PetSize {
@@ -50,7 +50,7 @@ export class ServiceOption extends HasUuid {
   @OneToMany(() => Appointment, (appointments) => appointments.serviceOption)
   public appointments: Appointment[];
 
-  @ManyToOne(() => Business, (business) => business.serviceOptions)
+  @ManyToOne(() => BusinessEntity, (business) => business.serviceOptions)
   @JoinColumn({ name: 'business_id' })
-  public business: Business;
+  public business: BusinessEntity;
 }

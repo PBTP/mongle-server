@@ -1,11 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { IUserService } from '../../auth/user.interface';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
-import { Business } from '../../schemas/business.entity';
+import { BusinessEntity } from '../../schemas/business.entity';
 import { AuthDto } from '../../auth/presentation/auth.dto';
 import { Builder } from 'builder-pattern';
+import {
+  BUSINESS_REPOSITORY,
+  IBusinessRepository,
+} from '../port/business.repository';
 
 @Injectable()
 export class BusinessService implements IUserService {
@@ -13,22 +15,21 @@ export class BusinessService implements IUserService {
   private readonly logger = new Logger(BusinessService.name);
 
   constructor(
-    @InjectRepository(Business)
-    private readonly businessRepository: Repository<Business>,
+    @Inject(BUSINESS_REPOSITORY)
+    private readonly businessRepository: IBusinessRepository,
   ) {}
 
-  async findOne(dto: Partial<AuthDto>): Promise<Business> {
-    return await this.businessRepository.findOneOrFail({
-      where: {
-        businessId: dto.userId,
-        uuid: dto.uuid,
-      },
-    });
+  async getOne(dto: Partial<AuthDto>): Promise<BusinessEntity> {
+    return await this.businessRepository.getOne(dto);
   }
 
-  async create(dto: UserDto): Promise<Business> {
-    const business = new Business();
-    Builder<Business>()
+  async findOne(dto: Partial<AuthDto>): Promise<BusinessEntity | null> {
+    return await this.businessRepository.getOne(dto);
+  }
+
+  async create(dto: UserDto): Promise<BusinessEntity> {
+    const business = new BusinessEntity();
+    Builder<BusinessEntity>()
       .uuid(dto.uuid!)
       .businessName(dto.name!)
       .authProvider(dto.authProvider!)
@@ -44,8 +45,8 @@ export class BusinessService implements IUserService {
       });
   }
 
-  async update(dto: AuthDto): Promise<Business> {
-    return this.findOne(dto).then(async (business) => {
+  async update(dto: AuthDto): Promise<BusinessEntity> {
+    return this.getOne(dto).then(async (business) => {
       business.businessName = dto.name ?? business.businessName;
       business.businessPhoneNumber =
         dto.phoneNumber ?? business.businessPhoneNumber;
@@ -55,7 +56,7 @@ export class BusinessService implements IUserService {
     });
   }
 
-  toUserDto(business: Business): UserDto {
+  toUserDto(business: BusinessEntity): UserDto {
     return {
       uuid: business.uuid,
       name: business.businessName,

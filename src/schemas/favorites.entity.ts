@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { Business } from './business.entity';
+import { BusinessEntity } from './business.entity';
 import { CustomerEntity } from './customer.entity';
 
 //TODO: 추후 UUID -> TSID로 변경
@@ -15,7 +15,7 @@ export class Favorite {
   @JoinColumn({ name: 'customer_id' })
   public customer: CustomerEntity;
 
-  @ManyToOne(() => Business, (business) => business.favorites)
+  @ManyToOne(() => BusinessEntity, (business) => business.favorites)
   @JoinColumn({ name: 'business_id' })
-  public business: Business;
+  public business: BusinessEntity;
 }

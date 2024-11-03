@@ -1,10 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Driver } from '../../schemas/drivers.entity';
-import { Repository } from 'typeorm';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { DriverEntity } from '../../schemas/drivers.entity';
 import { IUserService } from '../../auth/user.interface';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
 import { AuthDto } from '../../auth/presentation/auth.dto';
+import {
+  DRIVER_REPOSITORY,
+  IDriverRepository,
+} from '../port/driver.repository';
 
 @Injectable()
 export class DriverService implements IUserService {
@@ -13,26 +15,23 @@ export class DriverService implements IUserService {
   readonly userType: UserType = 'driver';
 
   constructor(
-    @InjectRepository(Driver)
-    private readonly driverRepository: Repository<Driver>,
+    @Inject(DRIVER_REPOSITORY)
+    private readonly driverRepository: IDriverRepository,
   ) {}
 
-  async signUp(dto: Driver): Promise<Driver> {
+  async signUp(dto: DriverEntity): Promise<DriverEntity> {
     const newDriver = this.driverRepository.create(dto);
     return await this.driverRepository.save(newDriver);
   }
 
-  async findOne(dto: Partial<AuthDto>): Promise<Driver> {
-    return await this.driverRepository.findOneOrFail({
-      where: {
-        driverId: dto.userId,
-        uuid: dto.uuid,
-        refreshToken: dto.refreshToken,
-      },
-    });
+  async getOne(dto: Partial<AuthDto>): Promise<DriverEntity> {
+    return await this.driverRepository.getOne(dto);
+  }
+  async findOne(dto: Partial<AuthDto>): Promise<DriverEntity | null> {
+    return await this.driverRepository.findOne(dto);
   }
 
-  async create(dto: UserDto): Promise<Driver> {
+  async create(dto: UserDto): Promise<DriverEntity> {
     return await this.driverRepository
       .save(this.driverRepository.create(dto))
       .then((driver) => {
@@ -43,8 +42,8 @@ export class DriverService implements IUserService {
       });
   }
 
-  async update(dto: AuthDto): Promise<Driver> {
-    return this.findOne(dto).then(async (driver) => {
+  async update(dto: AuthDto): Promise<DriverEntity> {
+    return this.getOne(dto).then(async (driver) => {
       if (dto.name) {
         driver.driverName = dto.name;
       }
@@ -57,7 +56,7 @@ export class DriverService implements IUserService {
     });
   }
 
-  toUserDto(driver: Driver): UserDto {
+  toUserDto(driver: DriverEntity): UserDto {
     return {
       uuid: driver.uuid,
       name: driver.driverName,

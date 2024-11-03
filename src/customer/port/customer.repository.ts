@@ -10,7 +10,8 @@ export const CUSTOMER_REPOSITORY = Symbol('ICustomerRepository');
 
 export interface ICustomerRepository {
   create(customer: Customer): Customer;
-  findOne(customer: Partial<Customer>): Promise<Customer>;
+  getOne(customer: Partial<Customer>): Promise<Customer>;
+  findOne(customer: Partial<Customer>): Promise<Customer | null>;
   save(customer: Customer): Promise<Customer>;
 }
 
@@ -25,7 +26,7 @@ export class CustomerRepository implements ICustomerRepository {
     return CustomerEntity.toModel(this.customerDB.create(customer));
   }
 
-  async findOne(dto: Partial<AuthDto>): Promise<Customer> {
+  async getOne(dto: Partial<AuthDto>): Promise<Customer> {
     const query = this.customerDB
       .createQueryBuilder('C')
       .leftJoinAndMapOne('C.profileImage', ImageEntity, 'I', 'C.uuid =  I.uuid')
@@ -45,6 +46,32 @@ export class CustomerRepository implements ICustomerRepository {
     query.addOrderBy('I.created_at', 'DESC');
 
     const customerEntity: CustomerEntity = await query.getOneOrFail();
+    return CustomerEntity.toModel(customerEntity);
+  }
+
+  async findOne(dto: Partial<AuthDto>): Promise<Customer | null> {
+    const query = this.customerDB
+      .createQueryBuilder('C')
+      .leftJoinAndMapOne('C.profileImage', ImageEntity, 'I', 'C.uuid =  I.uuid')
+      .addSelect('I.image_url', 'profileImage');
+
+    if (dto.userId) {
+      query.andWhere('C.customer_id = :customer_id', {
+        customer_id: dto.userId,
+      });
+    }
+
+    if (dto.uuid) {
+      query.andWhere('C.uuid = :uuid', { uuid: dto.uuid });
+    }
+
+    query.orderBy('C.modified_at', 'DESC');
+    query.addOrderBy('I.created_at', 'DESC');
+
+    const customerEntity: CustomerEntity | null = await query.getOne();
+    if (!customerEntity) {
+      return null;
+    }
     return CustomerEntity.toModel(customerEntity);
   }
 

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BusinessController } from './business.controller';
 import { BusinessService } from '../application/business.service';
-import { Business } from '../../schemas/business.entity';
+import { BusinessEntity } from '../../schemas/business.entity';
 import { AuthProvider } from '../../auth/presentation/user.dto';
 import { CurrentBusiness } from '../../auth/decorator/auth.decorator';
 import { ForbiddenException } from '@nestjs/common';
@@ -33,7 +33,7 @@ describe('BusinessController', () => {
 
   describe('내 업체 정보 조회', () => {
     it('인증되면 비즈니스 정보를 반환', async () => {
-      const mockBusiness = new Business();
+      const mockBusiness = new BusinessEntity();
       mockBusiness.businessId = 1;
       mockBusiness.businessName = 'Test Business';
       mockBusiness.uuid = 'test-uuid';
@@ -56,7 +56,7 @@ describe('BusinessController', () => {
     });
 
     it('사용자가 비즈니스가 아닌 경우 금지된 예외를 던져야 함\n', () => {
-      const mockBusiness = new Business();
+      const mockBusiness = new BusinessEntity();
       mockBusiness.businessId = 1;
       mockBusiness.businessName = 'Test Business';
       mockBusiness.uuid = 'test-uuid';

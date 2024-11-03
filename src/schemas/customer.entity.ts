@@ -16,7 +16,7 @@ import { CustomerChatRoom } from './customer-chat-room.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 import { AuthProvider } from '../auth/presentation/user.dto';
 import { ImageEntity } from './image.entity';
-import { Customer, ICustomer } from '../customer/customer.domain';
+import { Customer } from '../customer/customer.domain';
 import { Builder } from 'builder-pattern';
 import { IUUIDHolder } from '../common/holder/uuid.holders';
 import { IDateHolder } from '../common/holder/date.holder';

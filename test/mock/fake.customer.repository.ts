@@ -24,7 +24,7 @@ export class FakeCustomerRepository implements ICustomerRepository {
       .build();
   }
 
-  async findOne(dto: Partial<CustomerDto>): Promise<Customer> {
+  async getOne(dto: Partial<CustomerDto>): Promise<Customer> {
     if (!dto.uuid && !dto.userId && !dto.customerId) {
       throw new BadRequestException(
         `식별할 수 있는 값이 없습니다. uuid: ${dto.uuid}, userId: ${dto.userId}, customerId: ${dto.customerId}`,
@@ -41,6 +41,22 @@ export class FakeCustomerRepository implements ICustomerRepository {
       throw new Error('존재하지 않는 사용자입니다.');
     }
     return findCustomer;
+  }
+
+  async findOne(dto: Partial<CustomerDto>): Promise<Customer | null> {
+    if (!dto.uuid && !dto.userId && !dto.customerId) {
+      throw new BadRequestException(
+        `식별할 수 있는 값이 없습니다. uuid: ${dto.uuid}, userId: ${dto.userId}, customerId: ${dto.customerId}`,
+      );
+    }
+
+    const findCustomer = this.customers.find(
+      (c: Customer) =>
+        c.uuid === dto.uuid ||
+        c.customerId === dto.userId ||
+        c.customerId === dto.customerId,
+    );
+    return findCustomer ?? null;
   }
 
   async save(customer: Customer): Promise<ICustomer> {

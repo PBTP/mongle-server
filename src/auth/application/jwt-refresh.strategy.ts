@@ -44,7 +44,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
       throw new BadRequestException();
     }
 
-    return await this.userServices[payload.userType].findOne({
+    return await this.userServices[payload.userType].getOne({
       userId: payload.subject,
     });
   }

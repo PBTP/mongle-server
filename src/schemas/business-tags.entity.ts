@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   PrimaryColumn,
 } from 'typeorm';
-import { Business } from './business.entity';
+import { BusinessEntity } from './business.entity';
 import { Tag } from './tags.entity';
 
 @Entity({ name: 'business_tags' })
@@ -13,7 +13,7 @@ export class BusinessTag {
   @CreateDateColumn()
   public createdAt: Date;
 
-  @ManyToOne(() => Business, (business) => business.businessTags)
+  @ManyToOne(() => BusinessEntity, (business) => business.businessTags)
   @JoinColumn({ name: 'business_id' })
   @PrimaryColumn()
   public businessId: number;
@@ -23,6 +23,6 @@ export class BusinessTag {
   @PrimaryColumn()
   public tagId: number;
 
-  public business: Business;
+  public business: BusinessEntity;
   public tag: Tag;
 }

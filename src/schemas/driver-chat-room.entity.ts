@@ -6,7 +6,7 @@ import {
   Column,
   JoinColumn,
 } from 'typeorm';
-import { Driver } from './drivers.entity';
+import { DriverEntity } from './drivers.entity';
 import { ChatRoom } from './chat-room.entity';
 
 @Entity('driver_chat_rooms')
@@ -23,9 +23,9 @@ export class DriverChatRoom {
   @Column({ type: 'timestamp', nullable: true })
   deletedAt: Date;
 
-  @ManyToOne(() => Driver, (driver) => driver.chatRooms)
+  @ManyToOne(() => DriverEntity, (driver) => driver.chatRooms)
   @JoinColumn({ name: 'driver_id' })
-  driver: Driver;
+  driver: DriverEntity;
 
   @ManyToOne(() => ChatRoom, (chatRoom) => chatRoom.driverChatRooms)
   @JoinColumn({ name: 'chat_room_id' })

@@ -56,7 +56,11 @@ export class CustomerService implements IUserService {
     );
   }
 
-  async findOne(
+  findOne(dto: Partial<AuthDto>): Promise<UserDto | null> {
+    return this.customerRepository.findOne(dto);
+  }
+
+  async getOne(
     dto: Partial<AuthDto>,
     decrypt: boolean = false,
   ): Promise<Customer> {
@@ -64,11 +68,7 @@ export class CustomerService implements IUserService {
       throw new BadRequestException('식별할 수 없는 사용자입니다.');
     }
 
-    const customer = await this.customerRepository.findOne(dto);
-
-    if (!customer) {
-      throw new NotFoundException('존재하지 않는 사용자입니다.');
-    }
+    const customer = await this.customerRepository.getOne(dto);
 
     if (decrypt && customer) {
       if (customer?.customerPhoneNumber) {
@@ -110,7 +110,7 @@ export class CustomerService implements IUserService {
       dto.customerAddress = this.securityService.encrypt(dto.customerAddress);
     }
 
-    return await this.findOne(dto)
+    return await this.getOne(dto)
       .then(async (customer) => {
         customer.customerName = dto.customerName ?? customer.customerName;
         customer.customerPhoneNumber =

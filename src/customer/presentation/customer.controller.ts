@@ -26,7 +26,7 @@ export class CustomerController {
   > {
     return ResponseEntity.OK(
       await this.customerService
-        .findOne({ userId: customer.customerId }, true)
+        .getOne({ userId: customer.customerId }, true)
         .then((v) => {
           return Builder<CustomerDto>()
             .uuid(v.uuid)

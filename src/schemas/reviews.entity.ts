@@ -9,7 +9,7 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
-import { Business } from './business.entity';
+import { BusinessEntity } from './business.entity';
 import { CustomerEntity } from './customer.entity';
 import { Pet } from './pets.entity';
 import { HasUuid } from '../common/entity/parent.entity';
@@ -42,9 +42,9 @@ export class Review extends HasUuid {
   @JoinColumn({ name: 'customer_id' })
   public customer: CustomerEntity;
 
-  @ManyToOne(() => Business, (business) => business.reviews)
+  @ManyToOne(() => BusinessEntity, (business) => business.reviews)
   @JoinColumn({ name: 'business_id' })
-  public business: Business;
+  public business: BusinessEntity;
 
   @ManyToOne(() => Pet, (pets) => pets.reviews)
   @JoinColumn({ name: 'pet_id' })

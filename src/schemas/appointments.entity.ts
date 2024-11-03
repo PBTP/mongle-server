@@ -9,9 +9,9 @@ import {
   PrimaryColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { Business } from './business.entity';
+import { BusinessEntity } from './business.entity';
 import { CustomerEntity } from './customer.entity';
-import { Driver } from './drivers.entity';
+import { DriverEntity } from './drivers.entity';
 import { Pet } from './pets.entity';
 import { Review } from './reviews.entity';
 import { ServiceOption } from './service-options.entity';
@@ -59,13 +59,13 @@ export class Appointment extends HasUuid {
   @JoinColumn({ name: 'customer_id' })
   public customer: CustomerEntity;
 
-  @ManyToOne(() => Business, (business) => business.appointments)
+  @ManyToOne(() => BusinessEntity, (business) => business.appointments)
   @JoinColumn({ name: 'business_id' })
-  public business: Business;
+  public business: BusinessEntity;
 
-  @ManyToOne(() => Driver, (drivers) => drivers.appointments)
+  @ManyToOne(() => DriverEntity, (drivers) => drivers.appointments)
   @JoinColumn({ name: 'driver_id' })
-  public driver: Driver;
+  public driver: DriverEntity;
 
   @ManyToOne(() => Pet, (pets) => pets.appointments)
   @JoinColumn({ name: 'pet_id' })

@@ -58,13 +58,13 @@ export class Customer implements ICustomer {
     uuidHolder: IUUIDHolder,
     dateHolder: IDateHolder,
   ): Customer {
-    if (!customer.customerName || !customer.authProvider) {
+    if ((!customer.customerName && !customer.name) || !customer.authProvider) {
       throw new Error('필수 정보가 누락되었습니다.');
     }
 
     return Builder<Customer>()
       .uuid(uuidHolder.generatedUuid())
-      .customerName(customer.customerName)
+      .customerName(customer.customerName ?? customer.name)
       .authProvider(customer.authProvider)
       .createdAt(dateHolder.now())
       .modifiedAt(dateHolder.now())

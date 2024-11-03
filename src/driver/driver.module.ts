@@ -1,11 +1,18 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Driver } from '../schemas/drivers.entity';
+import { DriverEntity } from '../schemas/drivers.entity';
 import { DriverService } from './application/driver.service';
+import { DRIVER_REPOSITORY, DriverRepository } from './port/driver.repository';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Driver])],
+  imports: [TypeOrmModule.forFeature([DriverEntity])],
   exports: [DriverService],
-  providers: [DriverService],
+  providers: [
+    {
+      provide: DRIVER_REPOSITORY,
+      useClass: DriverRepository,
+    },
+    DriverService,
+  ],
 })
 export class DriverModule {}

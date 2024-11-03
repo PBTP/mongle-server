@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { ChatRoom } from '../../schemas/chat-room.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -9,10 +9,10 @@ import { BusinessChatService } from './business-chat.service';
 import { ChatMessageDto, ChatRoomDto } from '../presentation/chat.dto';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
 import { UserSocket } from '../presentation/chat.gateway';
-import { CacheService } from '../../common/cache/cache.service';
-import { Driver } from '../../schemas/drivers.entity';
+import { CACHE_SERVICE, CacheService } from '../../common/cache/cache.service';
+import { DriverEntity } from '../../schemas/drivers.entity';
 import { CursorDto } from '../../common/dto/cursor.dto';
-import { Business } from '../../schemas/business.entity';
+import { BusinessEntity } from '../../schemas/business.entity';
 import { IChatService } from './chat.interface';
 import { BadRequestException } from '@nestjs/common/exceptions';
 import { Customer, ICustomer } from '../../customer/customer.domain';
@@ -28,6 +28,7 @@ export class ChatService {
     private readonly chatRepository: Repository<ChatRoom>,
     @InjectRepository(ChatMessage)
     private readonly chatMessageRepository: Repository<ChatMessage>,
+    @Inject(CACHE_SERVICE)
     private readonly cacheService: CacheService,
     private readonly driverChatService: DriverChatService,
     private readonly customerChatService: CustomerChatService,
@@ -143,13 +144,13 @@ export class ChatService {
       )
       .leftJoinAndMapOne(
         'CM.driver',
-        Driver,
+        DriverEntity,
         'driver',
         'CM.senderUuid = driver.uuid',
       )
       .leftJoinAndMapOne(
         'CM.business',
-        Business,
+        BusinessEntity,
         'business',
         'CM.senderUuid = business.uuid',
       )
@@ -170,6 +171,7 @@ export class ChatService {
       data: chatMessages.map((message) => {
         const userType: UserType = 'customer';
 
+        // todo: getRawMany로 변경해서 Type처리 제대로 할것
         // @ts-ignore
         const user = message[userType];
 

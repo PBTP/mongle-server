@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { CacheService } from '../../common/cache/cache.service';
+import { CACHE_SERVICE, ICacheService } from '../../common/cache/cache.service';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { UserService } from './user.service';
 import { UserDto } from '../presentation/user.dto';
@@ -17,7 +17,8 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly cacheService: CacheService,
+    @Inject(CACHE_SERVICE)
+    private readonly cacheService: ICacheService,
     private readonly userService: UserService,
   ) {
     this.accessTokenOption = {
@@ -36,7 +37,7 @@ export class AuthService {
   }
 
   async login(dto: UserDto): Promise<AuthDto> {
-    let user: UserDto = await this.userService.findOne(dto);
+    let user: UserDto | null = await this.userService.findOne(dto);
     user = user ?? (await this.userService.create(dto));
     user.userId = user.customerId ?? user.driverId ?? user.businessId;
 
@@ -104,7 +105,7 @@ export class AuthService {
       throw new UnauthorizedException('토큰이 유효하지 않습니다.');
     }
 
-    const user: UserDto = await this.userService.findOne({
+    const user: UserDto = await this.userService.getOne({
       userType: payload.userType,
       userId: payload.subject,
     });
