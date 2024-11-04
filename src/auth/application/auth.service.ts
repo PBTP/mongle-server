@@ -6,6 +6,7 @@ import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { UserService } from './user.service';
 import { UserDto } from '../presentation/user.dto';
 import { AuthDto } from '../presentation/auth.dto';
+import { Builder } from 'builder-pattern';
 
 @Injectable()
 export class AuthService {
@@ -37,8 +38,12 @@ export class AuthService {
   }
 
   async login(dto: UserDto): Promise<AuthDto> {
-    let user: UserDto | null = await this.userService.findOne(dto);
-    user = user ?? (await this.userService.create(dto));
+    const user: UserDto = await this.userService
+      .findOne(dto)
+      .then(async (user) => {
+        return user ?? (await this.userService.create(dto));
+      });
+
     user.userId = user.customerId ?? user.driverId ?? user.businessId;
 
     user.userType = dto.userType;
@@ -76,30 +81,24 @@ export class AuthService {
       refreshToken: refreshToken,
     });
 
-    return {
-      uuid: user.uuid,
-      name: user.name,
-      userId: user.userId,
-      userType: user.userType ?? dto.userType,
-      phoneNumber: user.phoneNumber,
-      authProvider: user.authProvider,
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-    };
+    return Builder(AuthDto)
+      .uuid(user.uuid)
+      .name(dto.name)
+      .userId(user.userId)
+      .userType(user.userType)
+      .phoneNumber(user.phoneNumber)
+      .authProvider(user.authProvider)
+      .accessToken(accessToken)
+      .refreshToken(refreshToken)
+      .build();
   }
 
-  async tokenRefresh(
-    request: Request & { headers: { authorization?: string } },
-  ): Promise<AuthDto> {
-    const token = request.headers.authorization?.replace('Bearer ', '');
-
+  async tokenRefresh(token: string): Promise<AuthDto> {
     if (!token) {
-      throw new UnauthorizedException('Authorization 헤더에 토큰이 없습니다.');
+      throw new UnauthorizedException('토큰이 없습니다.');
     }
 
     const payload = this.jwtService.decode(token);
-
-    console.log('payload', payload);
 
     if (!payload) {
       throw new UnauthorizedException('토큰이 유효하지 않습니다.');
@@ -176,17 +175,13 @@ export class AuthService {
     );
   }
 
-  async decode(token: string): Promise<any> {
-    return await this.jwtService.decode(token);
-  }
-
   async getUser(token: string): Promise<any> {
     const payload = await this.jwtService.verify(token);
     if (!payload) {
       throw new UnauthorizedException('토큰이 유효하지 않습니다.');
     }
 
-    return await this.userService.findOne({
+    return await this.userService.getOne({
       userType: payload.userType,
       userId: payload.subject,
     });

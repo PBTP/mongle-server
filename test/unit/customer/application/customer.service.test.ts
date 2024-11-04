@@ -27,7 +27,7 @@ describe('CustomerService', () => {
         new FakeCloudStorageService(),
         new FakeImageRepository(),
       ),
-      new FakeUuidHolder('test-uuid'),
+      new FakeUuidHolder(),
       new FakeDateHolder(date),
     );
   });
@@ -59,7 +59,7 @@ describe('CustomerService', () => {
         .build();
 
       const customer = await service.create(customerDto);
-      const findCustomer = await service.findOne({ userId: 1 });
+      const findCustomer = await service.getOne({ userId: 1 });
 
       expect(findCustomer).toBeDefined();
       expect(findCustomer.customerId).toBe(1);
@@ -76,7 +76,7 @@ describe('CustomerService', () => {
         .build();
 
       const customer = await service.create(customerDto);
-      const findCustomer = await service.findOne({ uuid: customer.uuid });
+      const findCustomer = await service.getOne({ uuid: customer.uuid });
 
       expect(findCustomer).toBeDefined();
       expect(findCustomer.customerId).toBe(1);
@@ -97,7 +97,7 @@ describe('CustomerService', () => {
         customer.customerDetailAddress = '역삼동';
         return service.update(customer);
       });
-      const findCustomer = await service.findOne({ userId: 1 });
+      const findCustomer = await service.getOne({ userId: 1 });
 
       expect(findCustomer).toBeDefined();
       expect(findCustomer.customerId).toBe(1);
@@ -121,7 +121,7 @@ describe('CustomerService', () => {
         customer.customerDetailAddress = '역삼동';
         return service.update(customer);
       });
-      const findCustomer = await service.findOne({ userId: 1 }, true);
+      const findCustomer = await service.getOne({ userId: 1 }, true);
 
       expect(findCustomer).toBeDefined();
       expect(findCustomer.customerId).toBe(1);

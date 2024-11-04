@@ -44,12 +44,6 @@ export class FakeCustomerRepository implements ICustomerRepository {
   }
 
   async findOne(dto: Partial<CustomerDto>): Promise<Customer | null> {
-    if (!dto.uuid && !dto.userId && !dto.customerId) {
-      throw new BadRequestException(
-        `식별할 수 있는 값이 없습니다. uuid: ${dto.uuid}, userId: ${dto.userId}, customerId: ${dto.customerId}`,
-      );
-    }
-
     const findCustomer = this.customers.find(
       (c: Customer) =>
         c.uuid === dto.uuid ||

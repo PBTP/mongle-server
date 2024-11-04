@@ -1,5 +1,5 @@
 import { Point } from 'typeorm';
-import { AuthProvider } from '../auth/presentation/user.dto';
+import { AuthProvider, UserDto } from '../auth/presentation/user.dto';
 import { Favorite } from '../schemas/favorites.entity';
 import { Review } from '../schemas/reviews.entity';
 import { Appointment } from '../schemas/appointments.entity';
@@ -32,7 +32,7 @@ export interface ICustomer extends AuthDto {
   deletedAt?: Date;
 }
 
-export class Customer implements ICustomer {
+export class Customer implements ICustomer, UserDto {
   uuid?: string;
   customerId?: number;
   customerName: string;
@@ -68,6 +68,16 @@ export class Customer implements ICustomer {
       .authProvider(customer.authProvider)
       .createdAt(dateHolder.now())
       .modifiedAt(dateHolder.now())
+      .build();
+  }
+
+  static toUserModel(customer: Customer): UserDto {
+    return Builder(UserDto)
+      .userId(customer.customerId)
+      .name(customer.customerName)
+      .phoneNumber(customer.customerPhoneNumber)
+      .authProvider(customer.authProvider)
+      .uuid(customer.uuid)
       .build();
   }
 

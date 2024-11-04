@@ -55,6 +55,11 @@ export class CustomerRepository implements ICustomerRepository {
       .leftJoinAndMapOne('C.profileImage', ImageEntity, 'I', 'C.uuid =  I.uuid')
       .addSelect('I.image_url', 'profileImage');
 
+    if (!dto.userId && !dto.uuid) {
+      // 식별할 수 있는 값이 없는 경우 가장 첫번째 record가 반환될 수 있기 때문에 검증 후 null return
+      return null;
+    }
+
     if (dto.userId) {
       query.andWhere('C.customer_id = :customer_id', {
         customer_id: dto.userId,
