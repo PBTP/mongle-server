@@ -150,20 +150,27 @@ export class AuthService {
     }
 
     const key = `${user.userType}:${user.userId}:accessToken`;
+    const uniqueStrategy = this.accessTokenStrategy?.toLowerCase() === 'unique';
 
-    if (this.accessTokenStrategy?.toLowerCase() === 'unique') {
-      this.cacheService.get(key).then((v) => {
-        if (v) {
-          this.cacheService.del(v);
-        }
-      });
-
-      await this.cacheService.set(
-        key,
-        accessToken,
-        (this.accessTokenOption.expiresIn as number) / 1000,
-      );
+    if (uniqueStrategy) {
+      const existingToken = await this.cacheService.get(key);
+      if (existingToken) await this.cacheService.del(existingToken);
     }
+
+    await this.cacheService.set(
+      key,
+      accessToken,
+      (this.accessTokenOption.expiresIn as number) / 1000,
+    );
+
+    await this.cacheService.set(
+      accessToken,
+      JSON.stringify({
+        ...user,
+        refreshToken: undefined,
+      }),
+      (this.accessTokenOption.expiresIn as number) / 1000,
+    );
 
     await this.cacheService.set(
       accessToken,

@@ -13,10 +13,7 @@ import { DriverService } from '../../../../src/driver/application/driver.service
 import { FakeDriverRepository } from '../../../mock/fake.driver.repository';
 import { BusinessService } from '../../../../src/business/application/business.service';
 import { FakeBusinessRepository } from '../../../mock/fake.business.repsitory';
-import {
-  AuthProvider,
-  UserDto,
-} from '../../../../src/auth/presentation/user.dto';
+import { AuthProvider, UserDto } from '../../../../src/auth/presentation/user.dto';
 import { FakeDateHolder, FakeUuidHolder } from '../../../mock/fake.holder';
 
 describe('AuthService', () => {
@@ -131,6 +128,7 @@ describe('AuthService', () => {
   );
 
   test('Token Refresh시 accessToken, refreshToken이 새로 발급된다.', async () => {
+    jest.useFakeTimers();
     const initUser: UserDto = {
       userType: 'customer',
       name: '홍길동',
@@ -138,6 +136,9 @@ describe('AuthService', () => {
     };
 
     const loginUser = await service.login(initUser);
+
+    // iat, exp는 1초 단위로 계산되기 때문에 1초 이상의 시간을 흘려야 한다.
+    jest.advanceTimersByTime(2000);
 
     const refreshUser = await service.tokenRefresh(loginUser.refreshToken!);
 
