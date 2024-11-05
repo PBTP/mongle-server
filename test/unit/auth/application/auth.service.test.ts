@@ -13,16 +13,21 @@ import { DriverService } from '../../../../src/driver/application/driver.service
 import { FakeDriverRepository } from '../../../mock/fake.driver.repository';
 import { BusinessService } from '../../../../src/business/application/business.service';
 import { FakeBusinessRepository } from '../../../mock/fake.business.repsitory';
-import { AuthProvider, UserDto } from '../../../../src/auth/presentation/user.dto';
+import {
+  AuthProvider,
+  UserDto,
+  UserType,
+} from '../../../../src/auth/presentation/user.dto';
 import { FakeDateHolder, FakeUuidHolder } from '../../../mock/fake.holder';
 
 describe('AuthService', () => {
   let service: AuthService;
   let jwtService: JwtService;
+  let customerService: CustomerService;
   const date: Date = new Date();
 
   beforeEach(async () => {
-    const customerService = new CustomerService(
+    customerService = new CustomerService(
       new FakeCustomerRepository(),
       new FakeSecurityService(),
       new ImageService(
@@ -32,10 +37,18 @@ describe('AuthService', () => {
       new FakeUuidHolder(),
       new FakeDateHolder(date),
     );
-    jwtService = new JwtService();
+
+    const configService = new FakeConfigService();
+
+    const accessTokenOption = {
+      secret: configService.get('jwt/access/secret'),
+      expiresIn: configService.get('jwt/access/expire'),
+    };
+
+    jwtService = new JwtService(accessTokenOption);
     service = new AuthService(
       jwtService,
-      new FakeConfigService(),
+      configService,
       new FakeCacheService(),
       new UserService(
         customerService,
@@ -150,5 +163,70 @@ describe('AuthService', () => {
     expect(refreshUser.refreshToken).toBeDefined();
     expect(refreshUser.accessToken).not.toBe(loginUser.accessToken);
     expect(refreshUser.refreshToken).not.toBe(loginUser.refreshToken);
+  });
+
+  test('loging한 후 받은 accessToken으로 getUser를 호출해 유저 정보를 조회 할 수 있다.', async () => {
+    const initUser: UserDto = {
+      userType: 'customer',
+      name: '홍길동',
+      authProvider: AuthProvider.BASIC,
+    };
+
+    const loginUser = await service.login(initUser);
+    const findCustomer = await service.getUser(loginUser.accessToken!);
+
+    console.table(findCustomer);
+
+    expect(findCustomer).toBeDefined();
+    expect(findCustomer).toStrictEqual({
+      uuid: 'test-uuid',
+      userId: 1,
+      userType: 'customer',
+      authProvider: AuthProvider.BASIC,
+      customerId: 1,
+      customerName: '홍길동',
+      customerAddress: undefined,
+      customerDetailAddress: undefined,
+      customerPhoneNumber: undefined,
+      refreshToken: loginUser.refreshToken,
+      createdAt: date,
+      modifiedAt: date,
+      deletedAt: undefined,
+    });
+  });
+
+  test('loging한 후 받은 accessToken으로 고객의 정보를 조회할 수 있다.', async () => {
+    const initUser: UserDto = {
+      userType: 'customer',
+      name: '홍길동',
+      authProvider: AuthProvider.BASIC,
+    };
+
+    const loginUser = await service.login(initUser);
+
+    const decode = jwtService.decode(loginUser.accessToken!);
+    console.table(decode);
+
+    const findCustomer = await customerService.getOne({
+      userId: decode?.subject as number,
+      userType: decode?.userType as UserType,
+    });
+
+    expect(findCustomer).toBeDefined();
+    expect(findCustomer).toStrictEqual({
+      uuid: 'test-uuid',
+      userId: 1,
+      userType: 'customer',
+      customerId: 1,
+      customerName: '홍길동',
+      customerPhoneNumber: undefined,
+      customerAddress: undefined,
+      customerDetailAddress: undefined,
+      authProvider: AuthProvider.BASIC,
+      refreshToken: loginUser.refreshToken,
+      createdAt: date,
+      modifiedAt: date,
+      deletedAt: undefined,
+    });
   });
 });
