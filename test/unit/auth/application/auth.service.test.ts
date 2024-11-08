@@ -5,7 +5,7 @@ import { FakeSecurityService } from '../../../mock/fake.security.service';
 import { ImageService } from '../../../../src/common/image/application/image.service';
 import { FakeCloudStorageService } from '../../../mock/fake.cloud-storage.service';
 import { FakeImageRepository } from '../../../mock/fake.image.repository';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { FakeConfigService } from '../../../mock/fake.config.service';
 import { FakeCacheService } from '../../../mock/fake.cache.service';
 import { UserService } from '../../../../src/auth/application/user.service';
@@ -25,6 +25,27 @@ describe('AuthService', () => {
   let jwtService: JwtService;
   let customerService: CustomerService;
   const date: Date = new Date();
+
+  const users = [
+    {
+      userType: 'customer' as UserType,
+      uuid: 'test-uuid-1',
+      name: '홍길동1',
+      authProvider: AuthProvider.BASIC,
+    },
+    {
+      userType: 'customer' as UserType,
+      uuid: 'test-uuid-2',
+      name: '홍길동2',
+      authProvider: AuthProvider.BASIC,
+    },
+    {
+      userType: 'customer' as UserType,
+      uuid: 'test-uuid-3',
+      name: '홍길동3',
+      authProvider: AuthProvider.BASIC,
+    },
+  ];
 
   beforeEach(async () => {
     customerService = new CustomerService(
@@ -56,6 +77,17 @@ describe('AuthService', () => {
         new BusinessService(new FakeBusinessRepository()),
       ),
     );
+
+    // 모든 사용자를 로그인 처리
+    for (const user of users) {
+      await service.login(user);
+    }
+
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   test('login시 새로운 사용자인 경우 새로 DB에 등록된다.', async () => {
@@ -68,7 +100,7 @@ describe('AuthService', () => {
     const loginUser = await service.login(initUser);
 
     expect(loginUser).toBeDefined();
-    expect(loginUser?.userId).toBe(1);
+    expect(loginUser?.userId).toBe(4);
     expect(loginUser?.userType).toBe('customer');
     expect(loginUser?.name).toBe('홍길동');
     expect(loginUser?.authProvider).toBe(AuthProvider.BASIC);
@@ -101,7 +133,7 @@ describe('AuthService', () => {
 
     const loginUser = await service.login(initUser);
 
-    expect(loginUser.userId).toBe(1);
+    expect(loginUser.userId).toBe(4);
     expect(loginUser?.accessToken).toBeDefined();
 
     const decode = jwtService.decode(loginUser.accessToken!);
@@ -111,7 +143,7 @@ describe('AuthService', () => {
     expect(decode).toBeDefined();
     expect(decode.tokenType).toBe('access');
     expect(decode.userType).toBe('customer');
-    expect(decode.subject).toBe(1);
+    expect(decode.subject).toBe(4);
   });
 
   test(
@@ -126,7 +158,7 @@ describe('AuthService', () => {
 
       const loginUser = await service.login(initUser);
 
-      expect(loginUser.userId).toBe(1);
+      expect(loginUser.userId).toBe(4);
       expect(loginUser?.refreshToken).toBeDefined();
 
       const decode = jwtService.decode(loginUser.refreshToken!);
@@ -136,12 +168,11 @@ describe('AuthService', () => {
       expect(decode).toBeDefined();
       expect(decode.tokenType).toBe('refresh');
       expect(decode.userType).toBe('customer');
-      expect(decode.subject).toBe(1);
+      expect(decode.subject).toBe(4);
     },
   );
 
   test('Token Refresh시 accessToken, refreshToken이 새로 발급된다.', async () => {
-    jest.useFakeTimers();
     const initUser: UserDto = {
       userType: 'customer',
       name: '홍길동',
@@ -165,68 +196,84 @@ describe('AuthService', () => {
     expect(refreshUser.refreshToken).not.toBe(loginUser.refreshToken);
   });
 
-  test('loging한 후 받은 accessToken으로 getUser를 호출해 유저 정보를 조회 할 수 있다.', async () => {
-    const initUser: UserDto = {
-      userType: 'customer',
+  test('accessToken이 만료되면 getUser 시 TokenExpiredError가 발생한다.', async () => {
+    const initUser = {
+      userType: 'customer' as UserType,
       name: '홍길동',
       authProvider: AuthProvider.BASIC,
     };
 
     const loginUser = await service.login(initUser);
-    const findCustomer = await service.getUser(loginUser.accessToken!);
 
-    console.table(findCustomer);
+    // 2시간 후로 시간을 진행
+    jest.advanceTimersByTime(2 * 60 * 60 * 1000);
 
-    expect(findCustomer).toBeDefined();
-    expect(findCustomer).toStrictEqual({
-      uuid: 'test-uuid',
-      userId: 1,
-      userType: 'customer',
-      authProvider: AuthProvider.BASIC,
-      customerId: 1,
-      customerName: '홍길동',
-      customerAddress: undefined,
-      customerDetailAddress: undefined,
-      customerPhoneNumber: undefined,
-      refreshToken: loginUser.refreshToken,
-      createdAt: date,
-      modifiedAt: date,
-      deletedAt: undefined,
-    });
+    // 비동기 함수가 예외를 발생시키는지 테스트
+    await expect(service.getUser(loginUser.accessToken!)).rejects.toThrow(
+      TokenExpiredError,
+    );
   });
 
-  test('loging한 후 받은 accessToken으로 고객의 정보를 조회할 수 있다.', async () => {
-    const initUser: UserDto = {
-      userType: 'customer',
-      name: '홍길동',
-      authProvider: AuthProvider.BASIC,
-    };
+  describe('사용자별 고객 정보 조회 테스트 (GetUser)', () => {
+    test.each(users)(
+      '사용자  accessToken으로 고객 정보를 조회할 수 있다. %s',
+      async (user) => {
+        const loginUser = await service.login(user);
 
-    const loginUser = await service.login(initUser);
+        const decode = jwtService.decode(loginUser.accessToken!);
 
-    const decode = jwtService.decode(loginUser.accessToken!);
-    console.table(decode);
+        const findCustomer = await service.getUser(loginUser.accessToken!);
 
-    const findCustomer = await customerService.getOne({
-      userId: decode?.subject as number,
-      userType: decode?.userType as UserType,
-    });
+        expect(findCustomer).toBeDefined();
+        expect(findCustomer).toStrictEqual({
+          uuid: user.uuid,
+          userId: decode?.subject,
+          userType: user.userType,
+          customerId: decode?.subject,
+          customerName: user.name,
+          customerPhoneNumber: undefined,
+          customerAddress: undefined,
+          customerDetailAddress: undefined,
+          authProvider: user.authProvider,
+          refreshToken: loginUser.refreshToken,
+          createdAt: date,
+          modifiedAt: date,
+          deletedAt: undefined,
+        });
+      },
+    );
+  });
 
-    expect(findCustomer).toBeDefined();
-    expect(findCustomer).toStrictEqual({
-      uuid: 'test-uuid',
-      userId: 1,
-      userType: 'customer',
-      customerId: 1,
-      customerName: '홍길동',
-      customerPhoneNumber: undefined,
-      customerAddress: undefined,
-      customerDetailAddress: undefined,
-      authProvider: AuthProvider.BASIC,
-      refreshToken: loginUser.refreshToken,
-      createdAt: date,
-      modifiedAt: date,
-      deletedAt: undefined,
-    });
+  describe('사용자별 고객 정보 조회 테스트 customerService.getOne', () => {
+    test.each(users)(
+      '사용자 accessToken으로 고객 정보를 조회할 수 있다. %s',
+      async (user) => {
+        const loginUser = await service.login(user);
+
+        const decode = jwtService.decode(loginUser.accessToken!);
+
+        const findCustomer = await customerService.getOne({
+          userId: decode?.subject as number,
+          userType: decode?.userType as UserType,
+        });
+
+        expect(findCustomer).toBeDefined();
+        expect(findCustomer).toStrictEqual({
+          uuid: user.uuid,
+          userId: decode?.subject,
+          userType: user.userType,
+          customerId: decode?.subject,
+          customerName: user.name,
+          customerPhoneNumber: undefined,
+          customerAddress: undefined,
+          customerDetailAddress: undefined,
+          authProvider: user.authProvider,
+          refreshToken: loginUser.refreshToken,
+          createdAt: date,
+          modifiedAt: date,
+          deletedAt: undefined,
+        });
+      },
+    );
   });
 });

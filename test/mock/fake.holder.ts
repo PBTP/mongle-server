@@ -2,8 +2,16 @@ import { IUUIDHolder } from '../../src/common/holder/uuid.holders';
 import { IDateHolder } from '../../src/common/holder/date.holder';
 
 export class FakeUuidHolder implements IUUIDHolder {
+  private readonly uuids: string[] = [];
+
+  constructor(
+    initUuids = ['test-uuid-3', 'test-uuid-2', 'test-uuid-1'],
+  ) {
+    this.uuids = initUuids;
+  }
+
   generatedUuid(): string {
-    return 'test-uuid';
+    return this.uuids.pop()?.toString() ?? 'test-uuid';
   }
 }
 
