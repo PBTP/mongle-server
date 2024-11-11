@@ -1,27 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BusinessService } from './business.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Business } from '../../schemas/business.entity';
+import { BusinessEntity } from '../../schemas/business.entity';
 import { Repository } from 'typeorm';
 import { AuthProvider } from '../../auth/presentation/user.dto';
 
 describe('BusinessService', () => {
   let service: BusinessService;
-  let repo: Repository<Business>;
+  let repo: Repository<BusinessEntity>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         BusinessService,
         {
-          provide: getRepositoryToken(Business),
-          useClass: Repository<Business>,
+          provide: getRepositoryToken(BusinessEntity),
+          useClass: Repository<BusinessEntity>,
         },
       ],
     }).compile();
 
     service = module.get<BusinessService>(BusinessService);
-    repo = module.get<Repository<Business>>(getRepositoryToken(Business));
+    repo = module.get<Repository<BusinessEntity>>(getRepositoryToken(BusinessEntity));
   });
 
   it('should be defined', () => {
@@ -29,7 +29,7 @@ describe('BusinessService', () => {
   });
 
   it('업체 조회', async () => {
-    const business = new Business();
+    const business = new BusinessEntity();
     business.businessId = 1;
     business.businessName = 'test';
     business.uuid = 'test';
@@ -41,7 +41,7 @@ describe('BusinessService', () => {
   });
 
   it('업체 계정 생성', async () => {
-    const business = new Business();
+    const business = new BusinessEntity();
     business.businessId = 1;
     business.businessName = 'test';
     business.uuid = 'test';
@@ -62,13 +62,13 @@ describe('BusinessService', () => {
   });
 
   it('업체 정보 수정', async () => {
-    const business = new Business();
+    const business = new BusinessEntity();
     business.businessId = 1;
     business.businessName = 'test';
     business.uuid = 'test';
     business.authProvider = AuthProvider.BASIC;
 
-    const updatedBusiness = new Business();
+    const updatedBusiness = new BusinessEntity();
     updatedBusiness.businessId = 1;
     updatedBusiness.businessName = 'updated test';
     updatedBusiness.uuid = 'test';

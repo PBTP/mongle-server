@@ -6,19 +6,23 @@ import {
   OneToMany,
   Point,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
-import { Appointment } from "./appointments.entity";
-import { Favorite } from "./favorites.entity";
-import { Pet } from "./pets.entity";
-import { Review } from "./reviews.entity";
-import { CustomerChatRoom } from "./customer-chat-room.entity";
-import { HasUuid } from "../common/entity/parent.entity";
-import { AuthProvider } from "../auth/presentation/user.dto";
-import { Image } from "./image.entity";
+  UpdateDateColumn,
+} from 'typeorm';
+import { Appointment } from './appointments.entity';
+import { Favorite } from './favorites.entity';
+import { Pet } from './pets.entity';
+import { Review } from './reviews.entity';
+import { CustomerChatRoom } from './customer-chat-room.entity';
+import { HasUuid } from '../common/entity/parent.entity';
+import { AuthProvider } from '../auth/presentation/user.dto';
+import { ImageEntity } from './image.entity';
+import { Customer } from '../customer/customer.domain';
+import { Builder } from 'builder-pattern';
+import { IUUIDHolder } from '../common/holder/uuid.holders';
+import { IDateHolder } from '../common/holder/date.holder';
 
 @Entity({ name: 'customers' })
-export class Customer extends HasUuid {
+export class CustomerEntity extends HasUuid {
   @PrimaryGeneratedColumn()
   customerId: number;
 
@@ -73,5 +77,43 @@ export class Customer extends HasUuid {
   chatRooms: CustomerChatRoom[];
 
   // not column properties
-  profileImage?: Image;
+  profileImage?: ImageEntity;
+
+  static from(
+    customer: Customer,
+    uuidHolder: IUUIDHolder,
+    dateHolder: IDateHolder,
+  ): CustomerEntity {
+    return Builder<CustomerEntity>()
+      .customerName(customer.customerName)
+      .customerPhoneNumber(customer.customerPhoneNumber)
+      .customerAddress(customer.customerAddress)
+      .customerDetailAddress(customer.customerDetailAddress)
+      .customerLocation(customer.customerLocation)
+      .authProvider(customer.authProvider)
+      .createdAt(dateHolder.now())
+      .modifiedAt(dateHolder.now())
+      .deletedAt(undefined)
+      .refreshToken(customer.refreshToken)
+      .uuid(uuidHolder.generatedUuid())
+      .build();
+  }
+
+  static toModel(customer: CustomerEntity): Customer {
+    return Builder<Customer>()
+      .customerId(customer.customerId)
+      .customerName(customer.customerName)
+      .customerPhoneNumber(customer.customerPhoneNumber)
+      .customerAddress(customer.customerAddress)
+      .customerDetailAddress(customer.customerDetailAddress)
+      .customerLocation(customer.customerLocation)
+      .authProvider(customer.authProvider)
+      .refreshToken(customer.refreshToken)
+      .favorites(customer.favorites)
+      .reviews(customer.reviews)
+      .appointments(customer.appointments)
+      .pets(customer.pets)
+      .chatRooms(customer.chatRooms)
+      .build();
+  }
 }

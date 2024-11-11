@@ -22,11 +22,18 @@ export class UserService {
     this.userServices.business = businessService;
   }
 
-  async findOne(dto: UserDto): Promise<any> {
-    const user = await this.userServices[dto.userType!].findOne(dto);
+  async getOne(dto: UserDto): Promise<UserDto> {
+    const user = await this.userServices[dto.userType!].getOne(dto);
 
     user && (user.userType = dto.userType);
     return user;
+  }
+
+  async findOne(dto: UserDto): Promise<UserDto | null> {
+    const user = await this.userServices[dto.userType!].findOne(dto);
+
+    user && (user.userType = dto.userType);
+    return user ?? null;
   }
 
   async create(dto: UserDto) {

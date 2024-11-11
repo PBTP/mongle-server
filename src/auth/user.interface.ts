@@ -4,7 +4,9 @@ import { AuthDto } from './presentation/auth.dto';
 export interface IUserService {
   readonly userType: UserType;
 
-  findOne(dto: Partial<AuthDto>): Promise<UserDto>;
+  findOne(dto: Partial<AuthDto>): Promise<UserDto | null>;
+
+  getOne(dto: Partial<AuthDto>): Promise<UserDto>;
 
   create(dto: UserDto): Promise<UserDto>;
 

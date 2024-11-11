@@ -1,10 +1,10 @@
 import { CustomerService } from '../application/customer.service';
 import { Body, Controller, Get, Put } from '@nestjs/common';
 import { CustomerDto } from './customer.dto';
-import { Customer } from '../../schemas/customer.entity';
 import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Builder } from 'builder-pattern';
+import { Customer } from '../customer.domain';
 
 @ApiTags('고객 관련 API')
 @Controller('/v1/customer')
@@ -22,7 +22,7 @@ export class CustomerController {
     @CurrentCustomer() customer: Customer,
   ): Promise<Omit<CustomerDto, 'refreshToken' | 'accessToken'>> {
     return await this.customerService
-      .findOne({ userId: customer.customerId }, true)
+      .getOne({ userId: customer.customerId }, true)
       .then((v) => {
         return Builder<CustomerDto>()
           .uuid(v.uuid)
@@ -36,7 +36,7 @@ export class CustomerController {
           .customerAddress(v.customerAddress)
           .customerDetailAddress(v.customerDetailAddress)
           .authProvider(v.authProvider)
-          .profileImageUrl(v?.profileImage?.imageUrl)
+          .profileImageUrl(v.profileImage?.imageUrl)
           .build();
       });
   }
@@ -60,13 +60,20 @@ export class CustomerController {
         ...dto,
       })
       .then((v) => {
-        return {
-          uuid: v.uuid,
-          customerId: v.customerId,
-          authProvider: v.authProvider,
-          customerName: v.customerName,
-          presignedUrlDto: v.presignedUrlDto,
-        };
+        return Builder<CustomerDto>()
+          .uuid(v.uuid)
+          .userType('customer')
+          .userId(v.customerId)
+          .name(v.customerName)
+          .customerId(v.customerId)
+          .customerName(v.customerName)
+          .customerPhoneNumber(v.customerPhoneNumber)
+          .customerLocation(v.customerLocation)
+          .customerAddress(v.customerAddress)
+          .customerDetailAddress(v.customerDetailAddress)
+          .authProvider(v.authProvider)
+          .profileImageUrl(v?.profileImage?.imageUrl)
+          .build();
       });
   }
 }

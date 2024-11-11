@@ -1,6 +1,8 @@
 import { IsIn, IsNotEmpty, IsOptional } from 'class-validator';
 import { CrudGroup } from '../../common/validation/validation.data';
 import { ApiProperty } from '@nestjs/swagger';
+import { Customer } from '../../customer/customer.domain';
+import { Builder } from 'builder-pattern';
 
 // 고객, 업체, 기사 공통 사용 DTO
 export type UserType = 'customer' | 'driver' | 'business';
@@ -63,4 +65,14 @@ export class UserDto {
   customerId?: number;
   driverId?: number;
   businessId?: number;
+
+  static from(customer: Customer): UserDto {
+    return Builder(UserDto)
+      .userId(customer.customerId)
+      .name(customer.customerName)
+      .phoneNumber(customer.customerPhoneNumber)
+      .authProvider(customer.authProvider)
+      .uuid(customer.uuid)
+      .build();
+  }
 }

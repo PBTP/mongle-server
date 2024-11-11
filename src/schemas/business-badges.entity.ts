@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   PrimaryColumn,
 } from 'typeorm';
-import { Business } from './business.entity';
+import { BusinessEntity } from './business.entity';
 import { Badge } from './badges.entity';
 
 @Entity({ name: 'business_badges' })
@@ -13,7 +13,7 @@ export class BusinessBadge {
   @CreateDateColumn()
   public createdAt: Date;
 
-  @ManyToOne(() => Business, (business) => business.businessBadges)
+  @ManyToOne(() => BusinessEntity, (business) => business.businessBadges)
   @JoinColumn({ name: 'business_id' })
   @PrimaryColumn()
   public businessId: number;
@@ -23,6 +23,6 @@ export class BusinessBadge {
   @PrimaryColumn()
   public badgeId: number;
 
-  public business: Business;
+  public business: BusinessEntity;
   public badge: Badge;
 }

@@ -3,15 +3,16 @@ import {
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common/exceptions';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { CacheService } from '../../common/cache/cache.service';
+import { CACHE_SERVICE, CacheService } from '../../common/cache/cache.service';
 import { UserDto } from '../presentation/user.dto';
 
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(Strategy, 'access') {
   constructor(
+    @Inject(CACHE_SERVICE)
     private readonly cacheService: CacheService,
     private readonly configService: ConfigService,
   ) {

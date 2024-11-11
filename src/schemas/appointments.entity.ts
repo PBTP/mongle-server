@@ -8,14 +8,14 @@ import {
   OneToMany,
   PrimaryColumn,
   UpdateDateColumn
-} from "typeorm";
-import { Business } from "./business.entity";
-import { Customer } from "./customer.entity";
-import { Driver } from "./drivers.entity";
-import { Pet } from "./pets.entity";
-import { Review } from "./reviews.entity";
-import { ServiceOption } from "./service-options.entity";
-import { HasUuid } from "../common/entity/parent.entity";
+} from 'typeorm';
+import { BusinessEntity } from './business.entity';
+import { CustomerEntity } from './customer.entity';
+import { DriverEntity } from './drivers.entity';
+import { Pet } from './pets.entity';
+import { Review } from './reviews.entity';
+import { ServiceOption } from './service-options.entity';
+import { HasUuid } from '../common/entity/parent.entity';
 
 @Entity({ name: 'appointments' })
 export class Appointment extends HasUuid {
@@ -55,17 +55,17 @@ export class Appointment extends HasUuid {
   @OneToMany(() => Review, (reviews) => reviews.appointment)
   public reviews: Review[];
 
-  @ManyToOne(() => Customer, (customers) => customers.appointments)
+  @ManyToOne(() => CustomerEntity, (customers) => customers.appointments)
   @JoinColumn({ name: 'customer_id' })
-  public customer: Customer;
+  public customer: CustomerEntity;
 
-  @ManyToOne(() => Business, (business) => business.appointments)
+  @ManyToOne(() => BusinessEntity, (business) => business.appointments)
   @JoinColumn({ name: 'business_id' })
-  public business: Business;
+  public business: BusinessEntity;
 
-  @ManyToOne(() => Driver, (drivers) => drivers.appointments)
+  @ManyToOne(() => DriverEntity, (drivers) => drivers.appointments)
   @JoinColumn({ name: 'driver_id' })
-  public driver: Driver;
+  public driver: DriverEntity;
 
   @ManyToOne(() => Pet, (pets) => pets.appointments)
   @JoinColumn({ name: 'pet_id' })

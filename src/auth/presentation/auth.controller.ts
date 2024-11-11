@@ -10,6 +10,7 @@ import {
 import { Auth } from '../decorator/auth.decorator';
 import { UserDto, UserGroup } from './user.dto';
 import { GroupValidation } from '../../common/validation/validation.decorator';
+import { UnauthorizedException } from '@nestjs/common/exceptions';
 
 @ApiTags('인증 관련 API')
 @Controller('/v1/auth')
@@ -45,6 +46,13 @@ export class AuthController {
   @Auth(HttpStatus.CREATED, 'refresh')
   @Post('/refresh')
   async refresh(@Req() req: Request): Promise<AuthDto> {
-    return await this.authService.tokenRefresh(req);
+    const token = req.headers.get('Authorization')?.replace('Bearer ', '');
+    if (!token) {
+      throw new UnauthorizedException(
+        'Authorization 헤더에 Bearer Token이 없습니다..',
+      );
+    }
+
+    return await this.authService.tokenRefresh(token);
   }
 }

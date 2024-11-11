@@ -10,13 +10,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
-import { Business } from './business.entity';
+import { BusinessEntity } from './business.entity';
 import { DriverChatRoom } from './driver-chat-room.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 import { AuthProvider } from '../auth/presentation/user.dto';
 
 @Entity({ name: 'drivers' })
-export class Driver extends HasUuid {
+export class DriverEntity extends HasUuid {
   @PrimaryColumn()
   driverId: number;
 
@@ -41,9 +41,9 @@ export class Driver extends HasUuid {
   @OneToMany(() => DriverChatRoom, (chat) => chat.driver)
   chatRooms: DriverChatRoom[];
 
-  @ManyToOne(() => Business, (business) => business.drivers)
+  @ManyToOne(() => BusinessEntity, (business) => business.drivers)
   @JoinColumn({ name: 'business_id' })
-  business: Business;
+  business: BusinessEntity;
 
   @Column({
     type: 'enum',

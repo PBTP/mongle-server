@@ -1,12 +1,12 @@
-import { Body, Controller, Get, HttpStatus, Param, Post, Query } from "@nestjs/common";
-import { ChatService } from "../application/chat.service";
-import { Auth, CurrentCustomer } from "../../auth/decorator/auth.decorator";
-import { Customer } from "../../schemas/customer.entity";
-import { CrudGroup } from "../../common/validation/validation.data";
-import { GroupValidation } from "../../common/validation/validation.decorator";
-import { CursorDto } from "../../common/dto/cursor.dto";
-import { ChatMessageDto, ChatRoomDto } from "./chat.dto";
-import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { Body, Controller, Get, HttpStatus, Param, Post, Query } from '@nestjs/common';
+import { ChatService } from '../application/chat.service';
+import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
+import { CustomerEntity } from '../../schemas/customer.entity';
+import { CrudGroup } from '../../common/validation/validation.data';
+import { GroupValidation } from '../../common/validation/validation.decorator';
+import { CursorDto } from '../../common/dto/cursor.dto';
+import { ChatMessageDto, ChatRoomDto } from './chat.dto';
+import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('채팅방 API')
 @Controller('v1/chat/room')
@@ -28,7 +28,7 @@ export class ChatController {
   @GroupValidation([CrudGroup.create])
   async createChat(
     @Body() chatRoom: ChatRoomDto,
-    @CurrentCustomer() customer: Customer,
+    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<ChatRoomDto> {
     return await this.chatService.createChatRoom(chatRoom, customer);
   }
@@ -47,7 +47,7 @@ export class ChatController {
   @Auth()
   @Get()
   async findChatRooms(
-    @CurrentCustomer() customer: Customer,
+    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<ChatRoomDto[]> {
     return await this.chatService.findChatRooms({
       userId: customer.customerId,
@@ -72,7 +72,7 @@ export class ChatController {
   async findMessages(
     @Param('chatRoomId') chatRoomId: number,
     @Query() cursor: CursorDto<ChatMessageDto>,
-    @CurrentCustomer() customer: Customer,
+    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<CursorDto<ChatMessageDto>> {
     return await this.chatService.findMessages(chatRoomId, cursor, customer);
   }

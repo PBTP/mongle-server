@@ -7,7 +7,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Pet } from '../../schemas/pets.entity';
 import { Breed } from '../../schemas/breed.entity';
-import { Customer } from '../../schemas/customer.entity';
 import {
   PetChecklistAnswerDto,
   PetChecklistChoiceDto,
@@ -25,6 +24,7 @@ import { PetChecklistChoiceAnswer } from '../../schemas/pet-checklist-chocie-ans
 import { Builder } from 'builder-pattern';
 import { CustomerService } from '../../customer/application/customer.service';
 import { BadRequestException } from '@nestjs/common/exceptions';
+import { ICustomer } from '../../customer/customer.domain';
 
 @Injectable()
 export class PetService {
@@ -42,7 +42,7 @@ export class PetService {
     private breedRepository: Repository<Breed>,
   ) {}
 
-  async create(dto: PetDto, customer: Customer): Promise<Pet> {
+  async create(dto: PetDto, customer: ICustomer): Promise<Pet> {
     const breed = await this.breedRepository.findOneOrFail({
       where: { breedId: dto.breedId },
     });
@@ -60,13 +60,13 @@ export class PetService {
     return await this.petRepository.save(newPet);
   }
 
-  async findAll(customer: Customer): Promise<Pet[]> {
+  async findAll(customer: ICustomer): Promise<Pet[]> {
     return await this.petRepository.find({
       where: { customer: { customerId: customer.customerId } },
       relations: ['breed'],
     });
   }
-  async findOne(id: number, customer: Customer): Promise<Pet> {
+  async findOne(id: number, customer: ICustomer): Promise<Pet> {
     const pet = await this.petRepository.findOneOrFail({
       where: { petId: id },
       relations: ['breed', 'customer'],
@@ -82,7 +82,7 @@ export class PetService {
   async update(
     id: number,
     dto: Partial<PetDto>,
-    customer: Customer,
+    customer: ICustomer,
   ): Promise<Pet> {
     const pet = await this.findOne(id, customer);
 
@@ -103,7 +103,7 @@ export class PetService {
     return await this.petRepository.save(pet);
   }
 
-  async delete(id: number, customer: Customer): Promise<void> {
+  async delete(id: number, customer: ICustomer): Promise<void> {
     const pet = await this.findOne(id, customer);
 
     await this.petRepository.softDelete(pet.petId);
@@ -113,7 +113,7 @@ export class PetService {
     category: PetChecklistCategory,
     type: ChecklistType,
     petId: number | null,
-    customer: Customer,
+    customer: ICustomer,
   ): Promise<PetChecklistDto[]> {
     let query = this.petChecklistRepository
       .createQueryBuilder('PC')
@@ -188,7 +188,7 @@ export class PetService {
   async answerChecklist(
     petId: number,
     dto: PetChecklistAnswerDto[],
-    customer: Customer,
+    customer: ICustomer,
   ) {
     const pet = await this.findOne(petId, customer);
 

@@ -30,7 +30,7 @@ export class CustomerDto extends AuthDto {
   })
   @IsNotEmpty()
   @Length(1, 44)
-  override uuid: string;
+  override uuid?: string;
 
   @ApiProperty({
     description: '고객 이름',

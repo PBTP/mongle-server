@@ -12,7 +12,7 @@ import { Appointment } from './appointments.entity';
 import { BusinessBadge } from './business-badges.entity';
 import { BusinessNotice } from './business-notices.entity';
 import { BusinessTag } from './business-tags.entity';
-import { Driver } from './drivers.entity';
+import { DriverEntity } from './drivers.entity';
 import { Favorite } from './favorites.entity';
 import { Review } from './reviews.entity';
 import { ServiceOption } from './service-options.entity';
@@ -21,7 +21,7 @@ import { HasUuid } from '../common/entity/parent.entity';
 import { AuthProvider } from '../auth/presentation/user.dto';
 
 @Entity({ name: 'business' })
-export class Business extends HasUuid {
+export class BusinessEntity extends HasUuid {
   @PrimaryColumn()
   businessId: number;
 
@@ -73,8 +73,8 @@ export class Business extends HasUuid {
   @OneToMany(() => Appointment, (appointments) => appointments.business)
   appointments: Appointment[];
 
-  @OneToMany(() => Driver, (drivers) => drivers.business)
-  drivers: Driver[];
+  @OneToMany(() => DriverEntity, (drivers) => drivers.business)
+  drivers: DriverEntity[];
 
   @OneToMany(() => ServiceOption, (serviceOptions) => serviceOptions.business)
   serviceOptions: ServiceOption[];

@@ -2,8 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { RedisService } from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
 
+export const CACHE_SERVICE = Symbol('CACHE_SERVICE');
+
+export interface ICacheService {
+  get(key: string): Promise<string | null>;
+  getData<T>(key: string): Promise<T | undefined>;
+  set(key: string, value: string, expireTime?: number): Promise<'OK'>;
+  setData<T>(key: string, value: T, expireTime?: number): Promise<'OK'>;
+  del(key: string): Promise<number>;
+}
+
 @Injectable()
-export class CacheService {
+export class CacheService implements ICacheService {
   private readonly redis: Redis;
   private readonly prefix: string = `mongle-server:${process.env.NODE_ENV}:`;
 

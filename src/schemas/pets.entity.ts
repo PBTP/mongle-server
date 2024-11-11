@@ -7,11 +7,11 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { Breed } from './breed.entity';
-import { Customer } from './customer.entity';
+import { CustomerEntity } from './customer.entity';
 import { Review } from './reviews.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 import { PetChecklistAnswer } from './pet-checklist-answer.entity';
@@ -70,9 +70,9 @@ export class Pet extends HasUuid {
   @OneToMany(() => Appointment, (appointments) => appointments.pet)
   public appointments: Appointment[];
 
-  @ManyToOne(() => Customer, (customers) => customers.pets)
+  @ManyToOne(() => CustomerEntity, (customers) => customers.pets)
   @JoinColumn({ name: 'customer_id' })
-  public customer: Customer;
+  public customer: CustomerEntity;
 
   @ManyToOne(() => Breed, (breed) => breed.pets)
   @JoinColumn({ name: 'breed_id' })

@@ -7,7 +7,7 @@ import { LoggerService } from './config/logger/logger.config';
 import { ValidationDefaultOption } from './common/validation/validation.data';
 import { RedisIoAdapter } from './config/socket/socket.adapter';
 import { RedisService } from '@liaoliaots/nestjs-redis';
-import { EntityNotFoundExceptionFilter } from './common/filters/entit-not-found.filter';
+import { EntityNotFoundExceptionFilter } from './common/filters/entity-not-found.filter';
 
 export const serviceWebUrls = [
   'https://mgmg.life',

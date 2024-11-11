@@ -8,7 +8,7 @@ import {
   DeleteDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Business } from './business.entity';
+import { BusinessEntity } from './business.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 
 @Entity({ name: 'business_notices', orderBy: { createdAt: 'ASC' } })
@@ -31,7 +31,7 @@ export class BusinessNotice extends HasUuid {
   @DeleteDateColumn()
   public deletedAt: Date;
 
-  @ManyToOne(() => Business, (business) => business.businessNotices)
+  @ManyToOne(() => BusinessEntity, (business) => business.businessNotices)
   @JoinColumn({ name: 'business_id' })
-  public business: Business;
+  public business: BusinessEntity;
 }
