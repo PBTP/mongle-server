@@ -43,7 +43,7 @@ describe('CustomerService', () => {
 
       expect(customer).toBeDefined();
       expect(customer.customerId).toBe(1);
-      expect(customer.uuid).toBe('test-uuid');
+      expect(customer.uuid).toBe('test-uuid-1');
       expect(customer.customerAddress).not.toBe('서울시 강남구');
       expect(customer.customerAddress).toBeUndefined();
       expect(customer.customerName).toBe('홍길동');
@@ -63,7 +63,7 @@ describe('CustomerService', () => {
 
       expect(findCustomer).toBeDefined();
       expect(findCustomer.customerId).toBe(1);
-      expect(findCustomer.uuid).toBe('test-uuid');
+      expect(findCustomer.uuid).toBe('test-uuid-1');
       expect(findCustomer.customerName).toBe('홍길동');
       expect(findCustomer).toStrictEqual(customer);
     });
@@ -80,7 +80,7 @@ describe('CustomerService', () => {
 
       expect(findCustomer).toBeDefined();
       expect(findCustomer.customerId).toBe(1);
-      expect(findCustomer.uuid).toBe('test-uuid');
+      expect(findCustomer.uuid).toBe('test-uuid-1');
       expect(findCustomer.customerAddress).not.toBe('서울시 강남구');
       expect(findCustomer.customerName).toBe('홍길동');
       expect(findCustomer).toStrictEqual(customer);
@@ -101,7 +101,7 @@ describe('CustomerService', () => {
 
       expect(findCustomer).toBeDefined();
       expect(findCustomer.customerId).toBe(1);
-      expect(findCustomer.uuid).toBe('test-uuid');
+      expect(findCustomer.uuid).toBe('test-uuid-1');
       expect(findCustomer.customerAddress).toBeDefined();
       expect(findCustomer.customerAddress).not.toBe('서울시 강남구');
       expect(findCustomer.customerDetailAddress).not.toBe('역삼동');
@@ -125,7 +125,7 @@ describe('CustomerService', () => {
 
       expect(findCustomer).toBeDefined();
       expect(findCustomer.customerId).toBe(1);
-      expect(findCustomer.uuid).toBe('test-uuid');
+      expect(findCustomer.uuid).toBe('test-uuid-1');
       expect(findCustomer.customerAddress).toBeDefined();
       expect(findCustomer.customerAddress).toBe('서울시 강남구');
       expect(findCustomer.customerDetailAddress).toBe('역삼동');
@@ -182,7 +182,7 @@ describe('CustomerService', () => {
       expect(updateCustomer.presignedUrlDto).toBeDefined();
       expect(updateCustomer.presignedUrlDto?.url).toBeDefined();
       // User의 uuid를 사용하여 url을 생성하기 때문에 test-uuid가 나온다.
-      expect(updateCustomer.presignedUrlDto?.url).toEqual('test-uuid');
+      expect(updateCustomer.presignedUrlDto?.url).toEqual('test-uuid-1');
       expect(updateCustomer.presignedUrlDto?.fileName).toBeDefined();
       expect(updateCustomer.presignedUrlDto?.fileName).toEqual('test.jpg');
       expect(updateCustomer.presignedUrlDto?.fileSize).toBeDefined();

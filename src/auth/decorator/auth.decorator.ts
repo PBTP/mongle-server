@@ -12,6 +12,15 @@ import { ApiBearerAuth, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { BusinessEntity } from '../../schemas/business.entity';
 import { DriverEntity } from '../../schemas/drivers.entity';
+import { UserDto } from '../presentation/user.dto';
+
+export const CurrentUser = createParamDecorator(
+  (data: unknown, context: ExecutionContext) => {
+    const req: { user?: UserDto } = context.switchToHttp().getRequest();
+
+    return req.user;
+  },
+);
 
 export const CurrentCustomer = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {

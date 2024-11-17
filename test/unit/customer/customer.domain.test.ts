@@ -12,7 +12,7 @@ describe('Customer', () => {
   const date = new Date();
 
   beforeEach(() => {
-    uuidHolder = new FakeUuidHolder('test-uuid');
+    uuidHolder = new FakeUuidHolder();
     dateHolder = new FakeDateHolder(date);
   });
 
@@ -28,7 +28,7 @@ describe('Customer', () => {
       const customer = Customer.from(customerDto, uuidHolder, dateHolder);
 
       expect(customer).toBeDefined();
-      expect(customer.uuid).toBe(uuidHolder.generatedUuid());
+      expect(customer.uuid).toBe('test-uuid-1');
       expect(customer.customerName).toBe('홍길동');
       expect(customer.authProvider).toBe(AuthProvider.BASIC);
       expect(customer.createdAt).toBe(dateHolder.now());

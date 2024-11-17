@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { CustomerDto } from '../presentation/customer.dto';
 import { IUserService } from '../../auth/user.interface';
 import { AuthDto } from '../../auth/presentation/auth.dto';
@@ -64,7 +64,7 @@ export class CustomerService implements IUserService {
     dto: Partial<AuthDto>,
     decrypt: boolean = false,
   ): Promise<Customer> {
-    if (dto.userId && dto.uuid) {
+    if (!dto.userId && !dto.uuid && !dto.customerId && !dto.refreshToken) {
       throw new BadRequestException('식별할 수 없는 사용자입니다.');
     }
 
