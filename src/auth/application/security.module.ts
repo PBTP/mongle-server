@@ -1,9 +1,19 @@
 import { Global, Module } from '@nestjs/common';
-import { SecurityService } from './security.service';
+import { SECURITY_SERVICE, SecurityService } from './security.service';
 
 @Global()
 @Module({
-  providers: [SecurityService],
-  exports: [SecurityService],
+  providers: [
+    {
+      provide: SECURITY_SERVICE,
+      useClass: SecurityService,
+    },
+  ],
+  exports: [
+    {
+      provide: SECURITY_SERVICE,
+      useClass: SecurityService,
+    },
+  ],
 })
 export class SecurityModule {}

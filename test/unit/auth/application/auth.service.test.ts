@@ -1,7 +1,6 @@
 import { AuthService } from '../../../../src/auth/application/auth.service';
 import { CustomerService } from '../../../../src/customer/application/customer.service';
 import { FakeCustomerRepository } from '../../../mock/fake.customer.repository';
-import { FakeSecurityService } from '../../../mock/fake.security.service';
 import { ImageService } from '../../../../src/common/image/application/image.service';
 import { FakeCloudStorageService } from '../../../mock/fake.cloud-storage.service';
 import { FakeImageRepository } from '../../../mock/fake.image.repository';
@@ -19,6 +18,10 @@ import {
   UserType,
 } from '../../../../src/auth/presentation/user.dto';
 import { FakeDateHolder, FakeUuidHolder } from '../../../mock/fake.holder';
+import { SecurityService } from '../../../../src/auth/application/security.service';
+import { FakeSecurityService } from '../../../mock/fake.security.service';
+import { FakeSmsService } from '../../../mock/fake.sms.service';
+import { Builder } from 'builder-pattern';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -50,7 +53,7 @@ describe('AuthService', () => {
   beforeEach(async () => {
     customerService = new CustomerService(
       new FakeCustomerRepository(),
-      new FakeSecurityService(),
+      new SecurityService(new FakeConfigService()),
       new ImageService(
         new FakeCloudStorageService(),
         new FakeImageRepository(),
@@ -70,12 +73,14 @@ describe('AuthService', () => {
     service = new AuthService(
       jwtService,
       configService,
-      new FakeCacheService(),
       new UserService(
         customerService,
         new DriverService(new FakeDriverRepository()),
         new BusinessService(new FakeBusinessRepository()),
       ),
+      new FakeSecurityService(),
+      new FakeCacheService(),
+      new FakeSmsService(),
     );
 
     // 모든 사용자를 로그인 처리
@@ -275,5 +280,108 @@ describe('AuthService', () => {
         });
       },
     );
+  });
+
+  describe('인증번호 발급', () => {
+    test('otp를 발급하면 otp가 생성된다.', async () => {
+      const otp = await service.sendOtp('sms', '010-1234-5678');
+
+      expect(otp).toBeDefined();
+      // 6자리 숫자로 구성되어 있어야 한다.
+      expect(otp.length).toBe(6);
+      expect(Number(otp)).not.toBeNaN();
+    });
+
+    test('otp 검증이 성공 되면 user 정보를 업데이트 한다.', async () => {
+      const user: UserDto = Builder(UserDto)
+        .userType('customer')
+        .name('홍길동')
+        .uuid('test-uuid')
+        .userId(4)
+        .authProvider(AuthProvider.BASIC)
+        .build();
+
+      const loginUser = await service.login(user);
+
+      const otp = await service.sendOtp('sms', '010-1234-5678');
+
+      const result = await service.otpVerifyAndUserUpdate(
+        loginUser,
+        '010-1234-5678',
+        otp,
+      );
+
+      const updateUser = await customerService.getOne(
+        {
+          userId: loginUser.userId,
+          userType: loginUser.userType,
+        },
+        true,
+      );
+
+      expect(result).toBe(true);
+      expect(updateUser).toBeDefined();
+      expect(updateUser).toStrictEqual({
+        uuid: user.uuid,
+        userId: user.userId,
+        userType: user.userType,
+        customerId: user.userId,
+        customerName: user.name,
+        customerPhoneNumber: '010-1234-5678',
+        customerAddress: undefined,
+        customerDetailAddress: undefined,
+        authProvider: user.authProvider,
+        refreshToken: loginUser.refreshToken,
+        createdAt: date,
+        modifiedAt: date,
+        deletedAt: undefined,
+      });
+    });
+
+    test('otp 검증이 실패하면 user 정보를 업데이트 하지 않는다.', async () => {
+      const user: UserDto = Builder(UserDto)
+        .userType('customer')
+        .name('홍길동')
+        .uuid('test-uuid')
+        .userId(4)
+        .authProvider(AuthProvider.BASIC)
+        .build();
+
+      const loginUser = await service.login(user);
+
+      const otp = await service.sendOtp('sms', '010-1234-5678');
+
+      const result = await service.otpVerifyAndUserUpdate(
+        loginUser,
+        '010-1234-5678',
+        '102922',
+      );
+
+      const updateUser = await customerService.getOne(
+        {
+          userId: loginUser.userId,
+          userType: loginUser.userType,
+        },
+        true,
+      );
+
+      expect(result).toBe(false);
+      expect(updateUser).toBeDefined();
+      expect(updateUser).toStrictEqual({
+        uuid: user.uuid,
+        userId: user.userId,
+        userType: user.userType,
+        customerId: user.userId,
+        customerName: user.name,
+        customerPhoneNumber: undefined,
+        customerAddress: undefined,
+        customerDetailAddress: undefined,
+        authProvider: user.authProvider,
+        refreshToken: loginUser.refreshToken,
+        createdAt: date,
+        modifiedAt: date,
+        deletedAt: undefined,
+      });
+    });
   });
 });

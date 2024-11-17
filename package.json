@@ -36,6 +36,7 @@
     "@types/nodemailer": "^6.4.16",
     "@types/passport-jwt": "^4.0.1",
     "@types/socket.io": "^3.0.2",
+    "@types/speakeasy": "^2.0.10",
     "@willsoto/nestjs-prometheus": "^6.0.1",
     "aws-sdk": "^2.1623.0",
     "axios": "^1.7.2",
@@ -52,6 +53,8 @@
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "socket.io-redis": "^6.1.1",
+    "solapi": "^5.3.1",
+    "speakeasy": "^2.0.0",
     "tsid-ts": "^0.0.9",
     "typeorm": "^0.3.20",
     "typeorm-naming-strategies": "^4.1.0"
@@ -89,7 +92,8 @@
     "roots": [
       "<rootDir>/src",
       "<rootDir>/test"
-    ],    "testRegex": ".*\\.(spec|test)\\.ts$",
+    ],
+    "testRegex": ".*\\.(spec|test)\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },

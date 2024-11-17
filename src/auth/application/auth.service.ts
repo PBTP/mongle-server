@@ -2,11 +2,20 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CACHE_SERVICE, ICacheService } from '../../common/cache/cache.service';
-import { UnauthorizedException } from '@nestjs/common/exceptions';
+import {
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common/exceptions';
 import { UserService } from './user.service';
 import { UserDto } from '../presentation/user.dto';
 import { AuthDto } from '../presentation/auth.dto';
 import { Builder } from 'builder-pattern';
+import { ISecurityService, SECURITY_SERVICE } from './security.service';
+import { Sender } from '../../common/sender/sender.interface';
+import {
+  ISmsService,
+  SMS_SERVICE,
+} from '../../common/sender/sms/application/sms.service';
 
 @Injectable()
 export class AuthService {
@@ -14,13 +23,20 @@ export class AuthService {
   private readonly refreshTokenOption: JwtSignOptions;
   private readonly accessTokenStrategy: string;
   private readonly logger = new Logger(AuthService.name);
+  private readonly senders: {
+    [key: string]: Sender;
+  } = {};
 
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly userService: UserService,
+    @Inject(SECURITY_SERVICE)
+    private readonly securityService: ISecurityService,
     @Inject(CACHE_SERVICE)
     private readonly cacheService: ICacheService,
-    private readonly userService: UserService,
+    @Inject(SMS_SERVICE)
+    private readonly smsService: ISmsService,
   ) {
     this.accessTokenOption = {
       secret: this.configService.get<string>('jwt/access/secret'),
@@ -35,6 +51,8 @@ export class AuthService {
     this.accessTokenStrategy = <string>(
       this.configService.get('jwt/access/strategy')
     );
+
+    this.senders.sms = this.smsService;
   }
 
   async login(dto: UserDto): Promise<AuthDto> {
@@ -192,5 +210,37 @@ export class AuthService {
       userType: payload.userType,
       userId: payload.subject,
     });
+  }
+
+  async generateOtp(secret: string): Promise<string> {
+    return await this.securityService.generateOtp(secret);
+  }
+
+  async sendOtp(sendType: string, secret: string): Promise<string> {
+    return await this.generateOtp(secret).then(async (otp) => {
+      const message = `몽글\n인증번호는 [${otp}] 입니다.`;
+      const sender = this.senders[sendType];
+
+      if (!sender) {
+        throw new BadRequestException('지원하지 않는 전송 방식입니다.');
+      }
+
+      await sender.send(secret, message);
+      return otp;
+    });
+  }
+
+  async otpVerifyAndUserUpdate(
+    user: UserDto,
+    secret: string,
+    otp: string,
+  ): Promise<boolean> {
+    if (await this.securityService.validateOtp(secret, otp)) {
+      user.phoneNumber = secret;
+      await this.userService.update(user);
+      return true;
+    }
+
+    return false;
   }
 }

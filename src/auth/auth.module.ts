@@ -11,6 +11,8 @@ import { CacheModule } from '../common/cache/cache.module';
 import { DriverModule } from '../driver/driver.module';
 import { BusinessModule } from '../business/business.module';
 import { UserModule } from './user.module';
+import { SecurityModule } from './application/security.module';
+import { SmsModule } from '../common/sender/sms/sms.module';
 
 @Global()
 @Module({
@@ -22,18 +24,16 @@ import { UserModule } from './user.module';
       inject: [ConfigService],
     }),
     PassportModule.register({ defaultStrategy: 'access' }),
+    SmsModule,
     UserModule,
     CacheModule,
     DriverModule,
-    CustomerModule,
+    SecurityModule,
     BusinessModule,
+    CustomerModule,
   ],
   controllers: [AuthController],
-  providers: [
-    AuthService,
-    JwtAccessStrategy,
-    JwtRefreshStrategy
-  ],
+  providers: [AuthService, JwtAccessStrategy, JwtRefreshStrategy],
   exports: [AuthService, JwtAccessStrategy, JwtRefreshStrategy, PassportModule],
 })
 export class AuthModule {}
