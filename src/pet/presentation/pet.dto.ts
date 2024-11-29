@@ -10,12 +10,13 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Gender } from '../../schemas/pets.entity';
+import { Gender, Pet } from '../../schemas/pets.entity';
 import {
   ChecklistType,
   PetChecklistCategory,
 } from '../../schemas/pet-checklist.entity';
 import { CrudGroup } from '../../common/validation/validation.data';
+import { Builder } from 'builder-pattern';
 
 export class PetDto {
   @ApiProperty({
@@ -115,6 +116,20 @@ export class PetDto {
   })
   @IsNumber()
   public breedId: number;
+
+  static from(pet: Pet): PetDto {
+    return Builder(PetDto)
+      .petId(pet.petId)
+      .petName(pet.petName)
+      .petGender(Gender.MALE == pet.petGender ? Gender.MALE : Gender.FEMALE)
+      .petBirthdate(pet.petBirthdate)
+      .petWeight(pet.petWeight)
+      .neuteredYn(pet.neuteredYn)
+      .personality(pet.personality)
+      .vaccinationStatus(pet.vaccinationStatus)
+      .breedId(pet.breed.breedId)
+      .build();
+  }
 }
 
 export class PetChecklistDto {

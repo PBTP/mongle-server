@@ -3,6 +3,7 @@ import { AuthService } from '../application/auth.service';
 import { AuthDto, OtpRequestDto, OtpResponseDto } from './auth.dto';
 import {
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiParam,
   ApiResponse,
@@ -14,6 +15,7 @@ import { GroupValidation } from '../../common/validation/validation.decorator';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { Builder } from 'builder-pattern';
 import { CrudGroup } from '../../common/validation/validation.data';
+import { ResponseEntity } from '../../common/dto/response.entity';
 
 @ApiTags('인증 관련 API')
 @Controller('/v1/auth')
@@ -25,22 +27,28 @@ export class AuthController {
     description: `Resource Server에서 제공한 식별자를 통해 고객의 정보를 확인 하고 토큰을 발급합니다.
        (고객의 정보가 없을 경우 신규 고객으로 등록함)`,
   })
-  @ApiCreatedResponse({ type: AuthDto, description: '로그인 성공' })
+  @ApiCreatedResponse({
+    type: ResponseEntity<AuthDto>,
+    description: '로그인 성공',
+  })
   @ApiResponse({
     status: 401,
     description: `Unauthorized / 요청한 Access Token이 만료되었습니다. 토큰을 갱신하세요`,
   })
   @Post('/login')
   @GroupValidation([UserGroup.login])
-  async login(@Body() dto: UserDto): Promise<AuthDto> {
-    return await this.authService.login(dto);
+  async login(@Body() dto: UserDto): Promise<ResponseEntity<AuthDto>> {
+    return ResponseEntity.OK(await this.authService.login(dto));
   }
 
   @ApiOperation({
     summary: '토큰 갱신',
     description: `Refresh Token을 통해 Access Token을 재발급합니다.`,
   })
-  @ApiCreatedResponse({ type: AuthDto, description: '갱신 성공' })
+  @ApiCreatedResponse({
+    type: ResponseEntity<AuthDto>,
+    description: '갱신 성공',
+  })
   @ApiResponse({
     status: 401,
     description:
@@ -55,7 +63,7 @@ export class AuthController {
         authorization?: string;
       };
     },
-  ): Promise<AuthDto> {
+  ): Promise<ResponseEntity<AuthDto>> {
     const token = req.headers.authorization?.replace('Bearer ', '');
 
     if (!token) {
@@ -64,7 +72,10 @@ export class AuthController {
       );
     }
 
-    return await this.authService.tokenRefresh(token);
+    return ResponseEntity.CREATED(
+      await this.authService.tokenRefresh(token),
+      'refresh token 발급 완료',
+    );
   }
 
   @ApiOperation({
@@ -74,7 +85,10 @@ export class AuthController {
     sendType을 보내면 해당 수단으로 OTP를 전송합니다. ex) sms, email\n
     OTP는 10분동안 유효합니다.`,
   })
-  @ApiCreatedResponse({ type: OtpResponseDto, description: 'OTP 발급 성공' })
+  @ApiCreatedResponse({
+    type: ResponseEntity<OtpResponseDto>,
+    description: 'OTP 발급 성공',
+  })
   @ApiResponse({
     status: 401,
     description: 'Unauthorized / 요청한 고객이 없습니다.',
@@ -91,19 +105,23 @@ export class AuthController {
   async generatedOtpAndSend(
     @Body() dto: OtpRequestDto,
     @Query('sendType') sendType?: string,
-  ): Promise<OtpResponseDto> {
+  ): Promise<ResponseEntity<OtpResponseDto>> {
     if (sendType) {
       const generatedOtpNumber = await this.authService.sendOtp(
         sendType,
         dto.secret,
       );
 
-      return Builder<OtpResponseDto>().otp(generatedOtpNumber).build();
+      return ResponseEntity.CREATED(
+        Builder<OtpResponseDto>().otp(generatedOtpNumber).build(),
+      );
     }
 
-    return Builder<OtpResponseDto>()
-      .otp(await this.authService.generateOtp(dto.secret))
-      .build();
+    return ResponseEntity.CREATED(
+      Builder<OtpResponseDto>()
+        .otp(await this.authService.generateOtp(dto.secret))
+        .build(),
+    );
   }
 
   @ApiOperation({
@@ -115,19 +133,25 @@ export class AuthController {
     status: 401,
     description: 'Unauthorized / 요청한 고객이 없습니다.',
   })
+  @ApiOkResponse({
+    type: ResponseEntity<OtpResponseDto>,
+    description: 'OTP 검증 성공',
+  })
   @GroupValidation([CrudGroup.update])
   @Auth(HttpStatus.OK)
   @Post('/otp/verification')
   async otpVerify(
     @CurrentUser() user: UserDto,
     @Body() dto: OtpRequestDto,
-  ): Promise<OtpResponseDto> {
+  ): Promise<ResponseEntity<OtpResponseDto>> {
     const validated = await this.authService.otpVerifyAndUserUpdate(
       user,
       dto.secret,
       dto.otp,
     );
 
-    return Builder<OtpResponseDto>().otp(dto.otp).verified(validated).build();
+    return ResponseEntity.OK(
+      Builder<OtpResponseDto>().otp(dto.otp).verified(validated).build(),
+    );
   }
 }
