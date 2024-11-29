@@ -4,7 +4,7 @@ import {
   ForbiddenExceptionFilter,
   HttpExceptionFilter,
   NotFoundExceptionFilter,
-  UnauthorizedExceptionFilter
+  UnauthorizedExceptionFilter,
 } from '../../src/common/filters/exception.filters';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
