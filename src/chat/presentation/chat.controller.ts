@@ -35,7 +35,7 @@ export class ChatController {
   })
   @ApiCreatedResponse({
     description: '채팅방 생성 성공',
-    type: ResponseEntity<ChatRoomDto>,
+    type: ChatRoomDto,
   })
   @Auth(HttpStatus.CREATED)
   @Post()
@@ -58,7 +58,7 @@ export class ChatController {
   })
   @ApiOkResponse({
     description: '채팅방 목록 조회 성공',
-    type: ResponseEntity<[ChatRoomDto]>,
+    type: [ChatRoomDto],
   })
   @Auth()
   @Get()
@@ -83,7 +83,7 @@ export class ChatController {
   })
   @ApiOkResponse({
     description: '채팅방 메시지 조회 성공',
-    type: ResponseEntity<CursorDto<ChatMessageDto>>,
+    type: CursorDto<ChatMessageDto>,
   })
   @Auth()
   @Get(':chatRoomId/message')

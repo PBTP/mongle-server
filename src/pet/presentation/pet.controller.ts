@@ -33,7 +33,7 @@ export class PetController {
   constructor(private readonly petService: PetService) {}
 
   @ApiOkResponse({
-    type: ResponseEntity<PetChecklistDto[]>,
+    type: [PetChecklistDto],
   })
   @Get('/checklist')
   @Auth()
@@ -48,7 +48,7 @@ export class PetController {
   }
 
   @ApiOkResponse({
-    type: ResponseEntity<PetChecklistDto[]>,
+    type: [PetChecklistDto],
   })
   @Get('/:petId/checklist')
   @Auth()
@@ -68,7 +68,7 @@ export class PetController {
     description: '반려동물 체크리스트 답변을 등록합니다.',
   })
   @ApiOkResponse({
-    type: ResponseEntity<PetChecklistAnswerDto[]>,
+    type: [PetChecklistAnswerDto],
     description: '반려동물 체크리스트 답변 성공',
   })
   @ApiBody({ type: [PetChecklistAnswerDto] })
@@ -92,7 +92,7 @@ export class PetController {
     description: '새로운 반려동물 정보를 생성합니다.',
   })
   @ApiCreatedResponse({
-    type: ResponseEntity<PetDto>,
+    type: PetDto,
     description: '반려동물 정보 생성 성공',
   })
   @GroupValidation([CrudGroup.create])
@@ -113,7 +113,7 @@ export class PetController {
   })
   @Auth()
   @ApiOkResponse({
-    type: ResponseEntity<PetDto>,
+    type: PetDto,
     description: '반려동물 정보 조회 성공',
   })
   @Get('/my')
@@ -132,7 +132,7 @@ export class PetController {
     description: '반려동물 ID를 통해 반려동물 정보를 조회합니다.',
   })
   @ApiOkResponse({
-    type: ResponseEntity<PetDto>,
+    type: PetDto,
     description: '반려동물 정보 조회 성공',
   })
   @Get(':id')
@@ -151,7 +151,7 @@ export class PetController {
     description: '반려동물 정보를 수정합니다.',
   })
   @ApiOkResponse({
-    type: ResponseEntity<PetDto>,
+    type: PetDto,
     description: '반려동물 정보 수정 성공',
   })
   @Put(':id')

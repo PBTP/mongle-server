@@ -16,10 +16,7 @@ export class CustomerController {
     summary: '내 정보 조회',
     description: 'Access Token을 통해 내 정보를 조회합니다.',
   })
-  @ApiOkResponse({
-    type: ResponseEntity<Omit<CustomerDto, 'refreshToken' | 'accessToken'>>,
-    description: '내 정보 조회 성공',
-  })
+  @ApiOkResponse({ type: CustomerDto, description: '내 정보 조회 성공' })
   @Auth()
   @Get('my')
   async getMyCustomer(
@@ -53,10 +50,7 @@ export class CustomerController {
     summary: '사용자 정보 수정',
     description: '사용자 정보를 수정합니다.',
   })
-  @ApiOkResponse({
-    type: ResponseEntity<Omit<CustomerDto, 'refreshToken'>>,
-    description: '사용자 정보 수정 성공',
-  })
+  @ApiOkResponse({ type: CustomerDto, description: '사용자 정보 수정 성공' })
   @Auth()
   @Put()
   async updateProfile(

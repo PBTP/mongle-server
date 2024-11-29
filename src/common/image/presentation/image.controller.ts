@@ -5,11 +5,11 @@ import { ImageMetaDataDto } from './image.dto';
 import { CustomerEntity } from '../../../schemas/customer.entity';
 import { PresignedUrlDto } from '../../cloud/aws/s3/presentation/presigned-url.dto';
 import {
-  ApiBody,
-  ApiCreatedResponse,
+  ApiBody, ApiCreatedResponse,
   ApiOperation,
   ApiQuery,
-  ApiTags,
+  ApiResponse,
+  ApiTags
 } from '@nestjs/swagger';
 import { ResponseEntity } from '../../dto/response.entity';
 
@@ -35,7 +35,7 @@ export class ImageController {
       '이미지 업로드시에는 Body에 Binary로 이미지를 전송해야 합니다.',
   })
   @ApiCreatedResponse({
-    type: ResponseEntity<[PresignedUrlDto]>,
+    type: [PresignedUrlDto],
     description: 'Generated presigned URL',
   })
   @Auth(HttpStatus.CREATED)

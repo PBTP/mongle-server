@@ -28,7 +28,7 @@ export class AuthController {
        (고객의 정보가 없을 경우 신규 고객으로 등록함)`,
   })
   @ApiCreatedResponse({
-    type: ResponseEntity<AuthDto>,
+    type: AuthDto,
     description: '로그인 성공',
   })
   @ApiResponse({
@@ -46,7 +46,7 @@ export class AuthController {
     description: `Refresh Token을 통해 Access Token을 재발급합니다.`,
   })
   @ApiCreatedResponse({
-    type: ResponseEntity<AuthDto>,
+    type: AuthDto,
     description: '갱신 성공',
   })
   @ApiResponse({
@@ -86,7 +86,7 @@ export class AuthController {
     OTP는 10분동안 유효합니다.`,
   })
   @ApiCreatedResponse({
-    type: ResponseEntity<OtpResponseDto>,
+    type: OtpResponseDto,
     description: 'OTP 발급 성공',
   })
   @ApiResponse({
@@ -134,7 +134,7 @@ export class AuthController {
     description: 'Unauthorized / 요청한 고객이 없습니다.',
   })
   @ApiOkResponse({
-    type: ResponseEntity<OtpResponseDto>,
+    type: OtpResponseDto,
     description: 'OTP 검증 성공',
   })
   @GroupValidation([CrudGroup.update])
