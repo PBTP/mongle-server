@@ -1,6 +1,7 @@
 import {
   AllExceptionFilter,
   BadRequestExceptionFilter,
+  EntityNotFoundExceptionFilter,
   ForbiddenExceptionFilter,
   HttpExceptionFilter,
   NotFoundExceptionFilter,
@@ -246,6 +247,7 @@ describe('ExceptionFilter 테스트', () => {
         statusCode: HttpStatus.BAD_REQUEST,
         data: null,
         message: '요청이 잘못되었습니다.',
+        secretMessage: 'Bad Request',
       });
     });
   });
@@ -283,6 +285,53 @@ describe('ExceptionFilter 테스트', () => {
       } as unknown as ArgumentsHost;
 
       const exception = new NotFoundException();
+
+      filter.catch(exception, mockHost);
+
+      expect(mockResponse.status).toHaveBeenCalledWith(HttpStatus.NOT_FOUND);
+      expect(mockResponse.json).toHaveBeenCalledWith({
+        statusCode: HttpStatus.NOT_FOUND,
+        data: null,
+        message: '찾을 수 없습니다.',
+      });
+    });
+  });
+
+  describe('EntityNotFoundExceptionFilter 테스트', () => {
+    let filter: EntityNotFoundExceptionFilter;
+
+    beforeEach(async () => {
+      const module: TestingModule = await Test.createTestingModule({
+        providers: [EntityNotFoundExceptionFilter],
+      }).compile();
+
+      filter = module.get<EntityNotFoundExceptionFilter>(
+        EntityNotFoundExceptionFilter,
+      );
+    });
+
+    test('should be defined', () => {
+      expect(filter).toBeDefined();
+    });
+
+    test('EntityNotFoundException을 처리하고 지정한 Response 포멧으로 리턴해야한다.', () => {
+      const mockResponse = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response;
+
+      const mockRequest = {
+        url: '/test-url',
+      } as Request;
+
+      const mockHost = {
+        switchToHttp: jest.fn().mockReturnValue({
+          getResponse: () => mockResponse,
+          getRequest: () => mockRequest,
+        }),
+      } as unknown as ArgumentsHost;
+
+      const exception = new HttpException('Not Found', HttpStatus.NOT_FOUND);
 
       filter.catch(exception, mockHost);
 
