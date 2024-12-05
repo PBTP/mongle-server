@@ -1,9 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 
 import { PreRegistrationSurveyBody } from './pre-registration-survey-body';
 import { PreRegistrationSurveyRequest } from '../application/pre-registration-survey-request';
 import { PreRegistrationSurveyUseCase } from '../application/pre-registration-survey-use-case';
+import { ResponseEntity } from '../../common/dto/response.entity';
 
 @ApiTags('사전 등록 설문')
 @Controller('pre-registration-survey')
@@ -12,8 +13,14 @@ export class PreRegistrationSurveyController {
     private readonly preRegistrationSurveyUseCase: PreRegistrationSurveyUseCase,
   ) {}
 
+  @ApiOkResponse({
+    type: ResponseEntity<void>,
+    description: '사전 등록 설문 등록 성공',
+  })
   @Post()
-  async register(@Body() body: PreRegistrationSurveyBody): Promise<void> {
+  async register(
+    @Body() body: PreRegistrationSurveyBody,
+  ): Promise<ResponseEntity<void>> {
     const request: PreRegistrationSurveyRequest = {
       name: body.name,
       email: body.email,
@@ -24,6 +31,8 @@ export class PreRegistrationSurveyController {
       snsContact: body.snsContact,
       phoneInterview: body.phoneInterview,
     };
-    await this.preRegistrationSurveyUseCase.execute(request);
+    return ResponseEntity.OK(
+      await this.preRegistrationSurveyUseCase.execute(request),
+    );
   }
 }

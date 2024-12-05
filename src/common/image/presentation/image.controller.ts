@@ -4,7 +4,14 @@ import { Auth, CurrentCustomer } from '../../../auth/decorator/auth.decorator';
 import { ImageMetaDataDto } from './image.dto';
 import { CustomerEntity } from '../../../schemas/customer.entity';
 import { PresignedUrlDto } from '../../cloud/aws/s3/presentation/presigned-url.dto';
-import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody, ApiCreatedResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags
+} from '@nestjs/swagger';
+import { ResponseEntity } from '../../dto/response.entity';
 
 @ApiTags('이미지 관련 API')
 @Controller('/v1/image')
@@ -27,8 +34,7 @@ export class ImageController {
       '발급받은 url로 PUT 메소드로 이미지를 전송하면 S3에 이미지가 게시됩니다.\n' +
       '이미지 업로드시에는 Body에 Binary로 이미지를 전송해야 합니다.',
   })
-  @ApiResponse({
-    status: 201,
+  @ApiCreatedResponse({
     type: [PresignedUrlDto],
     description: 'Generated presigned URL',
   })
@@ -38,18 +44,20 @@ export class ImageController {
     @CurrentCustomer() customer: CustomerEntity,
     @Query('key') key: string,
     @Body() metadata: ImageMetaDataDto[],
-  ): Promise<PresignedUrlDto[]> {
-    return await this.imageService
-      .generatePreSignedUrls(key ?? customer.uuid, metadata)
-      .then((dtos) =>
-        dtos.map((v) => {
-          return {
-            url: v.url,
-            expiredTime: v.expiredTime,
-            fileName: v.fileName,
-            fileSize: v.fileSize,
-          };
-        }),
-      );
+  ): Promise<ResponseEntity<PresignedUrlDto[]>> {
+    return ResponseEntity.CREATED(
+      await this.imageService
+        .generatePreSignedUrls(key ?? customer.uuid, metadata)
+        .then((dtos) =>
+          dtos.map((v) => {
+            return {
+              url: v.url,
+              expiredTime: v.expiredTime,
+              fileName: v.fileName,
+              fileSize: v.fileSize,
+            };
+          }),
+        ),
+    );
   }
 }
