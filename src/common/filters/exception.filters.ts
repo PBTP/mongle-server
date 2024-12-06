@@ -128,10 +128,10 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
     const status = HttpStatus.NOT_FOUND;
     const responseEntity = ResponseEntity.NOT_FOUND('찾을 수 없습니다.');
 
-    this.logger.warn(
-      `Http Status: ${status}, path: ${request.url}, message: ${exception.message}`,
-      exception.stack,
-    );
+    // this.logger.warn(
+    //   `Http Status: ${status}, path: ${request.url}, message: ${exception.message}`,
+    //   exception.stack,
+    // );
 
     response.status(status).json(responseEntity);
   }
