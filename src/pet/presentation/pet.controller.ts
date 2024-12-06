@@ -1,7 +1,7 @@
 import { PetService } from '../application/pet.service';
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { PetChecklistAnswerDto, PetChecklistDto, PetDto } from './pet.dto';
-import { Pet } from '../../schemas/pets.entity';
+import { PetEntity } from '../../schemas/pets.entity';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GroupValidation } from 'src/common/validation/validation.decorator';
 import { CrudGroup } from 'src/common/validation/validation.data';
@@ -68,7 +68,7 @@ export class PetController {
   async create(
     @Body() dto: PetDto,
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<Pet> {
+  ): Promise<PetEntity> {
     return await this.petService.create(dto, customer);
   }
 
@@ -79,7 +79,7 @@ export class PetController {
   @Auth()
   @ApiOkResponse({ type: PetDto, description: '반려동물 정보 조회 성공' })
   @Get('/my')
-  async getAll(@CurrentCustomer() customer: CustomerEntity): Promise<Pet[]> {
+  async getAll(@CurrentCustomer() customer: CustomerEntity): Promise<PetEntity[]> {
     return await this.petService.findAll(customer);
   }
 
@@ -93,7 +93,7 @@ export class PetController {
   async getOne(
     @Param('id') id: number,
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<Pet> {
+  ): Promise<PetEntity> {
     return await this.petService.findOne(id, customer);
   }
 
@@ -108,7 +108,7 @@ export class PetController {
     @Param('id') id: number,
     @Body() dto: Omit<PetDto, 'petId'>,
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<Pet> {
+  ): Promise<PetEntity> {
     return await this.petService.update(id, dto, customer);
   }
 

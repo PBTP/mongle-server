@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { Favorite } from './favorites.entity';
-import { Pet } from './pets.entity';
+import { PetEntity } from './pets.entity';
 import { Review } from './reviews.entity';
 import { CustomerChatRoom } from './customer-chat-room.entity';
 import { HasUuid } from '../common/entity/parent.entity';
@@ -70,8 +70,8 @@ export class CustomerEntity extends HasUuid {
   @OneToMany(() => Appointment, (appointments) => appointments.customer)
   appointments: Appointment[];
 
-  @OneToMany(() => Pet, (pets) => pets.customer)
-  pets: Pet[];
+  @OneToMany(() => PetEntity, (pets) => pets.customer)
+  pets: PetEntity[];
 
   @OneToMany(() => CustomerChatRoom, (room) => room.chatRoom)
   chatRooms: CustomerChatRoom[];
@@ -81,8 +81,6 @@ export class CustomerEntity extends HasUuid {
 
   static from(
     customer: Customer,
-    uuidHolder: IUUIDHolder,
-    dateHolder: IDateHolder,
   ): CustomerEntity {
     return Builder<CustomerEntity>()
       .customerName(customer.customerName)
@@ -91,11 +89,7 @@ export class CustomerEntity extends HasUuid {
       .customerDetailAddress(customer.customerDetailAddress)
       .customerLocation(customer.customerLocation)
       .authProvider(customer.authProvider)
-      .createdAt(dateHolder.now())
-      .modifiedAt(dateHolder.now())
-      .deletedAt(undefined)
       .refreshToken(customer.refreshToken)
-      .uuid(uuidHolder.generatedUuid())
       .build();
   }
 

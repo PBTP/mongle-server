@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PetService } from './application/pet.service';
 import { PetController } from './presentation/pet.controller';
-import { Pet } from 'src/schemas/pets.entity';
+import { PetEntity } from 'src/schemas/pets.entity';
 import { Breed } from 'src/schemas/breed.entity';
 import { PetChecklist } from '../schemas/pet-checklist.entity';
 import { CustomerModule } from '../customer/customer.module';
@@ -12,7 +12,7 @@ import { PetChecklistAnswer } from '../schemas/pet-checklist-answer.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Pet,
+      PetEntity,
       Breed,
       PetChecklist,
       PetChecklistAnswer,

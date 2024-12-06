@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { Pet } from '../../schemas/pets.entity';
+import { PetEntity } from '../../schemas/pets.entity';
 import { Breed } from '../../schemas/breed.entity';
 import {
   PetChecklistAnswerDto,
@@ -30,8 +30,8 @@ import { ICustomer } from '../../customer/customer.domain';
 export class PetService {
   constructor(
     private customerService: CustomerService,
-    @InjectRepository(Pet)
-    private petRepository: Repository<Pet>,
+    @InjectRepository(PetEntity)
+    private petRepository: Repository<PetEntity>,
     @InjectRepository(PetChecklist)
     private petChecklistRepository: Repository<PetChecklist>,
     @InjectRepository(PetChecklistAnswer)
@@ -42,7 +42,7 @@ export class PetService {
     private breedRepository: Repository<Breed>,
   ) {}
 
-  async create(dto: PetDto, customer: ICustomer): Promise<Pet> {
+  async create(dto: PetDto, customer: ICustomer): Promise<PetEntity> {
     const breed = await this.breedRepository.findOneOrFail({
       where: { breedId: dto.breedId },
     });
@@ -60,13 +60,13 @@ export class PetService {
     return await this.petRepository.save(newPet);
   }
 
-  async findAll(customer: ICustomer): Promise<Pet[]> {
+  async findAll(customer: ICustomer): Promise<PetEntity[]> {
     return await this.petRepository.find({
       where: { customer: { customerId: customer.customerId } },
       relations: ['breed'],
     });
   }
-  async findOne(id: number, customer: ICustomer): Promise<Pet> {
+  async findOne(id: number, customer: ICustomer): Promise<PetEntity> {
     const pet = await this.petRepository.findOneOrFail({
       where: { petId: id },
       relations: ['breed', 'customer'],
@@ -83,7 +83,7 @@ export class PetService {
     id: number,
     dto: Partial<PetDto>,
     customer: ICustomer,
-  ): Promise<Pet> {
+  ): Promise<PetEntity> {
     const pet = await this.findOne(id, customer);
 
     if (dto.breedId && dto.breedId !== pet.breed.breedId) {

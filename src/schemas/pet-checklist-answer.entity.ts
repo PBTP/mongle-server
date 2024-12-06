@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { PetChecklist } from "./pet-checklist.entity";
-import { Pet } from "./pets.entity";
+import { PetEntity } from "./pets.entity";
 
 @Entity('pet_checklist_answers')
 export class PetChecklistAnswer {
@@ -10,9 +10,9 @@ export class PetChecklistAnswer {
   @PrimaryColumn()
   petChecklistId: number;
 
-  @ManyToOne(() => Pet, (pet) => pet.petChecklistAnswer)
+  @ManyToOne(() => PetEntity, (pet) => pet.petChecklistAnswer)
   @JoinColumn({ name: 'pet_id' })
-  pet: Pet;
+  pet: PetEntity;
 
   @ManyToOne(
     () => PetChecklist,

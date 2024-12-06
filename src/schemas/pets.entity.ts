@@ -7,7 +7,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { Breed } from './breed.entity';
@@ -15,6 +15,11 @@ import { CustomerEntity } from './customer.entity';
 import { Review } from './reviews.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 import { PetChecklistAnswer } from './pet-checklist-answer.entity';
+import { Builder } from 'builder-pattern';
+import { Pet } from '../pet/pet.domain';
+import { DateHolder } from '../common/holder/date.holder';
+import { UUIDHolder } from '../common/holder/uuid.holders';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 export enum Gender {
   MALE = 'MALE',
@@ -22,7 +27,7 @@ export enum Gender {
 }
 
 @Entity({ name: 'pets' })
-export class Pet extends HasUuid {
+export class PetEntity extends HasUuid {
   @PrimaryColumn()
   public petId: number;
 
@@ -84,4 +89,59 @@ export class Pet extends HasUuid {
   )
   @JoinColumn({ name: 'pet_id' })
   petChecklistAnswer: PetChecklistAnswer;
+
+  static from(pet: Pet): PetEntity {
+    return Builder(PetEntity)
+      .uuid(pet.uuid)
+      .petId(pet.petId)
+      .petName(pet.petName)
+      .petGender(pet.petGender)
+      .petBirthdate(pet.petBirthdate)
+      .petWeight(pet.petWeight)
+      .neuteredYn(pet.neuteredYn)
+      .personality(pet.personality)
+      .vaccinationStatus(pet.vaccinationStatus)
+      .reviews(pet.reviews)
+      .appointments(pet.appointments)
+      .breed(pet.breed)
+      .build();
+  }
+
+  static create(
+    pet: Pet,
+    customer: CustomerEntity,
+    uuid: UUIDHolder,
+    dateHolder: DateHolder,
+  ): PetEntity {
+    if (
+      pet.petName === undefined ||
+      pet.petGender === undefined ||
+      pet.petBirthdate === undefined ||
+      pet.petWeight === undefined ||
+      pet.neuteredYn === undefined ||
+      pet.personality === undefined ||
+      pet.vaccinationStatus === undefined ||
+      pet.appointments === undefined ||
+      pet.breed === undefined
+    ) {
+      throw new BadRequestException('필수 정보가 누락되었습니다.');
+    }
+
+    return Builder(PetEntity)
+      .uuid(uuid.generatedUuid())
+      .petName(pet.petName)
+      .petGender(pet.petGender)
+      .petBirthdate(pet.petBirthdate)
+      .petWeight(pet.petWeight)
+      .neuteredYn(pet.neuteredYn)
+      .personality(pet.personality)
+      .vaccinationStatus(pet.vaccinationStatus)
+      .createdAt(dateHolder.now())
+      .modifiedAt(dateHolder.now())
+      .reviews(pet.reviews)
+      .appointments(pet.appointments)
+      .customer(customer)
+      .breed(pet.breed)
+      .build();
+  }
 }
