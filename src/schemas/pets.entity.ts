@@ -10,11 +10,11 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
-import { Breed } from './breed.entity';
+import { BreedEntity } from './breed.entity';
 import { CustomerEntity } from './customer.entity';
 import { Review } from './reviews.entity';
 import { HasUuid } from '../common/entity/parent.entity';
-import { PetChecklistAnswer } from './pet-checklist-answer.entity';
+import { PetChecklistAnswerEntity } from './pet-checklist-answer.entity';
 import { Builder } from 'builder-pattern';
 import { Pet } from '../pet/pet.domain';
 import { DateHolder } from '../common/holder/date.holder';
@@ -79,16 +79,16 @@ export class PetEntity extends HasUuid {
   @JoinColumn({ name: 'customer_id' })
   public customer: CustomerEntity;
 
-  @ManyToOne(() => Breed, (breed) => breed.pets)
+  @ManyToOne(() => BreedEntity, (breed) => breed.pets)
   @JoinColumn({ name: 'breed_id' })
-  public breed: Breed;
+  public breed: BreedEntity;
 
   @ManyToOne(
-    () => PetChecklistAnswer,
+    () => PetChecklistAnswerEntity,
     (petChecklistAnswer) => petChecklistAnswer.pet,
   )
   @JoinColumn({ name: 'pet_id' })
-  petChecklistAnswer: PetChecklistAnswer;
+  petChecklistAnswer: PetChecklistAnswerEntity;
 
   static from(pet: Pet): PetEntity {
     return Builder(PetEntity)
@@ -142,6 +142,28 @@ export class PetEntity extends HasUuid {
       .appointments(pet.appointments)
       .customer(customer)
       .breed(pet.breed)
+      .build();
+  }
+
+  static update(pet: Pet, dateHolder: DateHolder): PetEntity {
+    return Builder(PetEntity)
+      .petId(pet.petId)
+      .petName(pet.petName)
+      .petGender(pet.petGender)
+      .petBirthdate(pet.petBirthdate)
+      .petWeight(pet.petWeight)
+      .neuteredYn(pet.neuteredYn)
+      .personality(pet.personality)
+      .vaccinationStatus(pet.vaccinationStatus)
+      .modifiedAt(dateHolder.now())
+      .breed(pet.breed)
+      .build();
+  }
+
+  static delete(pet: Pet, dateHolder: DateHolder): PetEntity {
+    return Builder(PetEntity)
+      .petId(pet.petId)
+      .deletedAt(dateHolder.now())
       .build();
   }
 }

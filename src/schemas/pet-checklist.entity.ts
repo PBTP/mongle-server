@@ -1,6 +1,9 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { PetChecklistChoice } from './pet-checklist-chocie.entity';
-import { PetChecklistAnswer } from './pet-checklist-answer.entity';
+import { PetChecklistChoiceEntity } from './pet-checklist-chocie.entity';
+import { PetChecklistAnswerEntity } from './pet-checklist-answer.entity';
+import { PetChecklist } from '../pet/pet.checklist.domain';
+import { Builder } from 'builder-pattern';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 export enum PetChecklistCategory {
   HEALTH = 'health',
@@ -15,7 +18,7 @@ export enum ChecklistType {
   ANSWER = 'answer',
 }
 @Entity('pet_checklist')
-export class PetChecklist {
+export class PetChecklistEntity {
   @PrimaryGeneratedColumn()
   petChecklistId: number;
 
@@ -35,14 +38,30 @@ export class PetChecklist {
   petChecklistContent: string;
 
   @OneToMany(
-    () => PetChecklistChoice,
+    () => PetChecklistChoiceEntity,
     (petCheckListChoice) => petCheckListChoice.petChecklist,
   )
-  petChecklistChoices: PetChecklistChoice[];
+  petChecklistChoices: PetChecklistChoiceEntity[];
 
   @OneToMany(
-    () => PetChecklistAnswer,
+    () => PetChecklistAnswerEntity,
     (petChecklistAnswer) => petChecklistAnswer.petChecklist,
   )
-  petChecklistAnswers: PetChecklistAnswer[];
+  petChecklistAnswers: PetChecklistAnswerEntity[];
+
+  public static create(checklist: PetChecklist): PetChecklistEntity {
+    if (
+      !checklist.petChecklistContent ||
+      !checklist.petChecklistCategory ||
+      !checklist.petChecklistType
+    ) {
+      throw new BadRequestException('필수 입력값이 누락되었습니다.');
+    }
+
+    return Builder(PetChecklistEntity)
+      .petChecklistType(checklist.petChecklistType)
+      .petChecklistCategory(checklist.petChecklistCategory)
+      .petChecklistContent(checklist.petChecklistContent)
+      .build();
+  }
 }

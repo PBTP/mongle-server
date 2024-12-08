@@ -1,5 +1,14 @@
 import { PetService } from '../application/pet.service';
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { PetChecklistAnswerDto, PetChecklistDto, PetDto } from './pet.dto';
 import { PetEntity } from '../../schemas/pets.entity';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -8,7 +17,11 @@ import { CrudGroup } from 'src/common/validation/validation.data';
 import { CustomerEntity } from 'src/schemas/customer.entity';
 // eslint-disable-next-line prettier/prettier
 import { Auth, CurrentCustomer } from 'src/auth/decorator/auth.decorator';
-import { ChecklistType, PetChecklistCategory } from '../../schemas/pet-checklist.entity';
+import {
+  ChecklistType,
+  PetChecklistCategory,
+} from '../../schemas/pet-checklist.entity';
+import { Pet } from '../pet.domain';
 
 @ApiTags('반려동물 관련 API')
 @Controller('/v1/pet')
@@ -20,9 +33,8 @@ export class PetController {
   async getChecklist(
     @Query('category') category: PetChecklistCategory,
     @Query('type') type: ChecklistType,
-    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<PetChecklistDto[]> {
-    return await this.petService.findCheckList(category, type, null, customer);
+    return await this.petService.findCheckList(category, type, null);
   }
 
   @Get('/:petId/checklist')
@@ -31,9 +43,8 @@ export class PetController {
     @Param('petId') petId: number,
     @Query('category') category: PetChecklistCategory,
     @Query('type') type: ChecklistType,
-    @CurrentCustomer() customer: CustomerEntity,
   ): Promise<PetChecklistDto[]> {
-    return await this.petService.findCheckList(category, type, petId, customer);
+    return await this.petService.findCheckList(category, type, petId);
   }
 
   @ApiOperation({
@@ -68,7 +79,7 @@ export class PetController {
   async create(
     @Body() dto: PetDto,
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<PetEntity> {
+  ): Promise<Pet> {
     return await this.petService.create(dto, customer);
   }
 
@@ -79,7 +90,9 @@ export class PetController {
   @Auth()
   @ApiOkResponse({ type: PetDto, description: '반려동물 정보 조회 성공' })
   @Get('/my')
-  async getAll(@CurrentCustomer() customer: CustomerEntity): Promise<PetEntity[]> {
+  async getAll(
+    @CurrentCustomer() customer: CustomerEntity,
+  ): Promise<PetEntity[]> {
     return await this.petService.findAll(customer);
   }
 
@@ -108,7 +121,7 @@ export class PetController {
     @Param('id') id: number,
     @Body() dto: Omit<PetDto, 'petId'>,
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<PetEntity> {
+  ): Promise<Pet> {
     return await this.petService.update(id, dto, customer);
   }
 

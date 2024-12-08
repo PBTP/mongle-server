@@ -165,6 +165,13 @@ export class PetChecklistDto {
 
 export class PetChecklistAnswerDto {
   @ApiProperty({
+    description: '반려동물 ID',
+    required: true,
+  })
+  @IsNotEmpty()
+  petId: number;
+
+  @ApiProperty({
     description: '반려동물 체크리스트 ID',
     required: true,
   })
@@ -229,4 +236,10 @@ export class PetChecklistChoiceDto {
     description: '해당 선택지가 선택되었는지에 대한 유무입니다.',
   })
   checked: boolean = false;
+}
+
+export class PetChecklistChoiceAnswerDto {
+  petId: number;
+  petChecklistId: number;
+  petChecklistChoiceId: number;
 }
