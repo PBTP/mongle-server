@@ -1,7 +1,7 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { LoggerService } from './config/logger/logger.config';
 import { ValidationDefaultOption } from './common/validation/validation.data';
@@ -10,7 +10,8 @@ import { RedisService } from '@liaoliaots/nestjs-redis';
 
 import {
   AllExceptionFilter,
-  BadRequestExceptionFilter, EntityNotFoundExceptionFilter,
+  BadRequestExceptionFilter,
+  EntityNotFoundExceptionFilter,
   ForbiddenExceptionFilter,
   HttpExceptionFilter,
   NotFoundExceptionFilter,
@@ -64,9 +65,16 @@ async function bootstrap() {
     })
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  const documentOptions: SwaggerDocumentOptions = {
+    deepScanRoutes: true,
+  };
+
+  const document = SwaggerModule.createDocument(app, config, documentOptions);
+  SwaggerModule.setup('docs', app, document, {
+    jsonDocumentUrl: 'docs/json',
+  });
 
   await app.listen(3000);
 }
+
 bootstrap();
