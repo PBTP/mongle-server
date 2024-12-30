@@ -90,7 +90,6 @@
       "ts"
     ],
     "roots": [
-      "<rootDir>/src",
       "<rootDir>/test"
     ],
     "testRegex": ".*\\.(spec|test)\\.ts$",
