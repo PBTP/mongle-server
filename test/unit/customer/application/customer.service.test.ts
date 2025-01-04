@@ -4,7 +4,7 @@ import { FakeConfigService } from '../../../mock/fake.config.service';
 import { FakeCustomerRepository } from '../../../mock/fake.customer.repository';
 import { SecurityService } from '../../../../src/auth/application/security.service';
 import { ImageService } from '../../../../src/common/image/application/image.service';
-import { FakeCloudStorageService } from '../../../mock/fake.cloud-storage.service';
+import { FakeCloudStorage } from '../../../mock/fake.cloud-storage';
 import { FakeImageRepository } from '../../../mock/fake.image.repository';
 import { CustomerDto } from '../../../../src/customer/presentation/customer.dto';
 import { Builder } from 'builder-pattern';
@@ -23,10 +23,7 @@ describe('CustomerService', () => {
     service = new CustomerService(
       new FakeCustomerRepository(),
       new SecurityService(configService),
-      new ImageService(
-        new FakeCloudStorageService(),
-        new FakeImageRepository(),
-      ),
+      new ImageService(new FakeCloudStorage(), new FakeImageRepository()),
       new FakeUuidHolder(),
       new FakeDateHolder(date),
     );
