@@ -1,30 +1,12 @@
 import { PetService } from '../application/pet.service';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { PetChecklistAnswerDto, PetChecklistDto, PetDto } from './pet.dto';
-import {
-  ApiBody,
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiOperation,
-  ApiTags,
-} from '@nestjs/swagger';
-import { GroupValidation } from 'src/common/validation/validation.decorator';
-import { CrudGroup } from 'src/common/validation/validation.data';
-import { CustomerEntity } from 'src/schemas/customer.entity';
-import { Auth, CurrentCustomer } from 'src/auth/decorator/auth.decorator';
-import {
-  ChecklistType,
-  PetChecklistCategory,
-} from '../../schemas/pet-checklist.entity';
+import { ApiBody, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { GroupValidation } from '../../common/validation/validation.decorator';
+import { CrudGroup } from '../../common/validation/validation.data';
+import { CustomerEntity } from '../../schemas/customer.entity';
+import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
+import { ChecklistType, PetChecklistCategory } from '../../schemas/pet-checklist.entity';
 import { ResponseEntity } from '../../common/dto/response.entity';
 
 @ApiTags('반려동물 관련 API')

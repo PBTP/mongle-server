@@ -1,12 +1,9 @@
 import { ConfigService } from '@nestjs/config';
-import {
-  BadRequestException,
-  UnauthorizedException,
-} from '@nestjs/common/exceptions';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common/exceptions';
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { Strategy, ExtractJwt } from 'passport-jwt';
-import { CustomerService } from 'src/customer/application/customer.service';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { CustomerService } from '../../customer/application/customer.service';
 import { BusinessService } from '../../business/application/business.service';
 import { DriverService } from '../../driver/application/driver.service';
 import { IUserService } from '../user.interface';

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PreRegistrationSurveyRequest } from './pre-registration-survey-request';
-import { EmailService } from 'src/email/email.service';
+import { EmailService } from '../../email/email.service';
 import { EmailContentGenerator } from './email-content-generator';
 
 @Injectable()
