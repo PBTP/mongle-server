@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { BusinessService } from './business.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { BusinessEntity } from '../../schemas/business.entity';
-import { Repository } from 'typeorm';
-import { AuthProvider } from '../../auth/presentation/user.dto';
+import {Test, TestingModule} from '@nestjs/testing';
+import {BusinessService} from './business.service';
+import {getRepositoryToken} from '@nestjs/typeorm';
+import {BusinessEntity} from '../../schemas/business.entity';
+import {Repository} from 'typeorm';
+import {AuthProvider} from '../../auth/presentation/user.dto';
 
 describe('BusinessService', () => {
   let service: BusinessService;

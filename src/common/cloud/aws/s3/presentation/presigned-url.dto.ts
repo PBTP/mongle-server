@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { ImageMetaDataDto } from '../../../../image/presentation/image.dto';
+import {ApiProperty} from '@nestjs/swagger';
+import {ImageMetaDataDto} from '../../../../image/presentation/image.dto';
 
 export const defaultExpiredTime = 60;
 

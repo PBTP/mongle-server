@@ -1,7 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional } from 'class-validator';
-import { UserDto } from './user.dto';
-import { CrudGroup } from '../../common/validation/validation.data';
+import {ApiProperty} from '@nestjs/swagger';
+import {IsNotEmpty, IsOptional} from 'class-validator';
+import {UserDto} from './user.dto';
+import {CrudGroup} from '../../common/validation/validation.data';
 
 export class AuthDto extends UserDto {
   @ApiProperty({

@@ -1,9 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {Body, Controller, Post} from '@nestjs/common';
+import {ApiTags} from '@nestjs/swagger';
 
-import { PreRegistrationSurveyBody } from './pre-registration-survey-body';
-import { PreRegistrationSurveyRequest } from '../application/pre-registration-survey-request';
-import { PreRegistrationSurveyUseCase } from '../application/pre-registration-survey-use-case';
+import {PreRegistrationSurveyBody} from './pre-registration-survey-body';
+import {PreRegistrationSurveyRequest} from '../application/pre-registration-survey-request';
+import {PreRegistrationSurveyUseCase} from '../application/pre-registration-survey-use-case';
 
 @ApiTags('사전 등록 설문')
 @Controller('pre-registration-survey')

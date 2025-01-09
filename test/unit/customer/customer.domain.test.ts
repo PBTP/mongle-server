@@ -1,10 +1,10 @@
-import { Builder } from 'builder-pattern';
-import { CustomerDto } from '../../../src/customer/presentation/customer.dto';
-import { AuthProvider } from '../../../src/auth/presentation/user.dto';
-import { FakeDateHolder, FakeUuidHolder } from '../../mock/fake.holder';
-import { Customer } from '../../../src/customer/customer.domain';
-import { IUUIDHolder } from '../../../src/common/holder/uuid.holders';
-import { IDateHolder } from '../../../src/common/holder/date.holder';
+import {Builder} from 'builder-pattern';
+import {CustomerDto} from '../../../src/customer/presentation/customer.dto';
+import {AuthProvider} from '../../../src/auth/presentation/user.dto';
+import {FakeDateHolder, FakeUuidHolder} from '../../mock/fake.holder';
+import {Customer} from '../../../src/customer/customer.domain';
+import {IUUIDHolder} from '../../../src/common/holder/uuid.holders';
+import {IDateHolder} from '../../../src/common/holder/date.holder';
 
 describe('Customer', () => {
   let uuidHolder: IUUIDHolder;

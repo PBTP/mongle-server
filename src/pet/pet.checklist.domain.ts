@@ -1,9 +1,5 @@
-import { Builder } from 'builder-pattern';
-import {
-  ChecklistType,
-  PetChecklistCategory,
-  PetChecklistEntity,
-} from '../schemas/pet-checklist.entity';
+import {Builder} from 'builder-pattern';
+import {ChecklistType, PetChecklistCategory, PetChecklistEntity,} from '../schemas/pet-checklist.entity';
 
 export class PetChecklist {
   petChecklistId: number;

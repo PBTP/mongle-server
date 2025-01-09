@@ -1,12 +1,7 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common';
-import { Response } from 'express';
-import { map, Observable } from 'rxjs';
-import { ResponseEntity } from '../dto/response.entity';
+import {CallHandler, ExecutionContext, Injectable, NestInterceptor,} from '@nestjs/common';
+import {Response} from 'express';
+import {map, Observable} from 'rxjs';
+import {ResponseEntity} from '../dto/response.entity';
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {

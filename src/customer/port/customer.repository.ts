@@ -1,10 +1,10 @@
-import { CustomerEntity } from '../../schemas/customer.entity';
-import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { AuthDto } from '../../auth/presentation/auth.dto';
-import { ImageEntity } from '../../schemas/image.entity';
-import { Customer } from '../customer.domain';
-import { InjectRepository } from '@nestjs/typeorm';
+import {CustomerEntity} from '../../schemas/customer.entity';
+import {Injectable} from '@nestjs/common';
+import {Repository} from 'typeorm';
+import {AuthDto} from '../../auth/presentation/auth.dto';
+import {ImageEntity} from '../../schemas/image.entity';
+import {Customer} from '../customer.domain';
+import {InjectRepository} from '@nestjs/typeorm';
 
 export const CUSTOMER_REPOSITORY = Symbol('ICustomerRepository');
 

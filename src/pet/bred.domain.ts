@@ -1,5 +1,5 @@
-import { Builder } from 'builder-pattern';
-import { BreedEntity } from '../schemas/breed.entity';
+import {Builder} from 'builder-pattern';
+import {BreedEntity} from '../schemas/breed.entity';
 
 export class Breed {
   uuid: string;

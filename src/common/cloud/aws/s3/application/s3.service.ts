@@ -1,13 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { S3 } from 'aws-sdk';
-import { ConfigService } from '@nestjs/config';
-import { BadRequestException } from '@nestjs/common/exceptions';
-import { ICloudStorage } from '../../../cloud-storage.interface';
-import { ImageMetaDataDto } from '../../../../image/presentation/image.dto';
-import {
-  defaultExpiredTime,
-  PresignedUrlDto,
-} from '../presentation/presigned-url.dto';
+import {Injectable} from '@nestjs/common';
+import {S3} from 'aws-sdk';
+import {ConfigService} from '@nestjs/config';
+import {BadRequestException} from '@nestjs/common/exceptions';
+import {ICloudStorage} from '../../../cloud-storage.interface';
+import {ImageMetaDataDto} from '../../../../image/presentation/image.dto';
+import {defaultExpiredTime, PresignedUrlDto,} from '../presentation/presigned-url.dto';
+
 export const CLOUD_STORAGE = Symbol('CloudStorageService');
 
 @Injectable()

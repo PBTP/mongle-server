@@ -1,10 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { BusinessController } from './business.controller';
-import { BusinessService } from '../application/business.service';
-import { BusinessEntity } from '../../schemas/business.entity';
-import { AuthProvider } from '../../auth/presentation/user.dto';
-import { CurrentBusiness } from '../../auth/decorator/auth.decorator';
-import { ForbiddenException } from '@nestjs/common';
+import {Test, TestingModule} from '@nestjs/testing';
+import {BusinessController} from './business.controller';
+import {BusinessService} from '../application/business.service';
+import {BusinessEntity} from '../../schemas/business.entity';
+import {AuthProvider} from '../../auth/presentation/user.dto';
+import {CurrentBusiness} from '../../auth/decorator/auth.decorator';
+import {ForbiddenException} from '@nestjs/common';
 
 describe('BusinessController', () => {
   let controller: BusinessController;

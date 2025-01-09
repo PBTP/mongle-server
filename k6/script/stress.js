@@ -1,4 +1,4 @@
-import { check } from 'k6';
+import {check} from 'k6';
 import http from 'k6/http';
 
 const host = 'http://host.docker.internal:3000';

@@ -1,19 +1,13 @@
-import { Body, Controller, HttpStatus, Post, Query, Req } from '@nestjs/common';
-import { AuthService } from '../application/auth.service';
-import { AuthDto, OtpRequestDto, OtpResponseDto } from './auth.dto';
-import {
-  ApiCreatedResponse,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { Auth, CurrentUser } from '../decorator/auth.decorator';
-import { UserDto, UserGroup } from './user.dto';
-import { GroupValidation } from '../../common/validation/validation.decorator';
-import { UnauthorizedException } from '@nestjs/common/exceptions';
-import { Builder } from 'builder-pattern';
-import { CrudGroup } from '../../common/validation/validation.data';
+import {Body, Controller, HttpStatus, Post, Query, Req} from '@nestjs/common';
+import {AuthService} from '../application/auth.service';
+import {AuthDto, OtpRequestDto, OtpResponseDto} from './auth.dto';
+import {ApiCreatedResponse, ApiOperation, ApiParam, ApiResponse, ApiTags,} from '@nestjs/swagger';
+import {Auth, CurrentUser} from '../decorator/auth.decorator';
+import {UserDto, UserGroup} from './user.dto';
+import {GroupValidation} from '../../common/validation/validation.decorator';
+import {UnauthorizedException} from '@nestjs/common/exceptions';
+import {Builder} from 'builder-pattern';
+import {CrudGroup} from '../../common/validation/validation.data';
 
 @ApiTags('인증 관련 API')
 @Controller('/v1/auth')

@@ -1,9 +1,9 @@
-import { UserDto } from '../../auth/presentation/user.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DriverEntity } from '../../schemas/drivers.entity';
-import { Repository } from 'typeorm';
-import { AuthDto } from '../../auth/presentation/auth.dto';
-import { Injectable } from '@nestjs/common';
+import {UserDto} from '../../auth/presentation/user.dto';
+import {InjectRepository} from '@nestjs/typeorm';
+import {DriverEntity} from '../../schemas/drivers.entity';
+import {Repository} from 'typeorm';
+import {AuthDto} from '../../auth/presentation/auth.dto';
+import {Injectable} from '@nestjs/common';
 
 export const DRIVER_REPOSITORY = Symbol('DRIVER_REPOSITORY');
 

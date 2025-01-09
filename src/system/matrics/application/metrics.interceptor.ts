@@ -1,13 +1,7 @@
-import { MetricsService } from './metrics.service';
-import {
-  CallHandler,
-  ExecutionContext,
-  Injectable,
-  NestInterceptor,
-  OnModuleInit,
-} from '@nestjs/common';
-import { Counter, Gauge, Histogram } from 'prom-client';
-import { catchError, Observable, tap } from 'rxjs';
+import {MetricsService} from './metrics.service';
+import {CallHandler, ExecutionContext, Injectable, NestInterceptor, OnModuleInit,} from '@nestjs/common';
+import {Counter, Gauge, Histogram} from 'prom-client';
+import {catchError, Observable, tap} from 'rxjs';
 
 @Injectable()
 export class MetricsInterceptor implements NestInterceptor, OnModuleInit {

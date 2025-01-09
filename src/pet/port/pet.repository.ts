@@ -1,13 +1,13 @@
-import { Customer } from '../../customer/customer.domain';
-import { Pet } from '../pet.domain';
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { PetEntity } from '../../schemas/pets.entity';
-import { Repository } from 'typeorm';
-import { DateHolder } from '../../common/holder/date.holder';
-import { UUIDHolder } from '../../common/holder/uuid.holders';
-import { CustomerEntity } from '../../schemas/customer.entity';
-import { BadRequestException } from '@nestjs/common/exceptions';
+import {Customer} from '../../customer/customer.domain';
+import {Pet} from '../pet.domain';
+import {Injectable} from '@nestjs/common';
+import {InjectRepository} from '@nestjs/typeorm';
+import {PetEntity} from '../../schemas/pets.entity';
+import {Repository} from 'typeorm';
+import {DateHolder} from '../../common/holder/date.holder';
+import {UUIDHolder} from '../../common/holder/uuid.holders';
+import {CustomerEntity} from '../../schemas/customer.entity';
+import {BadRequestException} from '@nestjs/common/exceptions';
 
 export const PET_REPOSITORY = Symbol('PetRepository');
 

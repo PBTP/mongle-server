@@ -1,21 +1,15 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { CustomerDto } from '../presentation/customer.dto';
-import { IUserService } from '../../auth/user.interface';
-import { AuthDto } from '../../auth/presentation/auth.dto';
-import { UserDto, UserType } from '../../auth/presentation/user.dto';
-import {
-  ISecurityService,
-  SECURITY_SERVICE,
-} from '../../auth/application/security.service';
-import { ImageService } from '../../common/image/application/image.service';
-import { BadRequestException } from '@nestjs/common/exceptions';
-import { Customer, ICustomer } from '../customer.domain';
-import {
-  CUSTOMER_REPOSITORY,
-  ICustomerRepository,
-} from '../port/customer.repository';
-import { IUUIDHolder, UUID_HOLDER } from '../../common/holder/uuid.holders';
-import { DATE_HOLDER, IDateHolder } from '../../common/holder/date.holder';
+import {Inject, Injectable, Logger} from '@nestjs/common';
+import {CustomerDto} from '../presentation/customer.dto';
+import {IUserService} from '../../auth/user.interface';
+import {AuthDto} from '../../auth/presentation/auth.dto';
+import {UserDto, UserType} from '../../auth/presentation/user.dto';
+import {ISecurityService, SECURITY_SERVICE,} from '../../auth/application/security.service';
+import {ImageService} from '../../common/image/application/image.service';
+import {BadRequestException} from '@nestjs/common/exceptions';
+import {Customer, ICustomer} from '../customer.domain';
+import {CUSTOMER_REPOSITORY, ICustomerRepository,} from '../port/customer.repository';
+import {IUUIDHolder, UUID_HOLDER} from '../../common/holder/uuid.holders';
+import {DATE_HOLDER, IDateHolder} from '../../common/holder/date.holder';
 
 @Injectable()
 export class CustomerService implements IUserService {

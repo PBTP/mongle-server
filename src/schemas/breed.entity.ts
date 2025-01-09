@@ -1,10 +1,10 @@
-import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
-import { PetEntity } from './pets.entity';
-import { HasUuid } from '../common/entity/parent.entity';
-import { Builder } from 'builder-pattern';
-import { UUIDHolder } from '../common/holder/uuid.holders';
-import { BadRequestException } from '@nestjs/common/exceptions';
-import { Breed } from '../pet/bred.domain';
+import {Column, Entity, OneToMany, PrimaryColumn} from 'typeorm';
+import {PetEntity} from './pets.entity';
+import {HasUuid} from '../common/entity/parent.entity';
+import {Builder} from 'builder-pattern';
+import {UUIDHolder} from '../common/holder/uuid.holders';
+import {BadRequestException} from '@nestjs/common/exceptions';
+import {Breed} from '../pet/bred.domain';
 
 @Entity({ name: 'breed' })
 export class BreedEntity extends HasUuid {

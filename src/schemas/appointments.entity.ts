@@ -1,21 +1,21 @@
 import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryColumn,
-  UpdateDateColumn
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    OneToMany,
+    PrimaryColumn,
+    UpdateDateColumn
 } from 'typeorm';
-import { BusinessEntity } from './business.entity';
-import { CustomerEntity } from './customer.entity';
-import { DriverEntity } from './drivers.entity';
-import { PetEntity } from './pets.entity';
-import { Review } from './reviews.entity';
-import { ServiceOption } from './service-options.entity';
-import { HasUuid } from '../common/entity/parent.entity';
+import {BusinessEntity} from './business.entity';
+import {CustomerEntity} from './customer.entity';
+import {DriverEntity} from './drivers.entity';
+import {PetEntity} from './pets.entity';
+import {Review} from './reviews.entity';
+import {ServiceOption} from './service-options.entity';
+import {HasUuid} from '../common/entity/parent.entity';
 
 @Entity({ name: 'appointments' })
 export class Appointment extends HasUuid {

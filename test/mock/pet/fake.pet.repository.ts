@@ -1,15 +1,14 @@
-import { DateHolder } from 'src/common/holder/date.holder';
-import { UUIDHolder } from 'src/common/holder/uuid.holders';
-import { Customer } from 'src/customer/customer.domain';
-import { Pet } from 'src/pet/pet.domain';
-import { IPetRepository } from '../../src/pet/port/pet.repository';
-import { PetEntity } from '../../src/schemas/pets.entity';
-import { CustomerEntity } from '../../src/schemas/customer.entity';
+import {DateHolder} from 'src/common/holder/date.holder';
+import {UUIDHolder} from 'src/common/holder/uuid.holders';
+import {Customer} from 'src/customer/customer.domain';
+import {Pet} from 'src/pet/pet.domain';
+import {IPetRepository} from '../../../src/pet/port/pet.repository';
+import {PetEntity} from '../../../src/schemas/pets.entity';
+import {CustomerEntity} from '../../../src/schemas/customer.entity';
 import {BadRequestException} from "@nestjs/common/exceptions";
-import {Builder} from "builder-pattern";
 
 export class FakePetRepository implements IPetRepository {
-  pets: PetEntity[] = [];
+  private pets: PetEntity[] = [];
 
   async getOne(petId:number): Promise<PetEntity> {
     const findPet = this.pets.find((p)=>p.petId === petId);
@@ -59,8 +58,6 @@ export class FakePetRepository implements IPetRepository {
     if (!findPet) {
       throw new Error('존재하지 않는 펫입니다.');
     }
-    // todo: 아래메소드에서 "TS2741: Property generateUuid is missing in type 에러 발생 이유?
-    // const updatedPet: PetEntity  = {...findPet, modifiedAt: dateHolder.now()}
 
     // todo: (단위테스트관련) 업데이트된 PetEntity 반환하는 아래 update 메소드 분리
     const updatedPet: PetEntity = PetEntity.update(pet, dateHolder);

@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { RedisService } from '@liaoliaots/nestjs-redis';
+import {Injectable} from '@nestjs/common';
+import {RedisService} from '@liaoliaots/nestjs-redis';
 import Redis from 'ioredis';
 
 export const CACHE_SERVICE = Symbol('CACHE_SERVICE');

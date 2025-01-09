@@ -1,8 +1,8 @@
-import { ImageEntity } from '../../../schemas/image.entity';
-import { ImageDto } from '../presentation/image.dto';
-import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { Image } from '../image.domain';
+import {ImageEntity} from '../../../schemas/image.entity';
+import {ImageDto} from '../presentation/image.dto';
+import {Injectable} from '@nestjs/common';
+import {Repository} from 'typeorm';
+import {Image} from '../image.domain';
 
 export const IMAGE_REPOSITORY = Symbol('IImageRepository');
 

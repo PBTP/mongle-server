@@ -1,15 +1,10 @@
-import {
-  ChecklistType,
-  PetChecklistCategory,
-  PetChecklistEntity,
-} from '../../schemas/pet-checklist.entity';
-import { PetChecklist } from '../pet.checklist.domain';
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
-import { PetChecklistChoiceAnswerEntity } from '../../schemas/pet-checklist-chocie-answer.entity';
-import { PetChecklistAnswerEntity } from '../../schemas/pet-checklist-answer.entity';
-import { PetChecklistChoice } from '../pet.checklist-choice.domain';
+import {ChecklistType, PetChecklistCategory, PetChecklistEntity,} from '../../schemas/pet-checklist.entity';
+import {PetChecklist} from '../pet.checklist.domain';
+import {InjectRepository} from '@nestjs/typeorm';
+import {In, Repository} from 'typeorm';
+import {Injectable} from '@nestjs/common';
+import {PetChecklistAnswerEntity} from '../../schemas/pet-checklist-answer.entity';
+import {PetChecklistChoice} from '../pet.checklist-choice.domain';
 
 export const PET_CHECKLIST_REPOSITORY = Symbol('PetChecklistRepository');
 

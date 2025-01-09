@@ -1,13 +1,6 @@
-import {
-  Entity,
-  Column,
-  CreateDateColumn,
-  ManyToOne,
-  JoinColumn,
-  PrimaryColumn,
-} from 'typeorm';
-import { ChatRoom } from './chat-room.entity';
-import { HasTsid } from '../common/entity/parent.entity';
+import {Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn,} from 'typeorm';
+import {ChatRoom} from './chat-room.entity';
+import {HasTsid} from '../common/entity/parent.entity';
 
 export enum MessageType {
   TEXT = 'TEXT',

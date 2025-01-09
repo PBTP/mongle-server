@@ -1,13 +1,6 @@
-import {
-  Entity,
-  PrimaryColumn,
-  ManyToOne,
-  CreateDateColumn,
-  Column,
-  JoinColumn,
-} from 'typeorm';
-import { DriverEntity } from './drivers.entity';
-import { ChatRoom } from './chat-room.entity';
+import {Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn,} from 'typeorm';
+import {DriverEntity} from './drivers.entity';
+import {ChatRoom} from './chat-room.entity';
 
 @Entity('driver_chat_rooms')
 export class DriverChatRoom {

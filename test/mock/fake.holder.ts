@@ -1,5 +1,5 @@
-import { IUUIDHolder } from '../../src/common/holder/uuid.holders';
-import { IDateHolder } from '../../src/common/holder/date.holder';
+import {IUUIDHolder} from '../../src/common/holder/uuid.holders';
+import {IDateHolder} from '../../src/common/holder/date.holder';
 
 export class FakeUuidHolder implements IUUIDHolder {
   private readonly uuids: string[] = [];

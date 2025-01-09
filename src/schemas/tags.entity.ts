@@ -1,5 +1,5 @@
-import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
-import { BusinessTag } from './business-tags.entity';
+import {Column, Entity, OneToMany, PrimaryColumn} from 'typeorm';
+import {BusinessTag} from './business-tags.entity';
 
 @Entity({ name: 'tags' })
 export class Tag {

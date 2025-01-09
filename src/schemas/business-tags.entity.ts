@@ -1,12 +1,6 @@
-import {
-  Entity,
-  ManyToOne,
-  JoinColumn,
-  CreateDateColumn,
-  PrimaryColumn,
-} from 'typeorm';
-import { BusinessEntity } from './business.entity';
-import { Tag } from './tags.entity';
+import {CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn,} from 'typeorm';
+import {BusinessEntity} from './business.entity';
+import {Tag} from './tags.entity';
 
 @Entity({ name: 'business_tags' })
 export class BusinessTag {

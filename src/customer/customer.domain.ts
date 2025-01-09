@@ -1,17 +1,17 @@
-import { Point } from 'typeorm';
-import { AuthProvider, UserDto } from '../auth/presentation/user.dto';
-import { Favorite } from '../schemas/favorites.entity';
-import { Review } from '../schemas/reviews.entity';
-import { Appointment } from '../schemas/appointments.entity';
-import { PetEntity } from '../schemas/pets.entity';
-import { CustomerChatRoom } from '../schemas/customer-chat-room.entity';
-import { AuthDto } from '../auth/presentation/auth.dto';
-import { CustomerDto } from './presentation/customer.dto';
-import { Builder } from 'builder-pattern';
-import { IUUIDHolder } from '../common/holder/uuid.holders';
-import { IDateHolder } from '../common/holder/date.holder';
-import { PresignedUrlDto } from '../common/cloud/aws/s3/presentation/presigned-url.dto';
-import { ImageDto } from '../common/image/presentation/image.dto';
+import {Point} from 'typeorm';
+import {AuthProvider, UserDto} from '../auth/presentation/user.dto';
+import {Favorite} from '../schemas/favorites.entity';
+import {Review} from '../schemas/reviews.entity';
+import {Appointment} from '../schemas/appointments.entity';
+import {PetEntity} from '../schemas/pets.entity';
+import {CustomerChatRoom} from '../schemas/customer-chat-room.entity';
+import {AuthDto} from '../auth/presentation/auth.dto';
+import {CustomerDto} from './presentation/customer.dto';
+import {Builder} from 'builder-pattern';
+import {IUUIDHolder} from '../common/holder/uuid.holders';
+import {IDateHolder} from '../common/holder/date.holder';
+import {PresignedUrlDto} from '../common/cloud/aws/s3/presentation/presigned-url.dto';
+import {ImageDto} from '../common/image/presentation/image.dto';
 
 export interface ICustomer extends AuthDto {
   customerId?: number;

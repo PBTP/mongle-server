@@ -1,12 +1,6 @@
-import {
-  Entity,
-  PrimaryColumn,
-  ManyToOne,
-  CreateDateColumn,
-  Column,
-} from 'typeorm';
-import { ChatRoom } from './chat-room.entity';
-import { BusinessEntity } from './business.entity';
+import {Column, CreateDateColumn, Entity, ManyToOne, PrimaryColumn,} from 'typeorm';
+import {ChatRoom} from './chat-room.entity';
+import {BusinessEntity} from './business.entity';
 
 @Entity('business_chat_rooms')
 export class BusinessChatRoom {

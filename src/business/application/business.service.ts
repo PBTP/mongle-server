@@ -1,13 +1,10 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { IUserService } from '../../auth/user.interface';
-import { UserDto, UserType } from '../../auth/presentation/user.dto';
-import { BusinessEntity } from '../../schemas/business.entity';
-import { AuthDto } from '../../auth/presentation/auth.dto';
-import { Builder } from 'builder-pattern';
-import {
-  BUSINESS_REPOSITORY,
-  IBusinessRepository,
-} from '../port/business.repository';
+import {Inject, Injectable, Logger} from '@nestjs/common';
+import {IUserService} from '../../auth/user.interface';
+import {UserDto, UserType} from '../../auth/presentation/user.dto';
+import {BusinessEntity} from '../../schemas/business.entity';
+import {AuthDto} from '../../auth/presentation/auth.dto';
+import {Builder} from 'builder-pattern';
+import {BUSINESS_REPOSITORY, IBusinessRepository,} from '../port/business.repository';
 
 @Injectable()
 export class BusinessService implements IUserService {

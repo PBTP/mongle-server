@@ -1,4 +1,4 @@
-import { PreRegistrationSurveyRequest } from './pre-registration-survey-request';
+import {PreRegistrationSurveyRequest} from './pre-registration-survey-request';
 
 export class EmailContentGenerator {
   static generateTextContent(request: PreRegistrationSurveyRequest): string {

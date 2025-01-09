@@ -1,7 +1,7 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { HasUuid } from '../common/entity/parent.entity';
-import { Image } from '../common/image/image.domain';
-import { Builder } from 'builder-pattern';
+import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn} from 'typeorm';
+import {HasUuid} from '../common/entity/parent.entity';
+import {Image} from '../common/image/image.domain';
+import {Builder} from 'builder-pattern';
 
 export type TImage = {
   imageId: number;

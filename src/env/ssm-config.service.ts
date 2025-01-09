@@ -1,13 +1,8 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import {
-  GetParameterCommand,
-  GetParametersByPathCommand,
-  SSMClient,
-  SSMClientConfig,
-} from '@aws-sdk/client-ssm';
-import { ConfigService } from '@nestjs/config';
+import {Injectable, Logger, NotFoundException} from '@nestjs/common';
+import {GetParameterCommand, GetParametersByPathCommand, SSMClient, SSMClientConfig,} from '@aws-sdk/client-ssm';
+import {ConfigService} from '@nestjs/config';
 import * as process from 'node:process';
-import { Parameter } from '@aws-sdk/client-ssm/dist-types/models/models_1';
+import {Parameter} from '@aws-sdk/client-ssm/dist-types/models/models_1';
 
 @Injectable()
 export default class SSMConfigService {

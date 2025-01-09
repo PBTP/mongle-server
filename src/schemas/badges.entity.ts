@@ -1,5 +1,5 @@
-import { Entity, PrimaryColumn, Column, OneToMany } from 'typeorm';
-import { BusinessBadge } from './business-badges.entity';
+import {Column, Entity, OneToMany, PrimaryColumn} from 'typeorm';
+import {BusinessBadge} from './business-badges.entity';
 
 @Entity({ name: 'badges' })
 export class Badge {

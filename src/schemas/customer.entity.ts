@@ -1,25 +1,23 @@
 import {
-  Column,
-  CreateDateColumn,
-  DeleteDateColumn,
-  Entity,
-  OneToMany,
-  Point,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    OneToMany,
+    Point,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm';
-import { Appointment } from './appointments.entity';
-import { Favorite } from './favorites.entity';
-import { PetEntity } from './pets.entity';
-import { Review } from './reviews.entity';
-import { CustomerChatRoom } from './customer-chat-room.entity';
-import { HasUuid } from '../common/entity/parent.entity';
-import { AuthProvider } from '../auth/presentation/user.dto';
-import { ImageEntity } from './image.entity';
-import { Customer } from '../customer/customer.domain';
-import { Builder } from 'builder-pattern';
-import { IUUIDHolder } from '../common/holder/uuid.holders';
-import { IDateHolder } from '../common/holder/date.holder';
+import {Appointment} from './appointments.entity';
+import {Favorite} from './favorites.entity';
+import {PetEntity} from './pets.entity';
+import {Review} from './reviews.entity';
+import {CustomerChatRoom} from './customer-chat-room.entity';
+import {HasUuid} from '../common/entity/parent.entity';
+import {AuthProvider} from '../auth/presentation/user.dto';
+import {ImageEntity} from './image.entity';
+import {Customer} from '../customer/customer.domain';
+import {Builder} from 'builder-pattern';
 
 @Entity({ name: 'customers' })
 export class CustomerEntity extends HasUuid {

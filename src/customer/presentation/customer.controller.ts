@@ -1,10 +1,10 @@
-import { CustomerService } from '../application/customer.service';
-import { Body, Controller, Get, Put } from '@nestjs/common';
-import { CustomerDto } from './customer.dto';
-import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Builder } from 'builder-pattern';
-import { Customer } from '../customer.domain';
+import {CustomerService} from '../application/customer.service';
+import {Body, Controller, Get, Put} from '@nestjs/common';
+import {CustomerDto} from './customer.dto';
+import {Auth, CurrentCustomer} from '../../auth/decorator/auth.decorator';
+import {ApiOkResponse, ApiOperation, ApiTags} from '@nestjs/swagger';
+import {Builder} from 'builder-pattern';
+import {Customer} from '../customer.domain';
 
 @ApiTags('고객 관련 API')
 @Controller('/v1/customer')

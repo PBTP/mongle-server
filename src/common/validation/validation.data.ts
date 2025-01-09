@@ -1,4 +1,4 @@
-import { UserGroup } from '../../auth/presentation/user.dto';
+import {UserGroup} from '../../auth/presentation/user.dto';
 
 export enum CrudGroup {
   create = 'create',

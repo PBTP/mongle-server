@@ -1,15 +1,15 @@
 import {
-  Entity,
-  PrimaryColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  CreateDateColumn,
-  DeleteDateColumn,
-  UpdateDateColumn,
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    JoinColumn,
+    ManyToOne,
+    PrimaryColumn,
+    UpdateDateColumn,
 } from 'typeorm';
-import { BusinessEntity } from './business.entity';
-import { HasUuid } from '../common/entity/parent.entity';
+import {BusinessEntity} from './business.entity';
+import {HasUuid} from '../common/entity/parent.entity';
 
 @Entity({ name: 'business_notices', orderBy: { createdAt: 'ASC' } })
 export class BusinessNotice extends HasUuid {

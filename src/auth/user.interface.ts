@@ -1,5 +1,5 @@
-import { UserDto, UserType } from './presentation/user.dto';
-import { AuthDto } from './presentation/auth.dto';
+import {UserDto, UserType} from './presentation/user.dto';
+import {AuthDto} from './presentation/auth.dto';
 
 export interface IUserService {
   readonly userType: UserType;

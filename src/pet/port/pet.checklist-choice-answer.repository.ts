@@ -1,7 +1,7 @@
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { PetChecklistChoiceAnswerEntity } from '../../schemas/pet-checklist-chocie-answer.entity';
-import { PetChecklistChoiceAnswer } from '../pet.checklist-choice-answer.domain';
+import {Repository} from 'typeorm';
+import {InjectRepository} from '@nestjs/typeorm';
+import {PetChecklistChoiceAnswerEntity} from '../../schemas/pet-checklist-chocie-answer.entity';
+import {PetChecklistChoiceAnswer} from '../pet.checklist-choice-answer.domain';
 
 export const PET_CHECKLIST_CHOICE_ANSWER_REPOSITORY = Symbol(
   'PetChecklistChoiceAnswerRepository',

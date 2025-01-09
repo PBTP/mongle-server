@@ -1,6 +1,6 @@
-import { ConsoleLogger, Injectable } from '@nestjs/common';
-import { SystemAlarmService } from '../../system/system.alarm.service';
-import { ConfigService } from '@nestjs/config';
+import {ConsoleLogger, Injectable} from '@nestjs/common';
+import {SystemAlarmService} from '../../system/system.alarm.service';
+import {ConfigService} from '@nestjs/config';
 
 @Injectable()
 export class LoggerService extends ConsoleLogger {

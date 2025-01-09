@@ -1,13 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsPhoneNumber,
-  IsString,
-  Length,
-} from 'class-validator';
+import {ApiProperty} from '@nestjs/swagger';
+import {IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, Length,} from 'class-validator';
 
 export class PreRegistrationSurveyBody {
   @ApiProperty()

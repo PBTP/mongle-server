@@ -1,5 +1,5 @@
-import { ImageMetaDataDto } from "../image/presentation/image.dto";
-import { PresignedUrlDto } from "./aws/s3/presentation/presigned-url.dto";
+import {ImageMetaDataDto} from "../image/presentation/image.dto";
+import {PresignedUrlDto} from "./aws/s3/presentation/presigned-url.dto";
 
 export interface ICloudStorage {
   generatePreSignedUrl(

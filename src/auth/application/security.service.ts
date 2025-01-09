@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {Injectable, Logger} from '@nestjs/common';
 import * as crypto from 'crypto';
 import * as speakeasy from 'speakeasy';
-import { ConfigService } from '@nestjs/config';
+import {ConfigService} from '@nestjs/config';
 
 export const SECURITY_SERVICE = 'SECURITY_SERVICE';
 

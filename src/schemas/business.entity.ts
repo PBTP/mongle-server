@@ -1,24 +1,24 @@
 import {
-  Entity,
-  PrimaryColumn,
-  Column,
-  OneToMany,
-  CreateDateColumn,
-  DeleteDateColumn,
-  UpdateDateColumn,
-  Point,
+    Column,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    OneToMany,
+    Point,
+    PrimaryColumn,
+    UpdateDateColumn,
 } from 'typeorm';
-import { Appointment } from './appointments.entity';
-import { BusinessBadge } from './business-badges.entity';
-import { BusinessNotice } from './business-notices.entity';
-import { BusinessTag } from './business-tags.entity';
-import { DriverEntity } from './drivers.entity';
-import { Favorite } from './favorites.entity';
-import { Review } from './reviews.entity';
-import { ServiceOption } from './service-options.entity';
-import { BusinessChatRoom } from './business-chat-room.entity';
-import { HasUuid } from '../common/entity/parent.entity';
-import { AuthProvider } from '../auth/presentation/user.dto';
+import {Appointment} from './appointments.entity';
+import {BusinessBadge} from './business-badges.entity';
+import {BusinessNotice} from './business-notices.entity';
+import {BusinessTag} from './business-tags.entity';
+import {DriverEntity} from './drivers.entity';
+import {Favorite} from './favorites.entity';
+import {Review} from './reviews.entity';
+import {ServiceOption} from './service-options.entity';
+import {BusinessChatRoom} from './business-chat-room.entity';
+import {HasUuid} from '../common/entity/parent.entity';
+import {AuthProvider} from '../auth/presentation/user.dto';
 
 @Entity({ name: 'business' })
 export class BusinessEntity extends HasUuid {
