@@ -1,4 +1,4 @@
-import {Injectable} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 export const DATE_HOLDER = Symbol('DATE_HOLDER');
 export interface IDateHolder {

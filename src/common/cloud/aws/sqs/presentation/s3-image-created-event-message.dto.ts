@@ -1,5 +1,11 @@
-import {IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested,} from 'class-validator';
-import {Type} from 'class-transformer';
+import {
+  IsString,
+  IsNotEmpty,
+  IsArray,
+  ValidateNested,
+  IsNumber,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 class S3Bucket {
   @IsString()

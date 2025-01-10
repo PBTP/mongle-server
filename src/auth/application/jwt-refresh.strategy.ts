@@ -1,13 +1,16 @@
-import {ConfigService} from '@nestjs/config';
-import {BadRequestException, UnauthorizedException,} from '@nestjs/common/exceptions';
-import {Injectable} from '@nestjs/common';
-import {PassportStrategy} from '@nestjs/passport';
-import {ExtractJwt, Strategy} from 'passport-jwt';
-import {CustomerService} from 'src/customer/application/customer.service';
-import {BusinessService} from '../../business/application/business.service';
-import {DriverService} from '../../driver/application/driver.service';
-import {IUserService} from '../user.interface';
-import {UserDto} from '../presentation/user.dto';
+import { ConfigService } from '@nestjs/config';
+import {
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common/exceptions';
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy, ExtractJwt } from 'passport-jwt';
+import { CustomerService } from 'src/customer/application/customer.service';
+import { BusinessService } from '../../business/application/business.service';
+import { DriverService } from '../../driver/application/driver.service';
+import { IUserService } from '../user.interface';
+import { UserDto } from '../presentation/user.dto';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {

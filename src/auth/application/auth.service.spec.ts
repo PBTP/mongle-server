@@ -1,10 +1,10 @@
-import {Test, TestingModule} from '@nestjs/testing';
-import {AuthService} from './auth.service';
-import {JwtService} from '@nestjs/jwt';
-import {ConfigService} from '@nestjs/config';
-import {CacheService} from '../../common/cache/cache.service';
-import {UserService} from './user.service';
-import {AuthProvider, UserDto} from '../presentation/user.dto';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuthService } from './auth.service';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { CacheService } from '../../common/cache/cache.service';
+import { UserService } from './user.service';
+import { AuthProvider, UserDto } from '../presentation/user.dto';
 
 describe('AuthService', () => {
   let service: AuthService;

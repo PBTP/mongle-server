@@ -1,4 +1,4 @@
-import {ISecurityService} from '../../src/auth/application/security.service';
+import { ISecurityService } from '../../src/auth/application/security.service';
 
 export class FakeSecurityService implements ISecurityService {
   constructor() {}

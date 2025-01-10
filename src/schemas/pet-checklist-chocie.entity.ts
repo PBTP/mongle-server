@@ -1,8 +1,15 @@
-import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn,} from 'typeorm';
-import {PetChecklistEntity} from './pet-checklist.entity';
-import {Builder} from 'builder-pattern';
-import {PetChecklistChoiceAnswerEntity} from './pet-checklist-chocie-answer.entity';
-import {PetChecklistChoice} from '../pet/pet.checklist-choice.domain';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { PetChecklistEntity } from './pet-checklist.entity';
+import { Builder } from 'builder-pattern';
+import { PetChecklistChoiceAnswerEntity } from './pet-checklist-chocie-answer.entity';
+import { PetChecklistChoice } from '../pet/pet.checklist-choice.domain';
 
 @Entity('pet_checklist_choices')
 export class PetChecklistChoiceEntity {

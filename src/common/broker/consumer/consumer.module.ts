@@ -1,9 +1,9 @@
-import {Module} from '@nestjs/common';
-import {ConfigService} from '@nestjs/config';
-import {SqsModule} from '@ssut/nestjs-sqs';
-import {SQSClient} from '@aws-sdk/client-sqs';
-import {sqsName} from '../../image/application/image.consumer';
-import {SqsOptions} from '@ssut/nestjs-sqs/dist/sqs.types';
+import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { SqsModule } from '@ssut/nestjs-sqs';
+import { SQSClient } from '@aws-sdk/client-sqs';
+import { sqsName } from '../../image/application/image.consumer';
+import { SqsOptions } from '@ssut/nestjs-sqs/dist/sqs.types';
 
 @Module({
   imports: [

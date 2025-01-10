@@ -1,15 +1,15 @@
-import {Review} from '../schemas/reviews.entity';
-import {Appointment} from '../schemas/appointments.entity';
-import {CustomerEntity} from '../schemas/customer.entity';
-import {BreedEntity} from '../schemas/breed.entity';
-import {PetChecklistAnswerEntity} from '../schemas/pet-checklist-answer.entity';
-import {Builder} from 'builder-pattern';
-import {PetEntity} from '../schemas/pets.entity';
-import {PetDto} from './presentation/pet.dto';
-import {Customer} from '../customer/customer.domain';
-import {UUIDHolder} from '../common/holder/uuid.holders';
-import {DateHolder} from '../common/holder/date.holder';
-import {BadRequestException} from '@nestjs/common/exceptions';
+import { Review } from '../schemas/reviews.entity';
+import { Appointment } from '../schemas/appointments.entity';
+import { CustomerEntity } from '../schemas/customer.entity';
+import { BreedEntity } from '../schemas/breed.entity';
+import { PetChecklistAnswerEntity } from '../schemas/pet-checklist-answer.entity';
+import { Builder } from 'builder-pattern';
+import { PetEntity } from '../schemas/pets.entity';
+import { PetDto } from './presentation/pet.dto';
+import { Customer } from '../customer/customer.domain';
+import { UUIDHolder } from '../common/holder/uuid.holders';
+import { DateHolder } from '../common/holder/date.holder';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 export class Pet {
   uuid: string;

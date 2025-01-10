@@ -1,7 +1,7 @@
-import {UserDto} from 'src/auth/presentation/user.dto';
-import {IDriverRepository} from '../../src/driver/port/driver.repository';
-import {DriverEntity} from '../../src/schemas/drivers.entity';
-import {AuthDto} from '../../src/auth/presentation/auth.dto';
+import { UserDto } from 'src/auth/presentation/user.dto';
+import { IDriverRepository } from '../../src/driver/port/driver.repository';
+import { DriverEntity } from '../../src/schemas/drivers.entity';
+import { AuthDto } from '../../src/auth/presentation/auth.dto';
 
 export class FakeDriverRepository implements IDriverRepository {
   private readonly drivers: DriverEntity[] = [];

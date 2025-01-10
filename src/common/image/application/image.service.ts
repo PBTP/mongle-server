@@ -1,10 +1,10 @@
-import {Inject, Injectable, Logger} from '@nestjs/common';
-import {ImageDto, ImageMetaDataDto} from '../presentation/image.dto';
-import {ICloudStorage} from '../../cloud/cloud-storage.interface';
-import {PresignedUrlDto} from '../../cloud/aws/s3/presentation/presigned-url.dto';
-import {IImageRepository, IMAGE_REPOSITORY} from '../port/image.repository';
-import {Image} from '../image.domain';
-import {CLOUD_STORAGE} from '../../cloud/aws/s3/application/s3.service';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ImageDto, ImageMetaDataDto } from '../presentation/image.dto';
+import { ICloudStorage } from '../../cloud/cloud-storage.interface';
+import { PresignedUrlDto } from '../../cloud/aws/s3/presentation/presigned-url.dto';
+import { IImageRepository, IMAGE_REPOSITORY } from '../port/image.repository';
+import { Image } from '../image.domain';
+import { CLOUD_STORAGE } from '../../cloud/aws/s3/application/s3.service';
 
 @Injectable()
 export class ImageService {

@@ -1,9 +1,9 @@
-import {Injectable} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository} from 'typeorm';
-import {Builder} from 'builder-pattern';
-import {UserDto} from '../../auth/presentation/user.dto';
-import {CustomerEntity} from '../../schemas/customer.entity';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Builder } from 'builder-pattern';
+import { UserDto } from '../../auth/presentation/user.dto';
+import { CustomerEntity } from '../../schemas/customer.entity';
 
 @Injectable()
 export class TestService {

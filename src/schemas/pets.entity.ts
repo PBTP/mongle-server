@@ -9,17 +9,17 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import {Appointment} from './appointments.entity';
-import {BreedEntity} from './breed.entity';
-import {CustomerEntity} from './customer.entity';
-import {Review} from './reviews.entity';
-import {HasUuid} from '../common/entity/parent.entity';
-import {PetChecklistAnswerEntity} from './pet-checklist-answer.entity';
-import {Builder} from 'builder-pattern';
-import {Pet} from '../pet/pet.domain';
-import {DateHolder} from '../common/holder/date.holder';
-import {UUIDHolder} from '../common/holder/uuid.holders';
-import {BadRequestException} from '@nestjs/common/exceptions';
+import { Appointment } from './appointments.entity';
+import { BreedEntity } from './breed.entity';
+import { CustomerEntity } from './customer.entity';
+import { Review } from './reviews.entity';
+import { HasUuid } from '../common/entity/parent.entity';
+import { PetChecklistAnswerEntity } from './pet-checklist-answer.entity';
+import { Builder } from 'builder-pattern';
+import { Pet } from '../pet/pet.domain';
+import { DateHolder } from '../common/holder/date.holder';
+import { UUIDHolder } from '../common/holder/uuid.holders';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 export enum Gender {
   MALE = 'MALE',

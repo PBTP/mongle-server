@@ -1,15 +1,21 @@
-import {Inject, Injectable, Logger} from '@nestjs/common';
-import {JwtService, JwtSignOptions} from '@nestjs/jwt';
-import {ConfigService} from '@nestjs/config';
-import {CACHE_SERVICE, ICacheService} from '../../common/cache/cache.service';
-import {BadRequestException, UnauthorizedException,} from '@nestjs/common/exceptions';
-import {UserService} from './user.service';
-import {UserDto} from '../presentation/user.dto';
-import {AuthDto} from '../presentation/auth.dto';
-import {Builder} from 'builder-pattern';
-import {ISecurityService, SECURITY_SERVICE} from './security.service';
-import {Sender} from '../../common/sender/sender.interface';
-import {ISmsService, SMS_SERVICE,} from '../../common/sender/sms/application/sms.service';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { CACHE_SERVICE, ICacheService } from '../../common/cache/cache.service';
+import {
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common/exceptions';
+import { UserService } from './user.service';
+import { UserDto } from '../presentation/user.dto';
+import { AuthDto } from '../presentation/auth.dto';
+import { Builder } from 'builder-pattern';
+import { ISecurityService, SECURITY_SERVICE } from './security.service';
+import { Sender } from '../../common/sender/sender.interface';
+import {
+  ISmsService,
+  SMS_SERVICE,
+} from '../../common/sender/sms/application/sms.service';
 
 @Injectable()
 export class AuthService {

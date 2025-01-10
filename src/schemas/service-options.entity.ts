@@ -1,17 +1,17 @@
 import {
-    Column,
-    CreateDateColumn,
-    DeleteDateColumn,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    OneToMany,
-    PrimaryColumn,
-    UpdateDateColumn,
+  Entity,
+  PrimaryColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  CreateDateColumn,
+  DeleteDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
-import {Appointment} from './appointments.entity';
-import {BusinessEntity} from './business.entity';
-import {HasUuid} from "../common/entity/parent.entity";
+import { Appointment } from './appointments.entity';
+import { BusinessEntity } from './business.entity';
+import { HasUuid } from "../common/entity/parent.entity";
 
 export enum PetSize {
   SMALL = 'SMALL',

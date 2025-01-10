@@ -1,9 +1,9 @@
-import {Injectable} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import * as AWS from 'aws-sdk';
-import {ConfigService} from '@nestjs/config';
-import {SystemAlarmService} from '../system/system.alarm.service';
-import {BadRequestException} from '@nestjs/common/exceptions';
+import { ConfigService } from '@nestjs/config';
+import { SystemAlarmService } from '../system/system.alarm.service';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class EmailService {

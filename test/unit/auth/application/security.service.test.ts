@@ -1,5 +1,5 @@
-import {SecurityService} from '../../../../src/auth/application/security.service';
-import {FakeConfigService} from '../../../mock/fake.config.service';
+import { SecurityService } from '../../../../src/auth/application/security.service';
+import { FakeConfigService } from '../../../mock/fake.config.service';
 
 describe('SecurityService Test', () => {
   let service: SecurityService;

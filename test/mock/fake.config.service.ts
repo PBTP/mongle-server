@@ -1,4 +1,4 @@
-import {ConfigService} from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 
 export class FakeConfigService extends ConfigService {
   private configMap: { [key: string]: any } = {};

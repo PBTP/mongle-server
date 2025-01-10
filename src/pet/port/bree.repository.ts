@@ -1,10 +1,10 @@
-import {BreedEntity} from '../../schemas/breed.entity';
-import {Breed} from '../bred.domain';
-import {UUIDHolder} from '../../common/holder/uuid.holders';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Repository} from 'typeorm';
-import {Injectable} from '@nestjs/common';
-import {BadRequestException} from '@nestjs/common/exceptions';
+import { BreedEntity } from '../../schemas/breed.entity';
+import { Breed } from '../bred.domain';
+import { UUIDHolder } from '../../common/holder/uuid.holders';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 export const BREED_REPOSITORY = Symbol('BreedRepository');
 

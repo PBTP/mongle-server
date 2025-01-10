@@ -1,5 +1,5 @@
-import {Global, Module} from '@nestjs/common';
-import {SystemAlarmService} from './system.alarm.service';
+import { Global, Module } from '@nestjs/common';
+import { SystemAlarmService } from './system.alarm.service';
 
 @Global()
 @Module({

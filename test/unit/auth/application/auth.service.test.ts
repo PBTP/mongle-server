@@ -1,23 +1,27 @@
-import {AuthService} from '../../../../src/auth/application/auth.service';
-import {CustomerService} from '../../../../src/customer/application/customer.service';
-import {FakeCustomerRepository} from '../../../mock/fake.customer.repository';
-import {ImageService} from '../../../../src/common/image/application/image.service';
-import {FakeCloudStorageService} from '../../../mock/fake.cloud-storage.service';
-import {FakeImageRepository} from '../../../mock/fake.image.repository';
-import {JwtService, TokenExpiredError} from '@nestjs/jwt';
-import {FakeConfigService} from '../../../mock/fake.config.service';
-import {FakeCacheService} from '../../../mock/fake.cache.service';
-import {UserService} from '../../../../src/auth/application/user.service';
-import {DriverService} from '../../../../src/driver/application/driver.service';
-import {FakeDriverRepository} from '../../../mock/fake.driver.repository';
-import {BusinessService} from '../../../../src/business/application/business.service';
-import {FakeBusinessRepository} from '../../../mock/fake.business.repsitory';
-import {AuthProvider, UserDto, UserType,} from '../../../../src/auth/presentation/user.dto';
-import {FakeDateHolder, FakeUuidHolder} from '../../../mock/fake.holder';
-import {SecurityService} from '../../../../src/auth/application/security.service';
-import {FakeSecurityService} from '../../../mock/fake.security.service';
-import {FakeSmsService} from '../../../mock/fake.sms.service';
-import {Builder} from 'builder-pattern';
+import { AuthService } from '../../../../src/auth/application/auth.service';
+import { CustomerService } from '../../../../src/customer/application/customer.service';
+import { FakeCustomerRepository } from '../../../mock/fake.customer.repository';
+import { ImageService } from '../../../../src/common/image/application/image.service';
+import { FakeCloudStorageService } from '../../../mock/fake.cloud-storage.service';
+import { FakeImageRepository } from '../../../mock/fake.image.repository';
+import { JwtService, TokenExpiredError } from '@nestjs/jwt';
+import { FakeConfigService } from '../../../mock/fake.config.service';
+import { FakeCacheService } from '../../../mock/fake.cache.service';
+import { UserService } from '../../../../src/auth/application/user.service';
+import { DriverService } from '../../../../src/driver/application/driver.service';
+import { FakeDriverRepository } from '../../../mock/fake.driver.repository';
+import { BusinessService } from '../../../../src/business/application/business.service';
+import { FakeBusinessRepository } from '../../../mock/fake.business.repsitory';
+import {
+  AuthProvider,
+  UserDto,
+  UserType,
+} from '../../../../src/auth/presentation/user.dto';
+import { FakeDateHolder, FakeUuidHolder } from '../../../mock/fake.holder';
+import { SecurityService } from '../../../../src/auth/application/security.service';
+import { FakeSecurityService } from '../../../mock/fake.security.service';
+import { FakeSmsService } from '../../../mock/fake.sms.service';
+import { Builder } from 'builder-pattern';
 
 describe('AuthService', () => {
   let service: AuthService;

@@ -1,3 +1,3 @@
-import {plainToInstance} from "class-transformer";
+import { plainToInstance } from "class-transformer";
 
 export const toDto = plainToInstance;

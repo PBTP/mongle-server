@@ -1,6 +1,12 @@
-import {CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn,} from 'typeorm';
-import {BusinessEntity} from './business.entity';
-import {Badge} from './badges.entity';
+import {
+  Entity,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  PrimaryColumn,
+} from 'typeorm';
+import { BusinessEntity } from './business.entity';
+import { Badge } from './badges.entity';
 
 @Entity({ name: 'business_badges' })
 export class BusinessBadge {

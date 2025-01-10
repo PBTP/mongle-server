@@ -1,13 +1,13 @@
-import {Module} from "@nestjs/common";
+import { Module } from "@nestjs/common";
 import {
-    makeCounterProvider,
-    makeGaugeProvider,
-    makeHistogramProvider,
-    makeSummaryProvider,
-    PrometheusModule
+  makeCounterProvider,
+  makeGaugeProvider,
+  makeHistogramProvider,
+  makeSummaryProvider,
+  PrometheusModule
 } from "@willsoto/nestjs-prometheus";
-import {MetricsService} from "./application/metrics.service";
-import {MetricsController} from "./presentation/metrics.controller";
+import { MetricsService } from "./application/metrics.service";
+import { MetricsController } from "./presentation/metrics.controller";
 
 @Module({
   imports: [

@@ -1,5 +1,5 @@
-import {BeforeInsert, Column} from 'typeorm';
-import {getTsid} from 'tsid-ts';
+import { BeforeInsert, Column } from 'typeorm';
+import { getTsid } from 'tsid-ts';
 
 export abstract class HasUuid {
   @Column({ type: 'varchar', length: 44, unique: true, nullable: false })

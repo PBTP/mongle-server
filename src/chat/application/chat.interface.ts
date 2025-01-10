@@ -1,5 +1,5 @@
-import {UserDto} from '../../auth/presentation/user.dto';
-import {ChatRoomDto} from '../presentation/chat.dto';
+import { UserDto } from '../../auth/presentation/user.dto';
+import { ChatRoomDto } from '../presentation/chat.dto';
 
 export interface IChatService {
   exitsUserRoom(user: UserDto, chatRoomId: number): Promise<boolean>;

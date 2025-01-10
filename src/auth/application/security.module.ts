@@ -1,5 +1,5 @@
-import {Global, Module} from '@nestjs/common';
-import {SECURITY_SERVICE, SecurityService} from './security.service';
+import { Global, Module } from '@nestjs/common';
+import { SECURITY_SERVICE, SecurityService } from './security.service';
 
 @Global()
 @Module({

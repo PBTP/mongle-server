@@ -1,8 +1,21 @@
-import {IsBoolean, IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsUrl, Length, ValidateIf,} from 'class-validator';
-import {ApiProperty} from '@nestjs/swagger';
-import {Gender} from '../../schemas/pets.entity';
-import {ChecklistType, PetChecklistCategory,} from '../../schemas/pet-checklist.entity';
-import {CrudGroup} from '../../common/validation/validation.data';
+import {
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsUrl,
+  Length,
+  ValidateIf,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { Gender } from '../../schemas/pets.entity';
+import {
+  ChecklistType,
+  PetChecklistCategory,
+} from '../../schemas/pet-checklist.entity';
+import { CrudGroup } from '../../common/validation/validation.data';
 
 export class PetDto {
   @ApiProperty({

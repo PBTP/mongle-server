@@ -1,8 +1,8 @@
-import {BusinessEntity} from '../../schemas/business.entity';
-import {AuthDto} from '../../auth/presentation/auth.dto';
-import {Repository} from 'typeorm';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Injectable} from '@nestjs/common';
+import { BusinessEntity } from '../../schemas/business.entity';
+import { AuthDto } from '../../auth/presentation/auth.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
 
 export const BUSINESS_REPOSITORY = Symbol('BUSINESS_REPOSITORY');
 

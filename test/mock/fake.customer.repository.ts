@@ -1,10 +1,10 @@
-import {CustomerEntity} from '../../src/schemas/customer.entity';
-import {ICustomerRepository} from '../../src/customer/port/customer.repository';
-import {Customer, ICustomer} from '../../src/customer/customer.domain';
-import {Builder} from 'builder-pattern';
-import {getTsid} from 'tsid-ts';
-import {CustomerDto} from '../../src/customer/presentation/customer.dto';
-import {BadRequestException} from '@nestjs/common/exceptions';
+import { CustomerEntity } from '../../src/schemas/customer.entity';
+import { ICustomerRepository } from '../../src/customer/port/customer.repository';
+import { Customer, ICustomer } from '../../src/customer/customer.domain';
+import { Builder } from 'builder-pattern';
+import { getTsid } from 'tsid-ts';
+import { CustomerDto } from '../../src/customer/presentation/customer.dto';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 export class FakeCustomerRepository implements ICustomerRepository {
   customers: Customer[] = [];

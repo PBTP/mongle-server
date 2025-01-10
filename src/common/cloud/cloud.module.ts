@@ -1,7 +1,6 @@
-import {Global, Module} from '@nestjs/common';
-import {CLOUD_STORAGE, S3Service} from './aws/s3/application/s3.service';
-import {ConsumerModule} from '../broker/consumer/consumer.module';
-
+import { Global, Module } from '@nestjs/common';
+import { CLOUD_STORAGE, S3Service } from './aws/s3/application/s3.service';
+import { ConsumerModule } from '../broker/consumer/consumer.module';
 @Global()
 @Module({
   imports: [ConsumerModule],

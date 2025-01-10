@@ -1,7 +1,6 @@
-import {Injectable, Logger} from '@nestjs/common';
-import {ConfigService} from '@nestjs/config';
-import {SolapiMessageService} from 'solapi';
-
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { SolapiMessageService } from 'solapi';
 export const SMS_SERVICE = Symbol('SMS_SERVICE');
 
 export interface ISmsService {

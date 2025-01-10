@@ -1,21 +1,35 @@
-import {ForbiddenException, Inject, Injectable} from '@nestjs/common';
-import {PetEntity} from '../../schemas/pets.entity';
-import {PetChecklistAnswerDto, PetChecklistChoiceDto, PetChecklistDto, PetDto,} from '../presentation/pet.dto';
-import {ChecklistType, PetChecklistCategory,} from '../../schemas/pet-checklist.entity';
-import {BadRequestException} from '@nestjs/common/exceptions';
-import {ICustomer} from '../../customer/customer.domain';
-import {IPetRepository, PET_REPOSITORY} from '../port/pet.repository';
-import {IPetChecklistRepository, PET_CHECKLIST_REPOSITORY,} from '../port/pet.checklist.repository';
-import {UUID_HOLDER, UUIDHolder} from '../../common/holder/uuid.holders';
-import {DATE_HOLDER, DateHolder} from '../../common/holder/date.holder';
-import {Pet} from '../pet.domain';
-import {BREED_REPOSITORY, IBreedRepository} from '../port/breed.repository';
-import {IPetChecklistAnswerRepository, PET_CHECKLIST_ANSWER_REPOSITORY,} from '../port/pet.checklist-answer.repository';
-import {PetChecklistAnswer} from '../pet.checklist-answer.domain';
-import {Builder} from 'builder-pattern';
-import {PET_CHECKLIST_CHOICE_REPOSITORY} from '../port/pet.checklist-choice.repository';
-import {IPetChecklistChoiceAnswerRepository} from '../port/pet.checklist-choice-answer.repository';
-import {PetChecklistChoiceAnswer} from '../pet.checklist-choice-answer.domain';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { PetEntity } from '../../schemas/pets.entity';
+import {
+  PetChecklistAnswerDto,
+  PetChecklistChoiceDto,
+  PetChecklistDto,
+  PetDto,
+} from '../presentation/pet.dto';
+import {
+  ChecklistType,
+  PetChecklistCategory,
+} from '../../schemas/pet-checklist.entity';
+import { BadRequestException } from '@nestjs/common/exceptions';
+import { ICustomer } from '../../customer/customer.domain';
+import { IPetRepository, PET_REPOSITORY } from '../port/pet.repository';
+import {
+  IPetChecklistRepository,
+  PET_CHECKLIST_REPOSITORY,
+} from '../port/pet.checklist.repository';
+import { UUID_HOLDER, UUIDHolder } from '../../common/holder/uuid.holders';
+import { DATE_HOLDER, DateHolder } from '../../common/holder/date.holder';
+import { Pet } from '../pet.domain';
+import { BREED_REPOSITORY, IBreedRepository } from '../port/bree.repository';
+import {
+  IPetChecklistAnswerRepository,
+  PET_CHECKLIST_ANSWER_REPOSITORY,
+} from '../port/pet.checklist-answer.repository';
+import { PetChecklistAnswer } from '../pet.checklist-answer.domain';
+import { Builder } from 'builder-pattern';
+import { PET_CHECKLIST_CHOICE_REPOSITORY } from '../port/pet.checklist-choice.repository';
+import { IPetChecklistChoiceAnswerRepository } from '../port/pet.checklist-choice-answer.repository';
+import { PetChecklistChoiceAnswer } from '../pet.checklist-choice-answer.domain';
 
 @Injectable()
 export class PetService {

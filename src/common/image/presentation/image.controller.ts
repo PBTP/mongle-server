@@ -1,10 +1,10 @@
-import {Body, Controller, HttpStatus, Post, Query} from '@nestjs/common';
-import {ImageService} from '../application/image.service';
-import {Auth, CurrentCustomer} from '../../../auth/decorator/auth.decorator';
-import {ImageMetaDataDto} from './image.dto';
-import {CustomerEntity} from '../../../schemas/customer.entity';
-import {PresignedUrlDto} from '../../cloud/aws/s3/presentation/presigned-url.dto';
-import {ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags} from '@nestjs/swagger';
+import { Body, Controller, HttpStatus, Post, Query } from '@nestjs/common';
+import { ImageService } from '../application/image.service';
+import { Auth, CurrentCustomer } from '../../../auth/decorator/auth.decorator';
+import { ImageMetaDataDto } from './image.dto';
+import { CustomerEntity } from '../../../schemas/customer.entity';
+import { PresignedUrlDto } from '../../cloud/aws/s3/presentation/presigned-url.dto';
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('이미지 관련 API')
 @Controller('/v1/image')

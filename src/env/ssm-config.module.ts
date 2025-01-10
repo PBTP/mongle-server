@@ -1,6 +1,6 @@
-import {Module} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import SSMConfigService from './ssm-config.service';
-import {ConfigService} from '@nestjs/config';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [ConfigService],
