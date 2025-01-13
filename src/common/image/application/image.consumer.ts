@@ -88,8 +88,9 @@ export class ImageConsumer {
 
   @SqsConsumerEventHandler('s3-image-object-created', 'error')
   public async errorHandler(error: Error, message: Message): Promise<void> {
+    this.logger.error(`Error: ${error.message}`)
     this.logger.error(
-      `Error occurred while processing message: ${message.MessageId}`,
+      `Error occurred while processing message: ${message?.MessageId}`,
     );
   }
 

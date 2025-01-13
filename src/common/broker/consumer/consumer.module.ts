@@ -23,16 +23,18 @@ import { SqsOptions } from '@ssut/nestjs-sqs/dist/sqs.types';
         });
 
         return {
-          consumers: [
-            {
-              name: 's3-image-object-created',
-              queueUrl: <string>(
-                configService.get(`sqs/url/${sqsName.s3ImageCreated}`)
-              ),
-              region: <string>configService.get('AWS_REGION'),
-              sqs: sqsClient,
-            },
-          ],
+          consumers: configService.get(`sqs/url/${sqsName.s3ImageCreated}`)
+            ? [
+                {
+                  name: 's3-image-object-created',
+                  queueUrl: <string>(
+                    configService.get(`sqs/url/${sqsName.s3ImageCreated}`)
+                  ),
+                  region: <string>configService.get('AWS_REGION'),
+                  sqs: sqsClient,
+                },
+              ]
+            : [],
         };
       },
     }),
