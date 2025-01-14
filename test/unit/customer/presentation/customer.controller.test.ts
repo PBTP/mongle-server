@@ -3,13 +3,12 @@ import { CustomerService } from '../../../../src/customer/application/customer.s
 import { FakeCustomerRepository } from '../../../mock/fake.customer.repository';
 import { FakeSecurityService } from '../../../mock/fake.security.service';
 import { ImageService } from '../../../../src/common/image/application/image.service';
-import { FakeCloudStorageService } from '../../../mock/fake.cloud-storage.service';
+import { FakeCloudStorage } from '../../../mock/fake.cloud-storage';
 import { FakeImageRepository } from '../../../mock/fake.image.repository';
 import { FakeDateHolder, FakeUuidHolder } from '../../../mock/fake.holder';
 import { Builder } from 'builder-pattern';
 import { CustomerDto } from '../../../../src/customer/presentation/customer.dto';
 import { AuthProvider } from '../../../../src/auth/presentation/user.dto';
-
 
 describe('CustomerController', () => {
   let customerController: CustomerController;
@@ -19,10 +18,7 @@ describe('CustomerController', () => {
     const customerService = new CustomerService(
       new FakeCustomerRepository(),
       new FakeSecurityService(),
-      new ImageService(
-        new FakeCloudStorageService(),
-        new FakeImageRepository(),
-      ),
+      new ImageService(new FakeCloudStorage(), new FakeImageRepository()),
       new FakeUuidHolder(),
       new FakeDateHolder(date),
     );
