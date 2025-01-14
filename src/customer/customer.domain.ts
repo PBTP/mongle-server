@@ -54,7 +54,7 @@ export class Customer implements ICustomer, UserDto {
   presignedUrlDto?: PresignedUrlDto;
   profileImage?: ImageDto;
 
-  static from(
+  static create(
     customer: CustomerDto,
     uuidHolder: IUUIDHolder,
     dateHolder: IDateHolder,
@@ -64,7 +64,7 @@ export class Customer implements ICustomer, UserDto {
     }
 
     return Builder<Customer>()
-      .uuid(uuidHolder.generatedUuid())
+      .uuid(customer.uuid ?? uuidHolder.generatedUuid())
       .customerName(customer.customerName ?? customer.name)
       .authProvider(customer.authProvider)
       .createdAt(dateHolder.now())

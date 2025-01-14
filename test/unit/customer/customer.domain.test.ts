@@ -16,7 +16,7 @@ describe('Customer', () => {
     dateHolder = new FakeDateHolder(date);
   });
 
-  describe('from', () => {
+  describe('create', () => {
     it('CustomerDto로부터 Customer 객체를 생성한다', () => {
       const customerDto: CustomerDto = Builder<CustomerDto>()
         .customerName('홍길동')
@@ -25,7 +25,7 @@ describe('Customer', () => {
         .customerDetailAddress('역삼동')
         .authProvider(AuthProvider.BASIC)
         .build();
-      const customer = Customer.from(customerDto, uuidHolder, dateHolder);
+      const customer = Customer.create(customerDto, uuidHolder, dateHolder);
 
       expect(customer).toBeDefined();
       expect(customer.uuid).toBe('test-uuid-1');
@@ -44,7 +44,7 @@ describe('Customer', () => {
         .build();
 
       expect(() =>
-        Customer.from(customerDto, uuidHolder, dateHolder),
+        Customer.create(customerDto, uuidHolder, dateHolder),
       ).toThrow();
     });
   });

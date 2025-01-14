@@ -3,6 +3,7 @@ import { DataSource } from 'typeorm';
 import { DynamicModule, Logger } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 
 export class PgTestHelper {
   private readonly logger = new Logger(PgTestHelper.name);
@@ -210,6 +211,66 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_customers_refresh_token
           logging: true,
         };
       },
+    });
+  }
+}
+
+export class PostGisHelper {
+  private readonly logger = new Logger(PostGisHelper.name);
+  postgisContainer: StartedPostgreSqlContainer;
+  host: string;
+  port: number;
+
+  constructor() {}
+
+  async start(): Promise<{
+    container: StartedPostgreSqlContainer;
+    host: string;
+    port: number;
+  }> {
+    this.logger.log('Starting PostGIS Testcontainers');
+    // PostGIS Testcontainers 설정
+    this.postgisContainer = await new PostgreSqlContainer(
+      'postgis/postgis:12-3.0',
+    ).start();
+
+    this.host = this.postgisContainer.getHost();
+    this.port = this.postgisContainer.getMappedPort(5432);
+
+    this.logger.log('Started PostGIS Testcontainers');
+
+    return {
+      container: this.postgisContainer,
+      host: this.host,
+      port: this.port,
+    };
+  }
+
+  async stop() {
+    this.logger.log('Stopping PostGIS Testcontainers');
+    try {
+      await this.postgisContainer.stop();
+      this.logger.log('Stopped PostGIS Testcontainers');
+    } catch (error) {
+      this.logger.error('Error stopping PostGIS Testcontainers', error);
+    }
+  }
+
+  async module(): Promise<DynamicModule> {
+    return TypeOrmModule.forRootAsync({
+      useFactory: async () => ({
+        type: 'postgres',
+        host: this.host,
+        port: this.port,
+        username: 'test',
+        password: 'test',
+        database: 'test',
+        entities: [__dirname + '/../../src/**/*.entity.{ts,js}'],
+        logger: 'advanced-console',
+        logging: 'all',
+        synchronize: true,
+        namingStrategy: new SnakeNamingStrategy(),
+      }),
     });
   }
 }

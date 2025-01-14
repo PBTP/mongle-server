@@ -15,6 +15,12 @@ export class FakeConfigService extends ConfigService {
     this.configMap['datasource/redis'] = '{"host":"localhost","port":6379}';
     this.configMap['datasource/db'] =
       '{"type":"mysql","host":"localhost","port":3306,"username":"root","password":"root","database":"test"}';
+
+    this.configMap['jwt/access/secret'] = 'test-access';
+    this.configMap['jwt/access/expire'] = 3600;
+    this.configMap['jwt/refresh/secret'] = 'test-refresh';
+    this.configMap['jwt/refresh/expire'] = 60 * 60 * 24 * 14;
+
   }
 
   override get(key: string): any {

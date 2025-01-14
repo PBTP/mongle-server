@@ -2339,6 +2339,13 @@
     sqs-consumer "^7.0.3"
     sqs-producer "^3.1.1"
 
+"@testcontainers/postgresql@^10.16.0":
+  version "10.16.0"
+  resolved "https://registry.yarnpkg.com/@testcontainers/postgresql/-/postgresql-10.16.0.tgz#0437a9b426d64ea958e745a0e2ae19462b786f81"
+  integrity sha512-zWFQI+3QxlEELRvVv27i6zlVEPNUz9zKaSh7iWmFlCdfhcyr78daS0FG8FIfdQ79VK7YXA4jv+dTYXa2SwXu/w==
+  dependencies:
+    testcontainers "^10.16.0"
+
 "@testcontainers/redis@^10.16.0":
   version "10.16.0"
   resolved "https://registry.yarnpkg.com/@testcontainers/redis/-/redis-10.16.0.tgz#e3eeeb1ec1194842e050525474a2dc3bc18f899f"

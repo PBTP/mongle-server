@@ -97,6 +97,7 @@ export class CustomerEntity extends UserEntity {
 
   static toModel(customer: CustomerEntity): Customer {
     return Builder<Customer>()
+      .uuid(customer.uuid)
       .customerId(customer.customerId)
       .customerName(customer.customerName)
       .customerPhoneNumber(customer.customerPhoneNumber)
