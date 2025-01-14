@@ -22,14 +22,23 @@ import { HttpStatusCode } from 'axios';
 import { PostGisHelper } from '../mock/pg.test-helper';
 import { RedisTestHelper } from '../mock/redis.test-helper';
 import { UUID_HOLDER } from '../../src/common/holder/uuid.holders';
-import { FakeUuidHolder } from '../mock/fake.holder';
+import { FakeDateHolder, FakeUuidHolder } from '../mock/fake.holder';
+import { DataSource } from 'typeorm';
+import { CustomerSeeder } from '../mock/seeders';
+import { AuthProvider } from '../../src/auth/presentation/user.dto';
+import { CustomerService } from '../../src/customer/application/customer.service';
 
 describe('AuthController E2E 테스트', () => {
   let app: INestApplication;
-
   let redisTestHelper: RedisTestHelper;
   let pgTestHelper: PostGisHelper;
+
+  let customerService: CustomerService;
+
   const uuidHolder = new FakeUuidHolder();
+  const date = new Date('2021-01-01T00:00:00Z');
+  const dateHolder = new FakeDateHolder(date);
+
 
   beforeAll(async () => {
     // Redis Testcontainers 설정
@@ -44,7 +53,7 @@ describe('AuthController E2E 테스트', () => {
       imports: [
         ConfigModule.forRoot({ isGlobal: true }),
         JwtModule.registerAsync({
-          useFactory: async () => ({ secret: 'test-secret' }),
+          useFactory: async () => ({ secret: 'test-secret' })
         }),
         PassportModule.register({ defaultStrategy: 'access' }),
         await pgTestHelper.module(),
@@ -57,10 +66,10 @@ describe('AuthController E2E 테스트', () => {
         BusinessModule,
         CustomerModule,
         ImageModule,
-        CloudModule,
+        CloudModule
       ],
       controllers: [AuthController],
-      providers: [AuthService],
+      providers: [AuthService]
     })
       .overrideProvider(UUID_HOLDER)
       .useValue(uuidHolder)
@@ -70,8 +79,15 @@ describe('AuthController E2E 테스트', () => {
       .useClass(FakeCloudStorageService)
       .compile();
 
+
     app = moduleFutures.createNestApplication();
     await app.init();
+
+    const dataSource = app.get(DataSource);
+    customerService = app.get(CustomerService);
+
+    await pgTestHelper.seed(new CustomerSeeder(dateHolder), dataSource);
+
   }, 30000);
 
   afterAll(async () => {
@@ -80,106 +96,153 @@ describe('AuthController E2E 테스트', () => {
     await app.close();
   });
 
-  test('빈값으로 보내면 Bad Request가 반환된다.', async () => {
-    // Given
-    const response = await request(app.getHttpServer())
-      .post('/v1/auth/login')
-      .expect(HttpStatusCode.BadRequest);
+  describe('POST /v1/auth/login', () => {
+    test('빈값으로 보내면 Bad Request가 반환된다.', async () => {
+      // Given
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/login')
+        .expect(HttpStatusCode.BadRequest);
 
-    // Then
-    const body = response.body;
-    expect(body.error).toEqual('Bad Request');
-    expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
-    console.table(body);
-  });
+      // Then
+      const body = response.body;
+      expect(body.error).toEqual('Bad Request');
+      expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
+      console.table(body);
+    });
 
-  test('userType이 없으면 Bad Request가 반환된다.', async () => {
-    // Given
-    const user = {
-      phoneNumber: '01012345678',
-      password: 'password',
-    };
+    test('userType이 없으면 Bad Request가 반환된다.', async () => {
+      // Given
+      const user = {
+        phoneNumber: '01012345678',
+        password: 'password'
+      };
 
-    // When
-    const response = await request(app.getHttpServer())
-      .post('/v1/auth/login')
-      .send(user)
-      .expect(HttpStatusCode.BadRequest);
+      // When
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/login')
+        .send(user)
+        .expect(HttpStatusCode.BadRequest);
 
-    // Then
-    const body = response.body;
-    expect(body.error).toEqual('Bad Request');
-    expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
-    console.table(body);
-  });
+      // Then
+      const body = response.body;
+      expect(body.error).toEqual('Bad Request');
+      expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
+      console.table(body);
+    });
 
-  test('name이 없으면 Bad Request가 반환된다.', async () => {
-    // Given
-    const user = {
-      userType: 'customer',
-      phoneNumber: '01012345678',
-    };
+    test('name이 없으면 Bad Request가 반환된다.', async () => {
+      // Given
+      const user = {
+        userType: 'customer',
+        phoneNumber: '01012345678'
+      };
 
-    // When
-    const response = await request(app.getHttpServer())
-      .post('/v1/auth/login')
-      .send(user)
-      .expect(HttpStatusCode.BadRequest);
+      // When
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/login')
+        .send(user)
+        .expect(HttpStatusCode.BadRequest);
 
-    // Then
-    const body = response.body;
-    expect(body.error).toEqual('Bad Request');
-    expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
-    console.table(body);
-  });
+      // Then
+      const body = response.body;
+      expect(body.error).toEqual('Bad Request');
+      expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
+      console.table(body);
+    });
 
-  test('phoneNumber이 없으면 Bad Request가 반환된다.', async () => {
-    // Given
-    const user = {
-      userType: 'customer',
-      name: 'test',
-    };
+    test('authProvider가 없으면 Bad Request가 반환된다.', async () => {
+      // Given
+      const user = {
+        userType: 'customer',
+        name: 'test'
+      };
 
-    // When
-    const response = await request(app.getHttpServer())
-      .post('/v1/auth/login')
-      .send(user)
-      .expect(HttpStatusCode.BadRequest);
+      // When
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/login')
+        .send(user)
+        .expect(HttpStatusCode.BadRequest);
 
-    // Then
-    const body = response.body;
-    expect(body.error).toEqual('Bad Request');
-    expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
-    console.table(body);
-  });
+      // Then
+      const body = response.body;
+      expect(body.error).toEqual('Bad Request');
+      expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
+      console.table(body);
+    });
 
-  test('정상적인 요청이면 Created가 반환된다.', async () => {
-    // Given
-    const user = {
-      authProvider: 'KAKAO',
-      userType: 'customer',
-      uuid: 'test',
-      name: 'test',
-    };
+    test('정상적인 요청이면 Created가 반환된다.', async () => {
+      // Given
+      const user = {
+        authProvider: 'KAKAO',
+        userType: 'customer',
+        uuid: 'test',
+        name: 'test'
+      };
 
-    // when
-    const response = await request(app.getHttpServer())
-      .post('/v1/auth/login')
-      .send(user)
-      .expect(HttpStatusCode.Created);
+      // when
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/login')
+        .send(user)
+        .expect(HttpStatusCode.Created);
 
-    const body = response.body;
-    const data = body.data;
+      const body = response.body;
+      const data = body.data;
 
-    // then
-    expect(data).toBeDefined();
-    expect(data.uuid).toBe(user.uuid);
-    expect(data.name).toBe(user.name);
-    expect(data.userId).toBeDefined();
-    expect(data.userType).toBe(user.userType);
-    expect(data.authProvider).toBe(user.authProvider);
-    expect(data.accessToken).toBeDefined();
-    expect(data.refreshToken).toBeDefined();
-    console.table(data);
+      // then
+      expect(data).toBeDefined();
+      expect(data.uuid).toBe(user.uuid);
+      expect(data.name).toBe(user.name);
+      expect(data.userId).toBeDefined();
+      expect(data.userType).toBe(user.userType);
+      expect(data.authProvider).toBe(user.authProvider);
+      expect(data.accessToken).toBeDefined();
+      expect(data.refreshToken).toBeDefined();
+      console.table(data);
+    });
+
+    test('이미 가입된 사용자라면 entity를 생성하지 않는다.', async () => {
+      // Given
+      const seedCustomer = {
+        uuid: 'customer-seed-uuid',
+        userType: 'customer',
+        authProvider: AuthProvider.KAKAO,
+        customerId: 1
+      };
+
+      // When
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/login')
+        .send(seedCustomer)
+        .expect(HttpStatusCode.Created);
+
+      // Then
+
+      const body = response.body;
+      const data = body.data;
+      expect(data).toBeDefined();
+      expect(data.uuid).toBe(seedCustomer.uuid);
+      expect(data.userId).toEqual(1);
+      expect(data.userType).toBe(seedCustomer.userType);
+      expect(data.authProvider).toBe(seedCustomer.authProvider);
+      expect(data.accessToken).toBeDefined();
+      expect(data.refreshToken).toBeDefined();
+
+      console.log('data');
+      console.table(data);
+
+      await customerService
+        .findOne({ uuid: seedCustomer.uuid })
+        .then((customer) => {
+          expect(customer).toBeDefined();
+          expect(customer?.userId).toEqual(1);
+          expect(customer?.customerId).toEqual(1);
+          expect(customer?.uuid).toEqual(seedCustomer.uuid);
+          expect(customer?.authProvider).toEqual(seedCustomer.authProvider);
+          expect(customer?.name).toEqual('customer-seed-name');
+          expect(customer?.phoneNumber).toEqual('customer-seed-phone');
+          console.log('customer');
+          console.table(customer);
+        });
+    });
   });
 });

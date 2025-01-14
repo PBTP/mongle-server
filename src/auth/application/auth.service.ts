@@ -56,7 +56,7 @@ export class AuthService {
         return user ?? (await this.userService.create(dto));
       });
 
-    user.userId = user.customerId ?? user.driverId ?? user.businessId;
+    user.userId = user.userId ?? user.customerId ?? user.driverId ?? user.businessId;
 
     user.userType = dto.userType;
 
@@ -95,7 +95,7 @@ export class AuthService {
 
     return Builder(AuthDto)
       .uuid(user.uuid)
-      .name(dto.name)
+      .name(user.name ?? dto.name)
       .userId(user.userId)
       .userType(user.userType)
       .phoneNumber(user.phoneNumber)

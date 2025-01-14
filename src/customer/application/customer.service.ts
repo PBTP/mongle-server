@@ -48,8 +48,9 @@ export class CustomerService implements IUserService {
     );
   }
 
-  findOne(dto: Partial<AuthDto>): Promise<UserDto | null> {
-    return this.customerRepository.findOne(dto);
+  async findOne(dto: Partial<AuthDto>): Promise<UserDto | null> {
+    const customer = await this.customerRepository.findOne(dto);
+    return customer ? UserDto.from(customer) : null;
   }
 
   async getOne(

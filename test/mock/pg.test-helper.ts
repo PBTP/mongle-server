@@ -4,6 +4,7 @@ import { DynamicModule, Logger } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { PostgreSqlContainer, StartedPostgreSqlContainer } from '@testcontainers/postgresql';
+import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 
 export class PgTestHelper {
   private readonly logger = new Logger(PgTestHelper.name);
@@ -236,7 +237,6 @@ export class PostGisHelper {
 
     this.host = this.postgisContainer.getHost();
     this.port = this.postgisContainer.getMappedPort(5432);
-
     this.logger.log('Started PostGIS Testcontainers');
 
     return {
@@ -256,6 +256,14 @@ export class PostGisHelper {
     }
   }
 
+  async seed(
+    seeder: Seeder,
+    dataSource:DataSource,
+    seederFactory : SeederFactoryManager = new SeederFactoryManager(),
+  ){
+    await seeder.run(dataSource, seederFactory);
+  }
+
   async module(): Promise<DynamicModule> {
     return TypeOrmModule.forRootAsync({
       useFactory: async () => ({
@@ -266,6 +274,7 @@ export class PostGisHelper {
         password: 'test',
         database: 'test',
         entities: [__dirname + '/../../src/**/*.entity.{ts,js}'],
+        migrations: [__dirname + './mock/seeders.ts'],
         logger: 'advanced-console',
         logging: 'all',
         synchronize: true,
