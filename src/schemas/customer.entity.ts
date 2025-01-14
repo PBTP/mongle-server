@@ -6,23 +6,22 @@ import {
   OneToMany,
   Point,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { Favorite } from './favorites.entity';
 import { Pet } from './pets.entity';
 import { Review } from './reviews.entity';
 import { CustomerChatRoom } from './customer-chat-room.entity';
-import { HasUuid } from '../common/entity/parent.entity';
-import { AuthProvider } from '../auth/presentation/user.dto';
 import { ImageEntity } from './image.entity';
 import { Customer } from '../customer/customer.domain';
 import { Builder } from 'builder-pattern';
 import { IUUIDHolder } from '../common/holder/uuid.holders';
 import { IDateHolder } from '../common/holder/date.holder';
+import { UserEntity } from '../common/entity/user.entity';
 
 @Entity({ name: 'customers' })
-export class CustomerEntity extends HasUuid {
+export class CustomerEntity extends UserEntity {
   @PrimaryGeneratedColumn()
   customerId: number;
 
@@ -45,9 +44,6 @@ export class CustomerEntity extends HasUuid {
     nullable: true,
   })
   customerLocation?: Point;
-
-  @Column({ type: 'enum', enum: AuthProvider, nullable: false })
-  authProvider: AuthProvider;
 
   @CreateDateColumn({ nullable: false })
   createdAt: Date;

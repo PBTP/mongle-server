@@ -28,8 +28,9 @@ describe('AuthController E2E 테스트', () => {
 
   let redisTestHelper: RedisTestHelper;
   let pgTestHelper: PgTestHelper;
+  let dataSource: DataSource;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     // Redis Testcontainers 설정
     redisTestHelper = new RedisTestHelper();
     await redisTestHelper.start();
@@ -37,7 +38,9 @@ describe('AuthController E2E 테스트', () => {
     pgTestHelper = new PgTestHelper();
 
     // pg-mem 설정
-    const { db, dataSource } = await pgTestHelper.connect();
+    const db = await pgTestHelper.connect();
+
+    dataSource = db.dataSource;
 
     const moduleFutures = await Test.createTestingModule({
       imports: [
@@ -91,5 +94,67 @@ describe('AuthController E2E 테스트', () => {
     const body = response.body;
     expect(body.error).toEqual('Bad Request');
     expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
+    console.table(body);
+  });
+
+  test('userType이 없으면 Bad Request가 반환된다.', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/v1/auth/login')
+      .send({
+        phoneNumber: '01012345678',
+        password: 'password',
+      })
+      .expect(HttpStatusCode.BadRequest);
+
+    const body = response.body;
+    expect(body.error).toEqual('Bad Request');
+    expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
+    console.table(body);
+  });
+
+  test('name이 없으면 Bad Request가 반환된다.', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/v1/auth/login')
+      .send({
+        userType: 'customer',
+        phoneNumber: '01012345678',
+      })
+      .expect(HttpStatusCode.BadRequest);
+
+    const body = response.body;
+    expect(body.error).toEqual('Bad Request');
+    expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
+    console.table(body);
+  });
+
+  test('phoneNumber이 없으면 Bad Request가 반환된다.', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/v1/auth/login')
+      .send({
+        userType: 'customer',
+        name: 'test',
+      })
+      .expect(HttpStatusCode.BadRequest);
+
+    const body = response.body;
+    expect(body.error).toEqual('Bad Request');
+    expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
+    console.table(body);
+  });
+
+  test('사용자가 없으면 사용자가 생성된다.', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/v1/auth/login')
+      .send({
+        userType: 'customer',
+        uuid: 'test',
+        name: 'test',
+      })
+      .expect(HttpStatusCode.Created);
+
+    const body = response.body;
+    expect(body.accessToken).toBeDefined();
+    expect(body.refreshToken).toBeDefined();
+    console.table(body);
   });
 });

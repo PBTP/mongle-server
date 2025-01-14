@@ -1,12 +1,12 @@
 import {
-  Entity,
-  PrimaryColumn,
   Column,
-  OneToMany,
   CreateDateColumn,
   DeleteDateColumn,
-  UpdateDateColumn,
+  Entity,
+  OneToMany,
   Point,
+  PrimaryColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { BusinessBadge } from './business-badges.entity';
@@ -17,11 +17,10 @@ import { Favorite } from './favorites.entity';
 import { Review } from './reviews.entity';
 import { ServiceOption } from './service-options.entity';
 import { BusinessChatRoom } from './business-chat-room.entity';
-import { HasUuid } from '../common/entity/parent.entity';
-import { AuthProvider } from '../auth/presentation/user.dto';
+import { UserEntity } from '../common/entity/user.entity';
 
 @Entity({ name: 'business' })
-export class BusinessEntity extends HasUuid {
+export class BusinessEntity extends UserEntity {
   @PrimaryColumn()
   businessId: number;
 
@@ -93,14 +92,6 @@ export class BusinessEntity extends HasUuid {
 
   @OneToMany(() => BusinessChatRoom, (chatRooms) => chatRooms.chatRoom)
   chatRooms: BusinessChatRoom[];
-
-  @Column({
-    type: 'enum',
-    enum: AuthProvider,
-    enumName: 'auth_provider',
-    nullable: false,
-  })
-  authProvider: AuthProvider;
 
   @Column({ length: 20, unique: true, nullable: true })
   refreshToken?: string;

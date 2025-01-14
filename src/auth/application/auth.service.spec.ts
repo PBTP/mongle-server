@@ -57,7 +57,7 @@ describe('AuthService', () => {
       .spyOn(jwtService, 'sign')
       .mockReturnValueOnce('test-access-token')
       .mockReturnValueOnce('test-refresh-token');
-    jest.spyOn(cacheService, 'set').mockResolvedValueOnce(undefined);
+    jest.spyOn(cacheService, 'set').mockResolvedValueOnce('OK');
     jest.spyOn(userService, 'update').mockResolvedValueOnce(userDto);
 
     const result = await service.login(userDto);
