@@ -27,6 +27,7 @@ import { DataSource } from 'typeorm';
 import { CustomerSeeder } from '../mock/seeders';
 import { AuthProvider } from '../../src/auth/presentation/user.dto';
 import { CustomerService } from '../../src/customer/application/customer.service';
+import { JwtRefreshStrategy } from '../../src/auth/application/jwt-refresh.strategy';
 
 describe('AuthController E2E 테스트', () => {
   let app: INestApplication;
@@ -38,7 +39,6 @@ describe('AuthController E2E 테스트', () => {
   const uuidHolder = new FakeUuidHolder();
   const date = new Date('2021-01-01T00:00:00Z');
   const dateHolder = new FakeDateHolder(date);
-
 
   beforeAll(async () => {
     // Redis Testcontainers 설정
@@ -53,7 +53,7 @@ describe('AuthController E2E 테스트', () => {
       imports: [
         ConfigModule.forRoot({ isGlobal: true }),
         JwtModule.registerAsync({
-          useFactory: async () => ({ secret: 'test-secret' })
+          useFactory: async () => ({ secret: 'test-secret' }),
         }),
         PassportModule.register({ defaultStrategy: 'access' }),
         await pgTestHelper.module(),
@@ -66,10 +66,10 @@ describe('AuthController E2E 테스트', () => {
         BusinessModule,
         CustomerModule,
         ImageModule,
-        CloudModule
+        CloudModule,
       ],
       controllers: [AuthController],
-      providers: [AuthService]
+      providers: [AuthService, JwtRefreshStrategy],
     })
       .overrideProvider(UUID_HOLDER)
       .useValue(uuidHolder)
@@ -79,7 +79,6 @@ describe('AuthController E2E 테스트', () => {
       .useClass(FakeCloudStorageService)
       .compile();
 
-
     app = moduleFutures.createNestApplication();
     await app.init();
 
@@ -87,7 +86,6 @@ describe('AuthController E2E 테스트', () => {
     customerService = app.get(CustomerService);
 
     await pgTestHelper.seed(new CustomerSeeder(dateHolder), dataSource);
-
   }, 30000);
 
   afterAll(async () => {
@@ -114,7 +112,7 @@ describe('AuthController E2E 테스트', () => {
       // Given
       const user = {
         phoneNumber: '01012345678',
-        password: 'password'
+        password: 'password',
       };
 
       // When
@@ -134,7 +132,7 @@ describe('AuthController E2E 테스트', () => {
       // Given
       const user = {
         userType: 'customer',
-        phoneNumber: '01012345678'
+        phoneNumber: '01012345678',
       };
 
       // When
@@ -154,7 +152,7 @@ describe('AuthController E2E 테스트', () => {
       // Given
       const user = {
         userType: 'customer',
-        name: 'test'
+        name: 'test',
       };
 
       // When
@@ -176,7 +174,7 @@ describe('AuthController E2E 테스트', () => {
         authProvider: 'KAKAO',
         userType: 'customer',
         uuid: 'test',
-        name: 'test'
+        name: 'test',
       };
 
       // when
@@ -206,7 +204,7 @@ describe('AuthController E2E 테스트', () => {
         uuid: 'customer-seed-uuid',
         userType: 'customer',
         authProvider: AuthProvider.KAKAO,
-        customerId: 1
+        customerId: 1,
       };
 
       // When
@@ -243,6 +241,39 @@ describe('AuthController E2E 테스트', () => {
           console.log('customer');
           console.table(customer);
         });
+    });
+  });
+
+  describe('POST /v1/auth/refresh', () => {
+    test('Authorization 헤더를 빈값으로 보내면 Unauthorized 가 반환된다.', async () => {
+      // Given
+      // When
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/refresh')
+        .expect(HttpStatusCode.Unauthorized);
+
+      // Then
+      const body = response.body;
+      expect(body.message).toEqual('Unauthorized');
+      expect(body.statusCode).toEqual(HttpStatusCode.Unauthorized);
+      console.table(body);
+    });
+
+    test('refreshToken이 Bearer 토큰이 아니면 Unauthorized가 반환된다', async () => {
+      // Given
+      const authorization = 'test';
+
+      // When
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/refresh')
+        .set('Authorization', authorization)
+        .expect(HttpStatusCode.Unauthorized);
+
+      // Then
+      const body = response.body;
+      expect(body.message).toEqual('Unauthorized');
+      expect(body.statusCode).toEqual(HttpStatusCode.Unauthorized);
+      console.table(body);
     });
   });
 });
