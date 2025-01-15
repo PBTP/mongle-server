@@ -28,6 +28,7 @@ import { CustomerSeeder } from '../mock/seeders';
 import { AuthProvider } from '../../src/auth/presentation/user.dto';
 import { CustomerService } from '../../src/customer/application/customer.service';
 import { JwtRefreshStrategy } from '../../src/auth/application/jwt-refresh.strategy';
+import clearAllTimers = jest.clearAllTimers;
 
 describe('AuthController E2E 테스트', () => {
   let app: INestApplication;
@@ -245,6 +246,38 @@ describe('AuthController E2E 테스트', () => {
   });
 
   describe('POST /v1/auth/refresh', () => {
+    let accessToken: string;
+    let refreshToken: string;
+
+    beforeAll(async () => {
+      const user = {
+        authProvider: 'KAKAO',
+        userType: 'customer',
+        uuid: 'customer-seed-uuid',
+        name: 'test',
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/login')
+        .send(user)
+        .expect(HttpStatusCode.Created);
+
+      const body = response.body;
+      const data = body.data;
+
+      expect(data).toBeDefined();
+      expect(data.accessToken).toBeDefined();
+      expect(data.refreshToken).toBeDefined();
+      accessToken = data.accessToken;
+      refreshToken = data.refreshToken;
+
+      console.table(data);
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
     test('Authorization 헤더를 빈값으로 보내면 Unauthorized 가 반환된다.', async () => {
       // Given
       // When
@@ -274,6 +307,52 @@ describe('AuthController E2E 테스트', () => {
       expect(body.message).toEqual('Unauthorized');
       expect(body.statusCode).toEqual(HttpStatusCode.Unauthorized);
       console.table(body);
+    });
+
+    test('refreshToken이 만료되면 Unauthorized가 반환된다.', async () => {
+      // Given
+      jest.useFakeTimers({
+        now: new Date().getTime() + 1000 * 60 * 60 * 24 * 31, // 31일 후
+      });
+      console.log('now', new Date());
+      console.log('accessToken', accessToken);
+      console.log('refreshToken', refreshToken);
+
+      // When
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/refresh')
+        .set('Authorization', `Bearer ${refreshToken}`)
+        .expect(HttpStatusCode.Unauthorized);
+
+      // Then
+      const body = response.body;
+      expect(body.message).toEqual('Unauthorized');
+      expect(body.statusCode).toEqual(HttpStatusCode.Unauthorized);
+      console.table(body);
+      clearAllTimers();
+    });
+
+    test('refreshToken이 정상적이면 accessToken과 refreshToken 모두 갱신한다.', async () => {
+      // Given
+      console.log('now', new Date());
+      console.log('accessToken', accessToken);
+      console.log('refreshToken', refreshToken);
+
+      // When
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/refresh')
+        .set('Authorization', `Bearer ${refreshToken}`)
+        .expect(HttpStatusCode.Created);
+
+      // Then
+      const body = response.body;
+      const data = body.data;
+      expect(data).toBeDefined();
+      expect(data.accessToken).toBeDefined();
+      expect(data.refreshToken).toBeDefined();
+      expect(data.accessToken).not.toEqual(accessToken);
+      expect(data.refreshToken).not.toEqual(refreshToken);
+      console.table(data);
     });
   });
 });
