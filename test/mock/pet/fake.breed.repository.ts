@@ -3,26 +3,9 @@ import { IBreedRepository } from 'src/pet/port/bree.repository';
 import { UUIDHolder } from '../../../src/common/holder/uuid.holders';
 import { Breed } from '../../../src/pet/bred.domain';
 import { BreedEntity } from '../../../src/schemas/breed.entity';
-import { FakeUuidHolder } from '../fake.holder';
 
 export class FakeBreedRepository implements IBreedRepository {
   private breeds: BreedEntity[] = [];
-
-  constructor(
-    initBreeds = [
-      {
-        breedId: 1,
-        breedName: '몽글이',
-        breedDescription: '귀엽다',
-        pets: [],
-      },
-    ],
-  ) {
-    const uuidHolder = new FakeUuidHolder();
-    this.breeds = initBreeds.map((breed) =>
-      BreedEntity.create({ ...breed, breedId: breed.breedId }, uuidHolder),
-    );
-  }
 
   async create(breed: Breed, uuidHolder: UUIDHolder): Promise<BreedEntity> {
     const newBreed: BreedEntity = BreedEntity.create(breed, uuidHolder);
