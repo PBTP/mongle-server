@@ -1,22 +1,21 @@
 import {
-  Entity,
-  PrimaryColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
   CreateDateColumn,
   DeleteDateColumn,
-  UpdateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+  UpdateDateColumn
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { BusinessEntity } from './business.entity';
 import { DriverChatRoom } from './driver-chat-room.entity';
-import { HasUuid } from '../common/entity/parent.entity';
-import { AuthProvider } from '../auth/presentation/user.dto';
+import { UserEntity } from '../common/entity/user.entity';
 
 @Entity({ name: 'drivers' })
-export class DriverEntity extends HasUuid {
+export class DriverEntity extends UserEntity {
   @PrimaryColumn()
   driverId: number;
 
@@ -44,14 +43,6 @@ export class DriverEntity extends HasUuid {
   @ManyToOne(() => BusinessEntity, (business) => business.drivers)
   @JoinColumn({ name: 'business_id' })
   business: BusinessEntity;
-
-  @Column({
-    type: 'enum',
-    enum: AuthProvider,
-    enumName: 'auth_provider',
-    nullable: false,
-  })
-  authProvider: AuthProvider;
 
   @Column({ length: 20, unique: true, nullable: true })
   refreshToken?: string;

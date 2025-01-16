@@ -12,6 +12,7 @@ import { IUUIDHolder } from '../common/holder/uuid.holders';
 import { IDateHolder } from '../common/holder/date.holder';
 import { PresignedUrlDto } from '../common/cloud/aws/s3/presentation/presigned-url.dto';
 import { ImageDto } from '../common/image/presentation/image.dto';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 export interface ICustomer extends AuthDto {
   customerId?: number;
@@ -53,17 +54,17 @@ export class Customer implements ICustomer, UserDto {
   presignedUrlDto?: PresignedUrlDto;
   profileImage?: ImageDto;
 
-  static from(
+  static create(
     customer: CustomerDto,
     uuidHolder: IUUIDHolder,
     dateHolder: IDateHolder,
   ): Customer {
     if ((!customer.customerName && !customer.name) || !customer.authProvider) {
-      throw new Error('필수 정보가 누락되었습니다.');
+      throw new BadRequestException('필수 정보가 누락되었습니다.');
     }
 
     return Builder<Customer>()
-      .uuid(uuidHolder.generatedUuid())
+      .uuid(customer.uuid ?? uuidHolder.generatedUuid())
       .customerName(customer.customerName ?? customer.name)
       .authProvider(customer.authProvider)
       .createdAt(dateHolder.now())

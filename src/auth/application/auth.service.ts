@@ -2,20 +2,14 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { CACHE_SERVICE, ICacheService } from '../../common/cache/cache.service';
-import {
-  BadRequestException,
-  UnauthorizedException,
-} from '@nestjs/common/exceptions';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common/exceptions';
 import { UserService } from './user.service';
 import { UserDto } from '../presentation/user.dto';
 import { AuthDto } from '../presentation/auth.dto';
 import { Builder } from 'builder-pattern';
 import { ISecurityService, SECURITY_SERVICE } from './security.service';
 import { Sender } from '../../common/sender/sender.interface';
-import {
-  ISmsService,
-  SMS_SERVICE,
-} from '../../common/sender/sms/application/sms.service';
+import { ISmsService, SMS_SERVICE } from '../../common/sender/sms/application/sms.service';
 
 @Injectable()
 export class AuthService {
@@ -62,7 +56,7 @@ export class AuthService {
         return user ?? (await this.userService.create(dto));
       });
 
-    user.userId = user.customerId ?? user.driverId ?? user.businessId;
+    user.userId = user.userId ?? user.customerId ?? user.driverId ?? user.businessId;
 
     user.userType = dto.userType;
 
@@ -101,7 +95,7 @@ export class AuthService {
 
     return Builder(AuthDto)
       .uuid(user.uuid)
-      .name(dto.name)
+      .name(user.name ?? dto.name)
       .userId(user.userId)
       .userType(user.userType)
       .phoneNumber(user.phoneNumber)
@@ -175,11 +169,11 @@ export class AuthService {
       if (existingToken) await this.cacheService.del(existingToken);
     }
 
-    await this.cacheService.set(
-      key,
-      accessToken,
+    const expiresIn = Math.floor(
       (this.accessTokenOption.expiresIn as number) / 1000,
     );
+
+    await this.cacheService.set(key, accessToken, expiresIn);
 
     await this.cacheService.set(
       accessToken,
@@ -187,19 +181,9 @@ export class AuthService {
         ...user,
         refreshToken: undefined,
       }),
-      (this.accessTokenOption.expiresIn as number) / 1000,
-    );
-
-    await this.cacheService.set(
-      accessToken,
-      JSON.stringify({
-        ...user,
-        refreshToken: undefined,
-      }),
-      (this.accessTokenOption.expiresIn as number) / 1000,
+      expiresIn,
     );
   }
-
   async getUser(token: string): Promise<any> {
     const payload = await this.jwtService.verify(token);
     if (!payload) {

@@ -1,9 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { AuthService } from './application/auth.service';
 import { AuthController } from './presentation/auth.controller';
-import { CustomerModule } from 'src/customer/customer.module';
+import { CustomerModule } from '../customer/customer.module';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtAccessStrategy } from './application/jwt-access.strategy';
 import { JwtRefreshStrategy } from './application/jwt-refresh.strategy';
 import { PassportModule } from '@nestjs/passport';
@@ -17,6 +17,7 @@ import { SmsModule } from '../common/sender/sms/sms.module';
 @Global()
 @Module({
   imports: [
+    ConfigModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('jwt/access/secret'),

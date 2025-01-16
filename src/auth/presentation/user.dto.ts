@@ -68,11 +68,13 @@ export class UserDto {
 
   static from(customer: Customer): UserDto {
     return Builder(UserDto)
-      .userId(customer.customerId)
+      .uuid(customer.uuid)
       .name(customer.customerName)
+      .userId(customer.customerId)
+      .customerId(customer.customerId)
+      .userType('customer')
       .phoneNumber(customer.customerPhoneNumber)
       .authProvider(customer.authProvider)
-      .uuid(customer.uuid)
       .build();
   }
 }

@@ -3,17 +3,11 @@ import { CustomerDto } from '../presentation/customer.dto';
 import { IUserService } from '../../auth/user.interface';
 import { AuthDto } from '../../auth/presentation/auth.dto';
 import { UserDto, UserType } from '../../auth/presentation/user.dto';
-import {
-  ISecurityService,
-  SECURITY_SERVICE,
-} from '../../auth/application/security.service';
+import { ISecurityService, SECURITY_SERVICE } from '../../auth/application/security.service';
 import { ImageService } from '../../common/image/application/image.service';
 import { BadRequestException } from '@nestjs/common/exceptions';
 import { Customer, ICustomer } from '../customer.domain';
-import {
-  CUSTOMER_REPOSITORY,
-  ICustomerRepository,
-} from '../port/customer.repository';
+import { CUSTOMER_REPOSITORY, ICustomerRepository } from '../port/customer.repository';
 import { IUUIDHolder, UUID_HOLDER } from '../../common/holder/uuid.holders';
 import { DATE_HOLDER, IDateHolder } from '../../common/holder/date.holder';
 
@@ -50,14 +44,13 @@ export class CustomerService implements IUserService {
     }
 
     return await this.customerRepository.save(
-      this.customerRepository.create(
-        Customer.from(dto, this.uuidHolder, this.dateHolder),
-      ),
+      Customer.create(dto, this.uuidHolder, this.dateHolder),
     );
   }
 
-  findOne(dto: Partial<AuthDto>): Promise<UserDto | null> {
-    return this.customerRepository.findOne(dto);
+  async findOne(dto: Partial<AuthDto>): Promise<UserDto | null> {
+    const customer = await this.customerRepository.findOne(dto);
+    return customer ? UserDto.from(customer) : null;
   }
 
   async getOne(

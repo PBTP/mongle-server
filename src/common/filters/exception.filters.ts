@@ -6,14 +6,11 @@ import {
   HttpException,
   HttpStatus,
   Logger,
-  NotFoundException,
+  NotFoundException
 } from '@nestjs/common';
 import { ResponseEntity } from '../dto/response.entity';
 import { Response } from 'express';
-import {
-  BadRequestException,
-  UnauthorizedException,
-} from '@nestjs/common/exceptions';
+import { BadRequestException, UnauthorizedException } from '@nestjs/common/exceptions';
 import { EntityNotFoundError } from 'typeorm';
 
 @Catch()
