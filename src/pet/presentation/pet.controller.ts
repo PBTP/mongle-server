@@ -1,4 +1,3 @@
-import { PetService } from '../application/pet.service';
 import {
   Body,
   Controller,
@@ -9,14 +8,15 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { PetChecklistAnswerDto, PetChecklistDto, PetDto } from './pet.dto';
-import { PetEntity } from '../../schemas/pets.entity';
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { GroupValidation } from 'src/common/validation/validation.decorator';
-import { CrudGroup } from 'src/common/validation/validation.data';
-import { CustomerEntity } from 'src/schemas/customer.entity';
+import { PetEntity } from '../../schemas/pets.entity';
+import { PetService } from '../application/pet.service';
+import { PetChecklistAnswerDto, PetChecklistDto, PetDto } from './pet.dto';
 // eslint-disable-next-line prettier/prettier
-import { Auth, CurrentCustomer } from 'src/auth/decorator/auth.decorator';
+import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
+import { CrudGroup } from '../../common/validation/validation.data';
+import { GroupValidation } from '../../common/validation/validation.decorator';
+import { CustomerEntity } from '../../schemas/customer.entity';
 import {
   ChecklistType,
   PetChecklistCategory,
