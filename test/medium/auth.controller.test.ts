@@ -28,7 +28,10 @@ import { CustomerSeeder } from '../mock/seeders';
 import { AuthProvider } from '../../src/auth/presentation/user.dto';
 import { CustomerService } from '../../src/customer/application/customer.service';
 import { JwtRefreshStrategy } from '../../src/auth/application/jwt-refresh.strategy';
-import clearAllTimers = jest.clearAllTimers;
+import { AuthDto } from '../../src/auth/presentation/auth.dto';
+import { SMS_SERVICE } from '../../src/common/sender/sms/application/sms.service';
+import { FakeSmsService } from '../mock/fake.sms.service';
+import { JwtAccessStrategy } from '../../src/auth/application/jwt-access.strategy';
 
 describe('AuthController E2E 테스트', () => {
   let app: INestApplication;
@@ -70,10 +73,12 @@ describe('AuthController E2E 테스트', () => {
         CloudModule,
       ],
       controllers: [AuthController],
-      providers: [AuthService, JwtRefreshStrategy],
+      providers: [AuthService, JwtAccessStrategy, JwtRefreshStrategy],
     })
       .overrideProvider(UUID_HOLDER)
       .useValue(uuidHolder)
+      .overrideProvider(SMS_SERVICE)
+      .useClass(FakeSmsService)
       .overrideProvider(ConfigService)
       .useClass(FakeConfigService)
       .overrideProvider(CLOUD_STORAGE)
@@ -246,11 +251,10 @@ describe('AuthController E2E 테스트', () => {
   });
 
   describe('POST /v1/auth/refresh', () => {
-    let accessToken: string;
-    let refreshToken: string;
+    let user: AuthDto;
 
     beforeAll(async () => {
-      const user = {
+      const loginUser = {
         authProvider: 'KAKAO',
         userType: 'customer',
         uuid: 'customer-seed-uuid',
@@ -259,7 +263,7 @@ describe('AuthController E2E 테스트', () => {
 
       const response = await request(app.getHttpServer())
         .post('/v1/auth/login')
-        .send(user)
+        .send(loginUser)
         .expect(HttpStatusCode.Created);
 
       const body = response.body;
@@ -268,8 +272,7 @@ describe('AuthController E2E 테스트', () => {
       expect(data).toBeDefined();
       expect(data.accessToken).toBeDefined();
       expect(data.refreshToken).toBeDefined();
-      accessToken = data.accessToken;
-      refreshToken = data.refreshToken;
+      user = data;
 
       console.table(data);
     });
@@ -315,13 +318,13 @@ describe('AuthController E2E 테스트', () => {
         now: new Date().getTime() + 1000 * 60 * 60 * 24 * 31, // 31일 후
       });
       console.log('now', new Date());
-      console.log('accessToken', accessToken);
-      console.log('refreshToken', refreshToken);
+      console.log('accessToken', user.accessToken);
+      console.log('refreshToken', user.refreshToken);
 
       // When
       const response = await request(app.getHttpServer())
         .post('/v1/auth/refresh')
-        .set('Authorization', `Bearer ${refreshToken}`)
+        .set('Authorization', `Bearer ${user.refreshToken}`)
         .expect(HttpStatusCode.Unauthorized);
 
       // Then
@@ -329,29 +332,188 @@ describe('AuthController E2E 테스트', () => {
       expect(body.message).toEqual('Unauthorized');
       expect(body.statusCode).toEqual(HttpStatusCode.Unauthorized);
       console.table(body);
-      clearAllTimers();
+      jest.clearAllTimers();
     });
 
     test('refreshToken이 정상적이면 accessToken과 refreshToken 모두 갱신한다.', async () => {
       // Given
       console.log('now', new Date());
-      console.log('accessToken', accessToken);
-      console.log('refreshToken', refreshToken);
+      console.log('accessToken', user.accessToken);
+      console.log('refreshToken', user.refreshToken);
 
       // When
       const response = await request(app.getHttpServer())
         .post('/v1/auth/refresh')
-        .set('Authorization', `Bearer ${refreshToken}`)
+        .set('Authorization', `Bearer ${user.refreshToken}`)
         .expect(HttpStatusCode.Created);
 
       // Then
       const body = response.body;
       const data = body.data;
+
       expect(data).toBeDefined();
       expect(data.accessToken).toBeDefined();
       expect(data.refreshToken).toBeDefined();
-      expect(data.accessToken).not.toEqual(accessToken);
-      expect(data.refreshToken).not.toEqual(refreshToken);
+      expect(data.accessToken).not.toEqual(user.accessToken);
+      expect(data.refreshToken).not.toEqual(user.refreshToken);
+      expect(data.userId).toEqual(user.userId);
+      expect(data.uuid).toEqual(user.uuid);
+      expect(data.userType).toEqual(user.userType);
+      expect(data.authProvider).toEqual(user.authProvider);
+      console.log('data');
+      console.table(data);
+    });
+  });
+
+  describe('POST /v1/auth/otp', () => {
+    let user: AuthDto;
+
+    beforeAll(async () => {
+      const loginUser = {
+        authProvider: 'KAKAO',
+        userType: 'customer',
+        uuid: 'customer-seed-uuid',
+        name: 'test',
+      };
+
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/login')
+        .send(loginUser)
+        .expect(HttpStatusCode.Created);
+
+      const body = response.body;
+      const data = body.data;
+
+      expect(data).toBeDefined();
+      expect(data.accessToken).toBeDefined();
+      expect(data.refreshToken).toBeDefined();
+      user = data;
+
+      console.table(data);
+    });
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+      jest.setSystemTime(Date.now());
+    });
+
+    afterEach(() => {
+      jest.clearAllTimers();
+      jest.useRealTimers();
+    });
+
+    test('OTP 요청시 secret이 없으면 BadRequest가 반환된다', async () => {
+      // Given
+      const otpRequest = {};
+
+      // When
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/otp')
+        .set('Authorization', `Bearer ${user.accessToken}`)
+        .send(otpRequest)
+        .expect(HttpStatusCode.BadRequest);
+
+      // Then
+      const body = response.body;
+      const data = response.body.data;
+
+      expect(body.error).toEqual('Bad Request');
+      expect(body.statusCode).toEqual(HttpStatusCode.BadRequest);
+      expect(data).toBeUndefined();
+    });
+
+    test('OTP를 생성하면 생성된 OTP는 6자리이고 Created가 반환된다.', async () => {
+      // Given
+      const otpRequest = {
+        secret: '01012345678',
+      };
+
+      // When
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/otp')
+        .set('Authorization', `Bearer ${user.accessToken}`)
+        .send(otpRequest)
+        .expect(HttpStatusCode.Created);
+
+      // Then
+      const body = response.body;
+      const data = response.body.data;
+
+      expect(body.statusCode).toEqual(HttpStatusCode.Created);
+      expect(data).toBeDefined();
+      expect(data.otp).toBeDefined();
+      expect(data.otp.length).toEqual(6);
+      expect(data.sendType).toBeUndefined();
+
+      console.table(data);
+    });
+
+    test('OTP 생성 요청시 sendType을 지정하면 해당 OTP가 해당 sendType으로 전송된다.', async () => {
+      // Given
+      const otpRequest = {
+        secret: '01012345678',
+      };
+
+      // When
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/otp')
+        .set('Authorization', `Bearer ${user.accessToken}`)
+        .query({ sendType: 'sms' })
+        .send(otpRequest)
+        .expect(HttpStatusCode.Created);
+
+      // Then
+      const body = response.body;
+      const data = response.body.data;
+
+      expect(body.statusCode).toEqual(HttpStatusCode.Created);
+      expect(data).toBeDefined();
+      expect(data.otp).toBeDefined();
+      expect(data.otp.length).toEqual(6);
+      expect(data.sendType).toEqual('sms');
+
+      console.table(data);
+    });
+
+    test('OTP는 생성 후 10분이 지나면 유효하지 않다.', async () => {
+      // Given
+      const otpRequest = {
+        secret: '01012345678',
+      };
+
+      const otpResponse = await request(app.getHttpServer())
+        .post('/v1/auth/otp')
+        .set('Authorization', `Bearer ${user.accessToken}`)
+        .send(otpRequest)
+        .expect(HttpStatusCode.Created);
+
+      const otp = otpResponse.body.data.otp;
+
+      // When
+      await jest.advanceTimersByTimeAsync(1000 * 60 * 11); // 11분 후
+
+      console.log('now', new Date());
+
+      const response = await request(app.getHttpServer())
+        .post('/v1/auth/otp/verification')
+        .set('Authorization', `Bearer ${user.accessToken}`)
+        .send({
+          secret: otpRequest.secret,
+          otp: otp,
+        })
+        .expect(HttpStatusCode.Ok);
+
+      // Then
+      const body = response.body;
+      const data = response.body.data;
+
+      expect(body.statusCode).toEqual(HttpStatusCode.Ok);
+      expect(data).toBeDefined();
+      expect(data.otp).toBeDefined();
+      expect(data.otp.length).toEqual(6);
+      expect(data.verified).toBe(false);
+
+      console.log('data');
       console.table(data);
     });
   });

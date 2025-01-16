@@ -66,4 +66,11 @@ export class OtpResponseDto implements OtpResponse {
     readOnly: true,
   })
   verified: boolean;
+
+  @ApiProperty({
+    description: '전송 매체',
+    type: String,
+    readOnly: true,
+  })
+  sendType: string;
 }

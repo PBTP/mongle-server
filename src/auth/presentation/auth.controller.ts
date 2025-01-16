@@ -106,7 +106,10 @@ export class AuthController {
       );
 
       return ResponseEntity.CREATED(
-        Builder<OtpResponseDto>().otp(generatedOtpNumber).build(),
+        Builder<OtpResponseDto>()
+          .otp(generatedOtpNumber)
+          .sendType(sendType)
+          .build(),
       );
     }
 
