@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsDate,
@@ -9,13 +10,13 @@ import {
   Length,
   ValidateIf,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { Gender } from '../../schemas/pets.entity';
+import { CrudGroup } from '../../common/validation/validation.data';
+import { Appointment } from '../../schemas/appointments.entity';
 import {
   ChecklistType,
   PetChecklistCategory,
 } from '../../schemas/pet-checklist.entity';
-import { CrudGroup } from '../../common/validation/validation.data';
+import { Gender } from '../../schemas/pets.entity';
 
 export class PetDto {
   @ApiProperty({
@@ -115,6 +116,13 @@ export class PetDto {
   })
   @IsNumber()
   public breedId: number;
+
+  @ApiProperty({
+    required: false,
+    description: '예약 목록입니다.',
+  })
+  @IsOptional()
+  public appointments: Appointment[];
 }
 
 export class PetChecklistDto {
