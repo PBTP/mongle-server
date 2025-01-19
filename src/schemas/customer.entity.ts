@@ -1,3 +1,4 @@
+import { Builder } from 'builder-pattern';
 import {
   Column,
   CreateDateColumn,
@@ -8,18 +9,15 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { AuthProvider } from '../auth/presentation/user.dto';
+import { HasUuid } from '../common/entity/parent.entity';
+import { Customer } from '../customer/customer.domain';
 import { Appointment } from './appointments.entity';
+import { CustomerChatRoom } from './customer-chat-room.entity';
 import { Favorite } from './favorites.entity';
+import { ImageEntity } from './image.entity';
 import { PetEntity } from './pets.entity';
 import { Review } from './reviews.entity';
-import { CustomerChatRoom } from './customer-chat-room.entity';
-import { HasUuid } from '../common/entity/parent.entity';
-import { AuthProvider } from '../auth/presentation/user.dto';
-import { ImageEntity } from './image.entity';
-import { Customer } from '../customer/customer.domain';
-import { Builder } from 'builder-pattern';
-import { IUUIDHolder } from '../common/holder/uuid.holders';
-import { IDateHolder } from '../common/holder/date.holder';
 
 @Entity({ name: 'customers' })
 export class CustomerEntity extends HasUuid {
@@ -79,18 +77,21 @@ export class CustomerEntity extends HasUuid {
   // not column properties
   profileImage?: ImageEntity;
 
-  static from(
-    customer: Customer,
-  ): CustomerEntity {
-    return Builder<CustomerEntity>()
+  static from(customer: Customer): CustomerEntity {
+    const builder = Builder<CustomerEntity>()
       .customerName(customer.customerName)
       .customerPhoneNumber(customer.customerPhoneNumber)
       .customerAddress(customer.customerAddress)
       .customerDetailAddress(customer.customerDetailAddress)
       .customerLocation(customer.customerLocation)
       .authProvider(customer.authProvider)
-      .refreshToken(customer.refreshToken)
-      .build();
+      .refreshToken(customer.refreshToken);
+
+    if (customer.customerId !== undefined) {
+      builder.customerId(customer.customerId); // todo: Pet Create 외 사용 확인 필요
+    }
+
+    return builder.build();
   }
 
   static toModel(customer: CustomerEntity): Customer {
