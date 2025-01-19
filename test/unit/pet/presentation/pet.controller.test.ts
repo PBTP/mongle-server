@@ -54,6 +54,7 @@ describe('PetController', () => {
         personality: 'Friendly',
         vaccinationStatus: 'completed',
         petGender: Gender.FEMALE,
+        appointments: [],
       };
       const customer = new CustomerEntity(); // 위와 같이 객체 리터럴로 생성 시 메소드와 상속 관계가 고려되지 않아아 에러 발생
       customer.customerId = 1;

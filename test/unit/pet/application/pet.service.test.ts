@@ -69,17 +69,7 @@ describe('PetService', () => {
 
   describe('create', () => {
     test('반려동물 엔티티 생성', async () => {
-      const petDto: PetDto = Builder<PetDto>()
-        .petName('몽글이')
-        .petGender(Gender.MALE)
-        .petBirthdate(new Date())
-        .petWeight(10)
-        .neuteredYn(true)
-        .personality('cute')
-        .vaccinationStatus('미완료')
-        .appointments([])
-        .breedId(1)
-        .build();
+      const petDto: PetDto = createPetDto();
 
       const pet = await service.create(petDto, customer);
 
@@ -94,31 +84,8 @@ describe('PetService', () => {
 
   describe('findAll', () => {
     test('특정 고객의 전체 반려동물 조회', async () => {
-      const pet1: PetDto = Builder<PetDto>()
-        .petName('몽글이')
-        .petGender(Gender.FEMALE)
-        .petBirthdate(new Date())
-        .petWeight(10)
-        .neuteredYn(true)
-        .personality('cute')
-        .vaccinationStatus('미완료')
-        .breedId(1)
-        .neuteredYn(true)
-        .appointments([])
-        .build();
-
-      const pet2: PetDto = Builder<PetDto>()
-        .petName('동글이')
-        .petGender(Gender.MALE)
-        .petBirthdate(new Date())
-        .petWeight(10)
-        .neuteredYn(true)
-        .personality('cute')
-        .vaccinationStatus('미완료')
-        .breedId(1)
-        .neuteredYn(true)
-        .appointments([])
-        .build();
+      const pet1: PetDto = createPetDto();
+      const pet2: PetDto = createPetDto({ petName: '동글이', petWeight: 20 });
 
       await service.create(pet1, customer);
       await service.create(pet2, customer);
@@ -134,17 +101,7 @@ describe('PetService', () => {
 
   describe('findOne', () => {
     test('반려동물 단일 조회', async () => {
-      const petDto: PetDto = Builder<PetDto>()
-        .petName('몽글이')
-        .petGender(Gender.MALE)
-        .petBirthdate(new Date())
-        .petWeight(10)
-        .neuteredYn(true)
-        .personality('cute')
-        .vaccinationStatus('미완료')
-        .appointments([])
-        .breedId(1)
-        .build();
+      const petDto: PetDto = createPetDto();
       const createdPet = await service.create(petDto, customer);
       const pet = await service.findOne(createdPet.petId, customer);
 
@@ -156,17 +113,7 @@ describe('PetService', () => {
 
   describe('update', () => {
     test('반려동물 정보 수정', async () => {
-      const petDto: PetDto = Builder<PetDto>()
-        .petName('몽글이')
-        .petGender(Gender.MALE)
-        .petBirthdate(new Date())
-        .petWeight(10)
-        .neuteredYn(true)
-        .personality('cute')
-        .vaccinationStatus('미완료')
-        .appointments([])
-        .breedId(1)
-        .build();
+      const petDto: PetDto = createPetDto();
 
       const prevPet = await service.create(petDto, customer);
       const updatedPet = await service.update(
@@ -196,17 +143,7 @@ describe('PetService', () => {
 
   describe('answerChecklist', () => {
     test('반려동물 체크리스트 답변', async () => {
-      const petDto: PetDto = Builder<PetDto>()
-        .petName('몽글이')
-        .petGender(Gender.MALE)
-        .petBirthdate(new Date())
-        .petWeight(10)
-        .neuteredYn(true)
-        .personality('cute')
-        .vaccinationStatus('미완료')
-        .appointments([])
-        .breedId(1)
-        .build();
+      const petDto: PetDto = createPetDto();
 
       const pet = await service.create(petDto, customer);
 
@@ -232,3 +169,19 @@ describe('PetService', () => {
     });
   });
 });
+
+function createPetDto(overrides?: Partial<PetDto>): PetDto {
+  const basePetDto = Builder<PetDto>()
+    .petName('몽글이')
+    .petGender(Gender.MALE)
+    .petBirthdate(new Date())
+    .petWeight(10)
+    .neuteredYn(true)
+    .personality('cute')
+    .vaccinationStatus('미완료')
+    .appointments([])
+    .breedId(1)
+    .build();
+
+  return { ...basePetDto, ...overrides };
+}
