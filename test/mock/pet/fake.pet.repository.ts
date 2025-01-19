@@ -27,15 +27,9 @@ export class FakePetRepository implements IPetRepository {
   }
 
   async findAllByCustomer(customer: Customer): Promise<PetEntity[]> {
-    const findPets = this.pets.filter((pet) => {
-      return pet.customer.customerId === customer.customerId;
-    });
-    if (findPets.length === 0) {
-      throw new Error(
-        `사용자(${customer.customerId})에게 등록된 펫이 없습니다.`,
-      );
-    }
-    return findPets;
+    return this.pets.filter(
+      (pet) => pet.customer.customerId === customer.customerId,
+    );
   }
 
   async create(
