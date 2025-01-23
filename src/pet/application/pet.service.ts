@@ -1,35 +1,35 @@
 import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
-import { PetEntity } from '../../schemas/pets.entity';
-import {
-  PetChecklistAnswerDto,
-  PetChecklistChoiceDto,
-  PetChecklistDto,
-  PetDto,
-} from '../presentation/pet.dto';
+import { BadRequestException } from '@nestjs/common/exceptions';
+import { Builder } from 'builder-pattern';
+import { DATE_HOLDER, DateHolder } from '../../common/holder/date.holder';
+import { UUID_HOLDER, UUIDHolder } from '../../common/holder/uuid.holders';
+import { ICustomer } from '../../customer/customer.domain';
 import {
   ChecklistType,
   PetChecklistCategory,
 } from '../../schemas/pet-checklist.entity';
-import { BadRequestException } from '@nestjs/common/exceptions';
-import { ICustomer } from '../../customer/customer.domain';
-import { IPetRepository, PET_REPOSITORY } from '../port/pet.repository';
-import {
-  IPetChecklistRepository,
-  PET_CHECKLIST_REPOSITORY,
-} from '../port/pet.checklist.repository';
-import { UUID_HOLDER, UUIDHolder } from '../../common/holder/uuid.holders';
-import { DATE_HOLDER, DateHolder } from '../../common/holder/date.holder';
+import { PetEntity } from '../../schemas/pets.entity';
+import { PetChecklistAnswer } from '../pet.checklist-answer.domain';
+import { PetChecklistChoiceAnswer } from '../pet.checklist-choice-answer.domain';
 import { Pet } from '../pet.domain';
 import { BREED_REPOSITORY, IBreedRepository } from '../port/bree.repository';
 import {
   IPetChecklistAnswerRepository,
   PET_CHECKLIST_ANSWER_REPOSITORY,
 } from '../port/pet.checklist-answer.repository';
-import { PetChecklistAnswer } from '../pet.checklist-answer.domain';
-import { Builder } from 'builder-pattern';
-import { PET_CHECKLIST_CHOICE_REPOSITORY } from '../port/pet.checklist-choice.repository';
 import { IPetChecklistChoiceAnswerRepository } from '../port/pet.checklist-choice-answer.repository';
-import { PetChecklistChoiceAnswer } from '../pet.checklist-choice-answer.domain';
+import { PET_CHECKLIST_CHOICE_REPOSITORY } from '../port/pet.checklist-choice.repository';
+import {
+  IPetChecklistRepository,
+  PET_CHECKLIST_REPOSITORY,
+} from '../port/pet.checklist.repository';
+import { IPetRepository, PET_REPOSITORY } from '../port/pet.repository';
+import {
+  PetChecklistAnswerDto,
+  PetChecklistChoiceDto,
+  PetChecklistDto,
+  PetDto,
+} from '../presentation/pet.dto';
 
 @Injectable()
 export class PetService {
@@ -145,6 +145,7 @@ export class PetService {
       return dto;
     });
   }
+
   async answerChecklist(
     petId: number,
     dto: PetChecklistAnswerDto[],
@@ -152,22 +153,24 @@ export class PetService {
   ) {
     const pet = await this.findOne(petId, customer);
 
-    const checklist = await this.petChecklistRepository.findByIds(
+    const checklists = await this.petChecklistRepository.findByIds(
       dto.map((v) => v.petChecklistId),
     );
 
-    for (const v of checklist) {
-      const answer = dto.find((d) => d.petChecklistId === v.petChecklistId);
+    for (const checklist of checklists) {
+      const answer = dto.find(
+        (d) => d.petChecklistId === checklist.petChecklistId,
+      );
+      console.log('아이디는 ' + checklist.petChecklistId);
 
-      if (v.petChecklistType === ChecklistType.ANSWER) {
+      if (checklist.petChecklistType === ChecklistType.ANSWER) {
         if (!answer?.petChecklistAnswer) {
           throw new BadRequestException('답변을 적어주세요');
         }
-
         await this.petChecklistAnswerRepository.create(
           Builder(PetChecklistAnswer)
             .petId(pet.petId)
-            .petChecklistId(v.petChecklistId)
+            .petChecklistId(checklist.petChecklistId)
             .petChecklistAnswer(answer.petChecklistAnswer)
             .build(),
         );
@@ -178,7 +181,7 @@ export class PetService {
 
         const petChecklistChoiceAnswer = Builder(PetChecklistChoiceAnswer)
           .petId(pet.petId)
-          .petChecklistId(v.petChecklistId)
+          .petChecklistId(checklist.petChecklistId)
           .petChecklistChoiceId(answer.petChecklistChoiceId)
           .build();
 

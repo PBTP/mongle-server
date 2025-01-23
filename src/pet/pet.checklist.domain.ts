@@ -1,4 +1,5 @@
 import { Builder } from 'builder-pattern';
+import { PetChecklistAnswerEntity } from '../schemas/pet-checklist-answer.entity';
 import {
   ChecklistType,
   PetChecklistCategory,
@@ -10,6 +11,7 @@ export class PetChecklist {
   petChecklistType: ChecklistType;
   petChecklistCategory: PetChecklistCategory;
   petChecklistContent: string;
+  petChecklistAnswers?: PetChecklistAnswerEntity[];
 
   static from(entity: PetChecklistEntity): PetChecklist {
     return Builder(PetChecklist)

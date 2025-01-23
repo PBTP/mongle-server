@@ -11,6 +11,7 @@ export class FakePetChecklistChoiceAnswerRepository
     choiceAnswer: PetChecklistChoiceAnswer,
   ): Promise<PetChecklistChoiceAnswerEntity> {
     const newChoiceAnswer = PetChecklistChoiceAnswerEntity.create(choiceAnswer);
+    newChoiceAnswer.petChecklistChoiceAnswerId = this.choiceAnswers.length + 1;
     this.choiceAnswers.push(newChoiceAnswer);
     return newChoiceAnswer;
   }

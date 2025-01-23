@@ -1,12 +1,20 @@
-import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { PetChecklistChoiceEntity } from './pet-checklist-chocie.entity';
-import { PetChecklistChoiceAnswer } from '../pet/pet.checklist-choice-answer.domain';
-import { Builder } from 'builder-pattern';
-import { throwIfEmpty } from 'rxjs';
 import { BadRequestException } from '@nestjs/common/exceptions';
+import { Builder } from 'builder-pattern';
+import {
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { PetChecklistChoiceAnswer } from '../pet/pet.checklist-choice-answer.domain';
+import { PetChecklistChoiceEntity } from './pet-checklist-chocie.entity';
 
 @Entity('pet_checklist_choices_answers')
 export class PetChecklistChoiceAnswerEntity {
+  @PrimaryGeneratedColumn()
+  petChecklistChoiceAnswerId: number;
+
   @PrimaryColumn()
   petId: number;
 

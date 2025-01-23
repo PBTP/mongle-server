@@ -34,6 +34,7 @@ export class FakePetChecklistRepository implements IPetChecklistRepository {
     if (findCheckList.length === 0) {
       throw new Error('PetChecklistEntity 목록을 찾을 수 없습니다.');
     }
+    console.log('findCheckList: ' + findCheckList.length);
     return findCheckList;
   }
 
@@ -42,5 +43,18 @@ export class FakePetChecklistRepository implements IPetChecklistRepository {
     entity.petChecklistId = this.checkLists.length + 1;
     this.checkLists.push(entity);
     return entity;
+  }
+
+  // 테스트용
+  async update(id: number, dto: Partial<PetChecklistEntity>): Promise<void> {
+    const index = this.checkLists.findIndex(
+      (checkLists) => checkLists.petChecklistId === id,
+    );
+    if (index !== -1) {
+      this.checkLists[index] = {
+        ...this.checkLists[index],
+        ...dto,
+      };
+    }
   }
 }

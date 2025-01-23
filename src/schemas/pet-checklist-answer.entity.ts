@@ -1,12 +1,22 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { BadRequestException } from '@nestjs/common/exceptions';
+import { Builder } from 'builder-pattern';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { PetChecklistAnswer } from '../pet/pet.checklist-answer.domain';
 import { PetChecklistEntity } from './pet-checklist.entity';
 import { PetEntity } from './pets.entity';
-import { PetChecklistAnswer } from '../pet/pet.checklist-answer.domain';
-import { Builder } from 'builder-pattern';
-import { BadRequestException } from '@nestjs/common/exceptions';
 
 @Entity('pet_checklist_answers')
 export class PetChecklistAnswerEntity {
+  @PrimaryGeneratedColumn()
+  petChecklistAnswerId: number;
+
   @PrimaryColumn()
   petId: number;
 
