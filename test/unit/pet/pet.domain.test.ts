@@ -68,7 +68,7 @@ describe('Pet', () => {
           .petGender(Gender.FEMALE)
           .petBirthdate(dateHolder.now())
           .petWeight(10)
-          .neuteredYn(true) // todo: false로 했을 시 오류 해결하기기
+          .neuteredYn(false)
           .personality('귀엽다')
           .vaccinationStatus('completed')
           .breedId(1)
@@ -86,12 +86,11 @@ describe('Pet', () => {
         expect(pet.petGender).toBe(Gender.FEMALE);
         expect(pet.petBirthdate).toEqual(dateHolder.now());
         expect(pet.petWeight).toBe(10);
-        expect(pet.neuteredYn).toBe(true);
+        expect(pet.neuteredYn).toBe(false);
         expect(pet.personality).toBe('귀엽다');
         expect(pet.vaccinationStatus).toBe('completed');
         expect(pet.breed).toBe(fakeBreed);
         expect(pet.customer).toEqual(fakeCustomer);
-        // expect(pet.uuid).toBe(uuidHolder.generatedUuid()); 모르겠는 오류떠
         expect(pet.createdAt).toEqual(dateHolder.now());
         expect(pet.modifiedAt).toEqual(dateHolder.now());
       });

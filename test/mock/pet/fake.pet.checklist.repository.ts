@@ -20,7 +20,10 @@ export class FakePetChecklistRepository implements IPetChecklistRepository {
         !category || checklist.petChecklistCategory === category;
       const matchesPetId =
         !petId ||
-        checklist.petChecklistAnswers?.some((answer) => answer.petId === petId);
+        (checklist.petChecklistAnswers &&
+          checklist.petChecklistAnswers.some(
+            (answer) => answer.petId === petId,
+          ));
       return matchesCategory && matchesType && matchesPetId;
     });
   }
@@ -34,7 +37,6 @@ export class FakePetChecklistRepository implements IPetChecklistRepository {
     if (findCheckList.length === 0) {
       throw new Error('PetChecklistEntity 목록을 찾을 수 없습니다.');
     }
-    console.log('findCheckList: ' + findCheckList.length);
     return findCheckList;
   }
 

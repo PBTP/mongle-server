@@ -161,7 +161,6 @@ export class PetService {
       const answer = dto.find(
         (d) => d.petChecklistId === checklist.petChecklistId,
       );
-      console.log('아이디는 ' + checklist.petChecklistId);
 
       if (checklist.petChecklistType === ChecklistType.ANSWER) {
         if (!answer?.petChecklistAnswer) {
