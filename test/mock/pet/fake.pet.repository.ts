@@ -18,7 +18,7 @@ export class FakePetRepository implements IPetRepository {
     return findPet;
   }
 
-  findOneById(petId: number): Promise<PetEntity> {
+  getOneById(petId: number): Promise<PetEntity> {
     const findPet = this.pets.find((p) => p.petId === petId);
     if (!findPet) {
       throw new Error('존재하지 않는 펫입니다.');

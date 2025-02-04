@@ -97,11 +97,11 @@ describe('PetService', () => {
     });
   });
 
-  describe('findOne', () => {
+  describe('getOne', () => {
     test('반려동물 단일 조회', async () => {
       const petDto: PetDto = createPetDto();
       const createdPet = await service.create(petDto, customer);
-      const pet = await service.findOne(createdPet.petId, customer);
+      const pet = await service.getOne(createdPet.petId, customer);
 
       expect(pet).toBeDefined();
       expect(pet.petId).toBe(createdPet.petId);
@@ -141,7 +141,7 @@ describe('PetService', () => {
 
   describe('answerChecklist', () => {
     test('반려동물 체크리스트 답변', async () => {
-      const pet = await fakePetRepository.findOneById(1);
+      const pet = await fakePetRepository.getOneById(1);
       const answers: PetChecklistAnswerDto[] = [
         {
           petId: pet.petId,

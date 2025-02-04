@@ -65,7 +65,7 @@ export class PetService {
     return await this.petRepository.findAllByCustomer(customer);
   }
 
-  async findOne(id: number, customer: ICustomer): Promise<PetEntity> {
+  async getOne(id: number, customer: ICustomer): Promise<PetEntity> {
     const pet = await this.petRepository.getOne(id);
 
     if (pet.customer.customerId !== customer.customerId) {
@@ -80,7 +80,7 @@ export class PetService {
     dto: Partial<PetDto>,
     customer: ICustomer,
   ): Promise<Pet> {
-    const pet = await this.findOne(id, customer);
+    const pet = await this.getOne(id, customer);
 
     if (dto.breedId && dto.breedId !== pet.breed.breedId) {
       pet.breed = await this.breedRepository.getBreed(dto.breedId);
@@ -98,7 +98,7 @@ export class PetService {
   }
 
   async delete(id: number, customer: ICustomer): Promise<void> {
-    const pet = await this.findOne(id, customer);
+    const pet = await this.getOne(id, customer);
 
     await this.petRepository.delete(pet);
   }
@@ -151,7 +151,7 @@ export class PetService {
     dto: PetChecklistAnswerDto[],
     customer: ICustomer,
   ) {
-    const pet = await this.findOne(petId, customer);
+    const pet = await this.getOne(petId, customer);
 
     const checklists = await this.petChecklistRepository.findByIds(
       dto.map((v) => v.petChecklistId),

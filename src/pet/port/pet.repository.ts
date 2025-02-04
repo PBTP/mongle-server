@@ -13,7 +13,7 @@ export const PET_REPOSITORY = Symbol('PetRepository');
 
 export interface IPetRepository {
   getOne(petId: number): Promise<PetEntity>;
-  findOneById(petId: number): Promise<PetEntity>;
+  getOneById(petId: number): Promise<PetEntity>;
   findAllByCustomer(customer: Customer): Promise<PetEntity[]>;
   create(
     dto: Pet,
@@ -39,7 +39,7 @@ export class PetRepository implements IPetRepository {
     });
   }
 
-  findOneById(petId: number): Promise<PetEntity> {
+  getOneById(petId: number): Promise<PetEntity> {
     return this.petDB.findOneOrFail({
       where: { petId },
       relations: ['breed', 'customer'],

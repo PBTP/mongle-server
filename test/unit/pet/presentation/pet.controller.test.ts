@@ -70,11 +70,11 @@ describe('PetController', () => {
     petController = new PetController(petService);
   });
 
-  describe('GetChecklist', () => {
+  describe('FindChecklist', () => {
     test('체크리스트 조회', async () => {
       const category = PetChecklistCategory.HEALTH;
       const type = ChecklistType.ANSWER;
-      const checklists = await petController.getChecklist(category, type);
+      const checklists = await petController.findChecklist(category, type);
       expect(checklists).toBeDefined();
       expect(Array.isArray(checklists)).toBe(true);
       expect(checklists[0].petChecklistCategory).toBe(category);
@@ -82,12 +82,12 @@ describe('PetController', () => {
     });
   });
 
-  describe('GetPetChecklist', () => {
+  describe('FindPetChecklist', () => {
     test('반려동물 체크리스트 조회', async () => {
       const category = PetChecklistCategory.HEALTH;
       const type = ChecklistType.ANSWER;
       const petId = 1;
-      const checklists = await petController.getPetChecklist(
+      const checklists = await petController.findPetChecklist(
         petId,
         category,
         type,
@@ -138,11 +138,11 @@ describe('PetController', () => {
     });
   });
 
-  describe('GetAll', () => {
+  describe('FindAll', () => {
     test('모든 반려동물 조회', async () => {
       const customer = new CustomerEntity();
       customer.customerId = 1;
-      const result = await petController.getAll(customer);
+      const result = await petController.findAll(customer);
       expect(result).toBeDefined();
       expect(Array.isArray(result)).toBe(true);
       expect(result.length).toBeGreaterThan(0);

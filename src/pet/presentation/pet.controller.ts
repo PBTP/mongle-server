@@ -30,7 +30,7 @@ export class PetController {
 
   @Get('/checklist')
   @Auth()
-  async getChecklist(
+  async findChecklist(
     @Query('category') category: PetChecklistCategory,
     @Query('type') type: ChecklistType,
   ): Promise<PetChecklistDto[]> {
@@ -39,7 +39,7 @@ export class PetController {
 
   @Get('/:petId/checklist')
   @Auth()
-  async getPetChecklist(
+  async findPetChecklist(
     @Param('petId') petId: number,
     @Query('category') category: PetChecklistCategory,
     @Query('type') type: ChecklistType,
@@ -90,7 +90,7 @@ export class PetController {
   @Auth()
   @ApiOkResponse({ type: PetDto, description: '반려동물 정보 조회 성공' })
   @Get('/my')
-  async getAll(
+  async findAll(
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<PetEntity[]> {
     return await this.petService.findAll(customer);
@@ -107,7 +107,7 @@ export class PetController {
     @Param('id') id: number,
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<PetEntity> {
-    return await this.petService.findOne(id, customer);
+    return await this.petService.getOne(id, customer);
   }
 
   @ApiOperation({
