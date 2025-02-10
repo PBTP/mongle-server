@@ -18,6 +18,7 @@ import { Favorite } from './favorites.entity';
 import { ImageEntity } from './image.entity';
 import { PetEntity } from './pets.entity';
 import { Review } from './reviews.entity';
+import { CustomerTermEntity } from './terms.entity';
 
 @Entity({ name: 'customers' })
 export class CustomerEntity extends HasUuid {
@@ -73,6 +74,9 @@ export class CustomerEntity extends HasUuid {
 
   @OneToMany(() => CustomerChatRoom, (room) => room.chatRoom)
   chatRooms: CustomerChatRoom[];
+
+  @OneToMany(() => CustomerTermEntity, (customerTerm) => customerTerm.customer)
+  customerTerms: CustomerTermEntity[];
 
   // not column properties
   profileImage?: ImageEntity;
