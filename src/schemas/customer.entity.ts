@@ -88,7 +88,7 @@ export class CustomerEntity extends HasUuid {
       .refreshToken(customer.refreshToken);
 
     if (customer.customerId !== undefined) {
-      builder.customerId(customer.customerId); // todo: Pet Create 외 사용 확인 필요
+      builder.customerId(customer.customerId);
     }
 
     return builder.build();

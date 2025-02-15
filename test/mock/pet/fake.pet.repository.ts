@@ -58,7 +58,6 @@ export class FakePetRepository implements IPetRepository {
       throw new Error('존재하지 않는 펫입니다.');
     }
 
-    // todo: (단위테스트관련) 업데이트된 PetEntity 반환하는 아래 update 메소드 분리
     const updatedPet: PetEntity = PetEntity.update(pet, dateHolder);
     this.pets = this.pets.map((p) => (p.petId === pet.petId ? updatedPet : p));
     return updatedPet;
@@ -70,7 +69,6 @@ export class FakePetRepository implements IPetRepository {
       throw new BadRequestException('식별자가 없습니다.');
     }
     this.pets = this.pets.filter((p) => p.petId !== pet.petId);
-    // todo: (단위테스트관련) from 메소드 분리
     return PetEntity.from(pet);
   }
 }
