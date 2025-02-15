@@ -81,6 +81,7 @@ describe('PetController', () => {
       expect(Array.isArray(checklists)).toBe(true);
       expect(checklists[0].petChecklistCategory).toBe(category);
       expect(checklists[0].petChecklistType).toBe(type);
+      expect(checklists[0].petChecklistChoices).toBeNull();
     });
   });
 

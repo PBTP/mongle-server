@@ -1,3 +1,4 @@
+import { ForbiddenException } from '@nestjs/common';
 import { Builder } from 'builder-pattern';
 import { AuthProvider } from '../../../../src/auth/presentation/user.dto';
 import { Customer } from '../../../../src/customer/customer.domain';
@@ -76,7 +77,7 @@ describe('PetService', () => {
   });
 
   describe('create', () => {
-    test('반려동물 엔티티 생성', async () => {
+    it('반려동물 엔티티 생성', async () => {
       const petDto: PetDto = createPetDto();
 
       const pet = await service.create(petDto, customer);
@@ -91,26 +92,33 @@ describe('PetService', () => {
   });
 
   describe('findAll', () => {
-    test('특정 고객의 전체 반려동물 조회', async () => {
+    it('특정 고객의 전체 반려동물 조회', async () => {
       const pets = await service.findAll(customer);
       expect(pets).toBeDefined();
     });
   });
 
   describe('getOne', () => {
-    test('반려동물 단일 조회', async () => {
-      const petDto: PetDto = createPetDto();
+    const petDto: PetDto = createPetDto();
+    it('반려동물 단일 조회', async () => {
       const createdPet = await service.create(petDto, customer);
       const pet = await service.getOne(createdPet.petId, customer);
-
       expect(pet).toBeDefined();
       expect(pet.petId).toBe(createdPet.petId);
       expect(pet.petName).toBe(createdPet.petName);
     });
+
+    it('특정 customer의 pet이 아닐 경우 ForbiddenException를 발생시킨다', async () => {
+      customer.customerId = 999;
+      await expect(service.getOne(1, customer)).rejects.toThrow(
+        ForbiddenException,
+      );
+      customer.customerId = 1;
+    });
   });
 
   describe('update', () => {
-    test('반려동물 정보 수정', async () => {
+    it('반려동물 정보 수정', async () => {
       const petDto: PetDto = createPetDto();
 
       const prevPet = await service.create(petDto, customer);
@@ -127,20 +135,28 @@ describe('PetService', () => {
   });
 
   describe('findCheckList', () => {
-    test('반려동물 체크리스트 조회', async () => {
+    it('반려동물 체크리스트 조회', async () => {
       const checklist = await service.findCheckList(
         PetChecklistCategory.HEALTH,
         ChecklistType.ANSWER,
         null,
       );
-
       expect(checklist).toBeDefined();
       expect(Array.isArray(checklist)).toBe(true);
+    });
+    it('체크리스트 타입이 Choice일 때 petChecklistAnswer는 null이다.', async () => {
+      const checklist = await service.findCheckList(
+        PetChecklistCategory.HEALTH,
+        ChecklistType.ANSWER,
+        null,
+      );
+      expect(checklist[0].petChecklistChoices).toBeNull();
+      expect(checklist[0].petChecklistAnswer).toBeDefined();
     });
   });
 
   describe('answerChecklist', () => {
-    test('반려동물 체크리스트 답변', async () => {
+    it('반려동물 체크리스트 답변', async () => {
       const pet = await fakePetRepository.getOneById(1);
       const answers: PetChecklistAnswerDto[] = [
         {
