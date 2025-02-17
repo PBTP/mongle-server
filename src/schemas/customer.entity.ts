@@ -1,3 +1,4 @@
+import { Builder } from 'builder-pattern';
 import {
   Column,
   CreateDateColumn,
@@ -8,18 +9,18 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { AuthProvider } from '../auth/presentation/user.dto';
+import { HasUuid } from '../common/entity/parent.entity';
+import { IDateHolder } from '../common/holder/date.holder';
+import { IUUIDHolder } from '../common/holder/uuid.holders';
+import { Customer } from '../customer/customer.domain';
 import { Appointment } from './appointments.entity';
+import { CustomerChatRoom } from './customer-chat-room.entity';
+import { CustomerTermEntity } from './customer-terms.entity';
 import { Favorite } from './favorites.entity';
+import { ImageEntity } from './image.entity';
 import { Pet } from './pets.entity';
 import { Review } from './reviews.entity';
-import { CustomerChatRoom } from './customer-chat-room.entity';
-import { HasUuid } from '../common/entity/parent.entity';
-import { AuthProvider } from '../auth/presentation/user.dto';
-import { ImageEntity } from './image.entity';
-import { Customer } from '../customer/customer.domain';
-import { Builder } from 'builder-pattern';
-import { IUUIDHolder } from '../common/holder/uuid.holders';
-import { IDateHolder } from '../common/holder/date.holder';
 
 @Entity({ name: 'customers' })
 export class CustomerEntity extends HasUuid {
@@ -75,6 +76,9 @@ export class CustomerEntity extends HasUuid {
 
   @OneToMany(() => CustomerChatRoom, (room) => room.chatRoom)
   chatRooms: CustomerChatRoom[];
+
+  @OneToMany(() => CustomerTermEntity, (term) => term.customer)
+  customerTerms: CustomerTermEntity[];
 
   // not column properties
   profileImage?: ImageEntity;
