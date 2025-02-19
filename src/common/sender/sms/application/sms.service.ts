@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SolapiMessageService } from 'solapi';
+import { BadRequestException } from '@nestjs/common/exceptions';
 export const SMS_SERVICE = Symbol('SMS_SERVICE');
 
 export interface ISmsService {
@@ -24,6 +25,10 @@ export class SmsService implements ISmsService {
   }
 
   async send(phoneNumber: string, message: string): Promise<boolean> {
+    if (!phoneNumber || !message) {
+      throw new BadRequestException('전화번호 또는 메시지가 없습니다.');
+    }
+
     return await this.solapiMessageService
       .sendOne({
         to: phoneNumber,

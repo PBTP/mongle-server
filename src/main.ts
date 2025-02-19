@@ -1,13 +1,22 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { LoggerService } from './config/logger/logger.config';
 import { ValidationDefaultOption } from './common/validation/validation.data';
 import { RedisIoAdapter } from './config/socket/socket.adapter';
 import { RedisService } from '@liaoliaots/nestjs-redis';
-import { EntityNotFoundExceptionFilter } from './common/filters/entity-not-found.filter';
+
+import {
+  AllExceptionFilter,
+  BadRequestExceptionFilter,
+  EntityNotFoundExceptionFilter,
+  ForbiddenExceptionFilter,
+  HttpExceptionFilter,
+  NotFoundExceptionFilter,
+  UnauthorizedExceptionFilter
+} from './common/filters/exception.filters';
 
 export const serviceWebUrls = [
   'https://mgmg.life',
@@ -27,7 +36,14 @@ async function bootstrap() {
 
   app.useLogger(app.get<LoggerService>(LoggerService));
   app.useGlobalPipes(new ValidationPipe(ValidationDefaultOption));
+  app.useGlobalFilters(new AllExceptionFilter());
+  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new ForbiddenExceptionFilter());
+  app.useGlobalFilters(new UnauthorizedExceptionFilter());
+  app.useGlobalFilters(new BadRequestExceptionFilter());
+  app.useGlobalFilters(new NotFoundExceptionFilter());
   app.useGlobalFilters(new EntityNotFoundExceptionFilter());
+
   app.useGlobalInterceptors(
     new ClassSerializerInterceptor(app.get<Reflector>(Reflector)),
   );
@@ -49,9 +65,16 @@ async function bootstrap() {
     })
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  const documentOptions: SwaggerDocumentOptions = {
+    deepScanRoutes: true,
+  };
+
+  const document = SwaggerModule.createDocument(app, config, documentOptions);
+  SwaggerModule.setup('docs', app, document, {
+    jsonDocumentUrl: 'docs/json',
+  });
 
   await app.listen(3000);
 }
+
 bootstrap();

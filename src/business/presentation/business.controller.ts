@@ -5,6 +5,8 @@ import { Auth, CurrentBusiness } from '../../auth/decorator/auth.decorator';
 import { BusinessEntity } from '../../schemas/business.entity';
 import { BusinessService } from '../application/business.service';
 import { BusinessDto } from './business.dto';
+import { ResponseEntity } from '../../common/dto/response.entity';
+import { Builder } from 'builder-pattern';
 
 @ApiTags('업체 관련 API')
 @Controller('/v1/business')
@@ -20,17 +22,19 @@ export class BusinessController {
   @Get('my')
   async getMyBusinessInfo(
     @CurrentBusiness() business: BusinessEntity,
-  ): Promise<BusinessDto> {
-    return {
-      uuid: business.uuid,
-      authProvider: business.authProvider,
-      openingDate: business.openingDate,
-      businessId: business.businessId,
-      businessName: business.businessName,
-      businessRule: business.businessRule,
-      businessLocation: business.businessLocation,
-      businessPriceGuide: business.businessPriceGuide,
-      businessPhoneNumber: business.businessPhoneNumber,
-    };
+  ): Promise<ResponseEntity<BusinessDto>> {
+    return ResponseEntity.OK(
+      Builder(BusinessDto)
+        .uuid(business.uuid)
+        .name(business.businessName)
+        .authProvider(business.authProvider)
+        .businessId(business.businessId)
+        .businessName(business.businessName)
+        .businessRule(business.businessRule)
+        .businessLocation(business.businessLocation)
+        .businessPriceGuide(business.businessPriceGuide)
+        .businessPhoneNumber(business.businessPhoneNumber)
+        .build(),
+    );
   }
 }

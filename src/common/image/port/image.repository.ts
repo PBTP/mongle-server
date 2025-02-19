@@ -9,6 +9,8 @@ export const IMAGE_REPOSITORY = Symbol('IImageRepository');
 export interface IImageRepository {
   create(image: Partial<Image>): Image;
 
+  getOne(image: Partial<Image>): Promise<Image>;
+
   findOne(image: Partial<Image>): Promise<Image | undefined>;
 
   save(image: Image): Promise<Image>;
@@ -20,6 +22,12 @@ export class ImageRepository implements IImageRepository {
 
   create(image: Partial<ImageDto>): Image {
     return this.imageDB.create(image).toModel();
+  }
+
+  async getOne(image: Partial<ImageDto>): Promise<Image> {
+    return this.imageDB
+      .findOneOrFail({ where: { imageUrl: image.imageUrl } })
+      .then((v) => v?.toModel());
   }
 
   async findOne(image: Partial<ImageDto>): Promise<Image | undefined> {
