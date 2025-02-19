@@ -25,7 +25,7 @@ describe('Pet Domain', () => {
   });
 
   describe('create', () => {
-    it('PetDto로부터 Pet 객체를 생성한다.', () => {
+    test('PetDto로부터 Pet 객체를 생성한다.', () => {
       const petDto: PetDto = Builder<PetDto>()
         .petName('몽글이')
         .petGender(Gender.FEMALE)
@@ -59,7 +59,7 @@ describe('Pet Domain', () => {
       expect(pet.modifiedAt).toEqual(dateHolder.now());
     });
 
-    it('필수 필드 누락 시 BadRequestException을 발생시킨다.', () => {
+    test('필수 필드 누락 시 BadRequestException을 발생시킨다.', () => {
       const petDto = Builder<PetDto>().petName('동글이').build();
       expect(() =>
         Pet.create(petDto, fakeBreed, fakeCustomer, uuidHolder, dateHolder),
@@ -68,7 +68,7 @@ describe('Pet Domain', () => {
   });
 
   describe('from', () => {
-    it('PetEntity로부터 Pet 객체를 생성한다', () => {
+    test('PetEntity로부터 Pet 객체를 생성한다', () => {
       const petEntity: PetEntity = Builder<PetEntity>()
         .petId(1)
         .petName('몽글이')

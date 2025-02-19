@@ -77,7 +77,7 @@ describe('PetService', () => {
   });
 
   describe('create', () => {
-    it('반려동물 엔티티 생성', async () => {
+    test('반려동물 엔티티 생성', async () => {
       const petDto: PetDto = createPetDto();
 
       const pet = await service.create(petDto, customer);
@@ -92,7 +92,7 @@ describe('PetService', () => {
   });
 
   describe('findAll', () => {
-    it('특정 고객의 전체 반려동물 조회', async () => {
+    test('특정 고객의 전체 반려동물 조회', async () => {
       const pets = await service.findAll(customer);
       expect(pets).toBeDefined();
     });
@@ -100,7 +100,7 @@ describe('PetService', () => {
 
   describe('getOne', () => {
     const petDto: PetDto = createPetDto();
-    it('반려동물 단일 조회', async () => {
+    test('반려동물 단일 조회', async () => {
       const createdPet = await service.create(petDto, customer);
       const pet = await service.getOne(createdPet.petId, customer);
       expect(pet).toBeDefined();
@@ -108,7 +108,7 @@ describe('PetService', () => {
       expect(pet.petName).toBe(createdPet.petName);
     });
 
-    it('특정 customer의 pet이 아닐 경우 ForbiddenException를 발생시킨다', async () => {
+    test('특정 customer의 pet이 아닐 경우 ForbiddenException를 발생시킨다', async () => {
       customer.customerId = 999;
       await expect(service.getOne(1, customer)).rejects.toThrow(
         ForbiddenException,
@@ -118,7 +118,7 @@ describe('PetService', () => {
   });
 
   describe('update', () => {
-    it('반려동물 정보 수정', async () => {
+    test('반려동물 정보 수정', async () => {
       const petDto: PetDto = createPetDto();
 
       const prevPet = await service.create(petDto, customer);
@@ -135,7 +135,7 @@ describe('PetService', () => {
   });
 
   describe('findCheckList', () => {
-    it('반려동물 체크리스트 조회', async () => {
+    test('반려동물 체크리스트 조회', async () => {
       const checklist = await service.findCheckList(
         PetChecklistCategory.HEALTH,
         ChecklistType.ANSWER,
@@ -144,7 +144,7 @@ describe('PetService', () => {
       expect(checklist).toBeDefined();
       expect(Array.isArray(checklist)).toBe(true);
     });
-    it('체크리스트 타입이 Choice일 때 petChecklistAnswer는 null이다.', async () => {
+    test('체크리스트 타입이 Choice일 때 petChecklistAnswer는 null이다.', async () => {
       const checklist = await service.findCheckList(
         PetChecklistCategory.HEALTH,
         ChecklistType.ANSWER,
@@ -156,7 +156,7 @@ describe('PetService', () => {
   });
 
   describe('answerChecklist', () => {
-    it('반려동물 체크리스트 답변', async () => {
+    test('반려동물 체크리스트 답변', async () => {
       const pet = await fakePetRepository.getOneById(1);
       const answers: PetChecklistAnswerDto[] = [
         {

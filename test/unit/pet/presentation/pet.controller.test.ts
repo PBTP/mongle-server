@@ -73,7 +73,7 @@ describe('PetController', () => {
   });
 
   describe('FindChecklist', () => {
-    it('체크리스트 조회', async () => {
+    test('체크리스트 조회', async () => {
       const category = PetChecklistCategory.HEALTH;
       const type = ChecklistType.ANSWER;
       const checklists = await petController.findChecklist(category, type);
@@ -86,7 +86,7 @@ describe('PetController', () => {
   });
 
   describe('FindPetChecklist', () => {
-    it('반려동물 체크리스트 조회', async () => {
+    test('반려동물 체크리스트 조회', async () => {
       const category = PetChecklistCategory.HEALTH;
       const type = ChecklistType.ANSWER;
       const petId = 1;
@@ -103,7 +103,7 @@ describe('PetController', () => {
   });
 
   describe('AnswerChecklist', () => {
-    it('체크리스트 답변하기', async () => {
+    test('체크리스트 답변하기', async () => {
       const petId = 1;
       const dto = [
         {
@@ -130,7 +130,7 @@ describe('PetController', () => {
     customer.customerId = 1;
     customer.customerName = '홍길동';
     customer.authProvider = AuthProvider.APPLE;
-    it('반려동물 생성하기', async () => {
+    test('반려동물 생성하기', async () => {
       const dto: PetDto = createPetDto();
       const pet = await petController.create(dto, customer);
       expect(pet).toBeDefined();
@@ -139,7 +139,7 @@ describe('PetController', () => {
       expect(pet.customer.customerName).toBe(customer.customerName);
       expect(pet.customer.authProvider).toBe(customer.authProvider);
     });
-    it('PetDto의 breedId가 존재하지 않을 때 BadRequestException을 발생시킨다.', async () => {
+    test('PetDto의 breedId가 존재하지 않을 때 BadRequestException을 발생시킨다.', async () => {
       const dto = Builder<PetDto>()
         .petName('몽글이')
         .petGender(Gender.MALE)
@@ -159,7 +159,7 @@ describe('PetController', () => {
   });
 
   describe('FindAll', () => {
-    it('모든 반려동물 조회', async () => {
+    test('모든 반려동물 조회', async () => {
       const customer = new CustomerEntity();
       customer.customerId = 1;
       const result = await petController.findAll(customer);
@@ -173,14 +173,14 @@ describe('PetController', () => {
   describe('GetOne', () => {
     const id = 1;
     const customer = new CustomerEntity();
-    it('단일 반려동물 조회', async () => {
+    test('단일 반려동물 조회', async () => {
       customer.customerId = 1;
       const pet = await petController.getOne(id, customer);
       expect(pet).toBeDefined();
       expect(pet.petId).toBe(id);
       expect(pet.customer.customerId).toBe(customer.customerId);
     });
-    it('customerId가 일치하지 않으면 ForbiddenException을 발생시킨다.', async () => {
+    test('customerId가 일치하지 않으면 ForbiddenException을 발생시킨다.', async () => {
       customer.customerId = 2;
       await expect(petController.getOne(id, customer)).rejects.toThrow(
         ForbiddenException,
@@ -202,7 +202,7 @@ describe('PetController', () => {
       petGender: Gender.FEMALE,
       appointments: [],
     };
-    it('반려동물 정보 수정', async () => {
+    test('반려동물 정보 수정', async () => {
       customer.customerId = 1;
       const result = await petController.update(id, dto, customer);
       expect(result).toBeDefined();
@@ -210,7 +210,7 @@ describe('PetController', () => {
       expect(result.breed.breedId).toBe(dto.breedId);
       expect(result.petWeight).toBe(dto.petWeight);
     });
-    it('customerId가 일치하지 않으면 ForbiddenException을 발생시킨다.', async () => {
+    test('customerId가 일치하지 않으면 ForbiddenException을 발생시킨다.', async () => {
       customer.customerId = 2;
       await expect(petController.update(id, dto, customer)).rejects.toThrow(
         ForbiddenException,
@@ -219,7 +219,7 @@ describe('PetController', () => {
   });
 
   describe('Delete', () => {
-    it('반려동물 삭제', async () => {
+    test('반려동물 삭제', async () => {
       const id = 1;
       const customer = new CustomerEntity();
       customer.customerId = 1;
