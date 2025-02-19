@@ -15,16 +15,19 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { PetEntity } from '../../schemas/pets.entity';
-import { PetService } from '../application/pet.service';
-import { PetChecklistAnswerDto, PetChecklistDto, PetDto } from './pet.dto';
 import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
+import { ResponseEntity } from '../../common/dto/response.entity';
 import { CrudGroup } from '../../common/validation/validation.data';
 import { GroupValidation } from '../../common/validation/validation.decorator';
 import { CustomerEntity } from '../../schemas/customer.entity';
-import { ChecklistType, PetChecklistCategory } from '../../schemas/pet-checklist.entity';
-import { ResponseEntity } from '../../common/dto/response.entity';
+import {
+  ChecklistType,
+  PetChecklistCategory,
+} from '../../schemas/pet-checklist.entity';
+import { PetEntity } from '../../schemas/pets.entity';
+import { PetService } from '../application/pet.service';
 import { Pet } from '../pet.domain';
+import { PetChecklistAnswerDto, PetChecklistDto, PetDto } from './pet.dto';
 
 @ApiTags('반려동물 관련 API')
 @Controller('/v1/pet')
@@ -72,12 +75,10 @@ export class PetController {
     @Param('petId') petId: number,
     @Body() dto: PetChecklistAnswerDto[],
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<ResponseEntity<PetChecklistAnswerDto[]>> {
-    return ResponseEntity.OK(
-      await this.petService
-        .answerChecklist(petId, dto, customer)
-        .then(() => dto),
-    );
+  ): Promise<PetChecklistAnswerDto[]> {
+    return await this.petService
+      .answerChecklist(petId, dto, customer)
+      .then(() => dto);
   }
 
   @ApiOperation({
@@ -94,10 +95,8 @@ export class PetController {
   async create(
     @Body() dto: PetDto,
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<ResponseEntity<PetDto>> {
-    return ResponseEntity.CREATED(
-      PetDto.from(await this.petService.create(dto, customer)),
-    );
+  ): Promise<Pet> {
+    return await this.petService.create(dto, customer);
   }
 
   @ApiOperation({
@@ -147,10 +146,8 @@ export class PetController {
     @Param('id') id: number,
     @Body() dto: Omit<PetDto, 'petId'>,
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<ResponseEntity<PetDto>> {
-    return ResponseEntity.OK(
-      PetDto.from(await this.petService.update(id, dto, customer)),
-    );
+  ): Promise<Pet> {
+    return await this.petService.update(id, dto, customer);
   }
 
   @ApiOperation({
