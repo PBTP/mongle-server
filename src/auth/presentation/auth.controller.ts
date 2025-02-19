@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Query, Req } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { AuthDto, OtpRequestDto, OtpResponseDto } from './auth.dto';
 import {
@@ -100,7 +100,7 @@ export class AuthController {
     type: String,
   })
   @GroupValidation([CrudGroup.create])
-  @Auth(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.CREATED)
   @Post('/otp')
   async generatedOtpAndSend(
     @Body() dto: OtpRequestDto,
@@ -138,7 +138,7 @@ export class AuthController {
     description: 'OTP 검증 성공',
   })
   @GroupValidation([CrudGroup.update])
-  @Auth(HttpStatus.OK)
+  @HttpCode(HttpStatus.OK)
   @Post('/otp/verification')
   async otpVerify(
     @CurrentUser() user: UserDto,
