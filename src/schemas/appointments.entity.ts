@@ -12,7 +12,7 @@ import {
 import { BusinessEntity } from './business.entity';
 import { CustomerEntity } from './customer.entity';
 import { DriverEntity } from './drivers.entity';
-import { Pet } from './pets.entity';
+import { PetEntity } from './pets.entity';
 import { Review } from './reviews.entity';
 import { ServiceOption } from './service-options.entity';
 import { HasUuid } from '../common/entity/parent.entity';
@@ -67,9 +67,9 @@ export class Appointment extends HasUuid {
   @JoinColumn({ name: 'driver_id' })
   public driver: DriverEntity;
 
-  @ManyToOne(() => Pet, (pets) => pets.appointments)
+  @ManyToOne(() => PetEntity, (pets) => pets.appointments)
   @JoinColumn({ name: 'pet_id' })
-  public pet: Pet;
+  public pet: PetEntity;
 
   @ManyToOne(
     () => ServiceOption,

@@ -11,7 +11,7 @@ import {
 import { Appointment } from './appointments.entity';
 import { BusinessEntity } from './business.entity';
 import { CustomerEntity } from './customer.entity';
-import { Pet } from './pets.entity';
+import { PetEntity } from './pets.entity';
 import { HasUuid } from '../common/entity/parent.entity';
 
 @Entity({ name: 'reviews' })
@@ -46,7 +46,7 @@ export class Review extends HasUuid {
   @JoinColumn({ name: 'business_id' })
   public business: BusinessEntity;
 
-  @ManyToOne(() => Pet, (pets) => pets.reviews)
+  @ManyToOne(() => PetEntity, (pets) => pets.reviews)
   @JoinColumn({ name: 'pet_id' })
-  public pet: Pet;
+  public pet: PetEntity;
 }
