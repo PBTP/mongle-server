@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Builder } from 'builder-pattern';
-import { IsBoolean, IsNumber } from 'class-validator';
+import { IsNumber } from 'class-validator';
 import { CustomerTermEntity } from '../../schemas/customer-terms.entity';
 
 export class CustomerTermDto {
@@ -27,19 +27,11 @@ export class CustomerTermDto {
   @IsNumber()
   public version: number;
 
-  @ApiProperty({
-    description: '고객 동의 약관 여부',
-    required: true,
-  })
-  @IsBoolean()
-  public hasAgreed: boolean;
-
   static from(customerTerm: CustomerTermEntity): CustomerTermDto {
     return Builder(CustomerTermDto)
       .termId(customerTerm.term.termId)
       .customerId(customerTerm.customer.customerId)
       .version(customerTerm.version)
-      .hasAgreed(customerTerm.hasAgreed)
       .build();
   }
 }

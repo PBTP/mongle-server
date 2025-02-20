@@ -4,7 +4,7 @@ import {
   DeleteDateColumn,
   Entity,
   OneToMany,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { TermDto } from '../terms/presentation/terms.dto';
@@ -19,7 +19,7 @@ export enum TermCategory {
 
 @Entity({ name: 'terms' })
 export class TermEntity {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   public termId: number;
 
   @Column()

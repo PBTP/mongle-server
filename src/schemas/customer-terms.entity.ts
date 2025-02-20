@@ -4,25 +4,22 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  UpdateDateColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CustomerTermDto } from '../terms/presentation/customter-terms.dto';
+import { CustomerTermDto } from '../terms/presentation/customer-terms.dto';
 import { CustomerEntity } from './customer.entity';
 import { TermEntity } from './terms.entity';
 
 @Entity({ name: 'customer_terms' })
 export class CustomerTermEntity {
+  @PrimaryGeneratedColumn()
+  public id: number;
+
   @Column()
   public version: number;
 
-  @Column()
-  public hasAgreed: boolean;
-
   @CreateDateColumn()
-  public checkedAt?: Date;
-
-  @UpdateDateColumn()
-  public modifiedAt?: Date;
+  public agreedAt?: Date;
 
   @ManyToOne(() => CustomerEntity, (customer) => customer.customerTerms)
   @JoinColumn({ name: 'customer_id' })
@@ -41,7 +38,6 @@ export class CustomerTermEntity {
     entity.customer = customer;
     entity.term = term;
     entity.version = dto.version;
-    entity.hasAgreed = dto.hasAgreed;
     return entity;
   }
 }
