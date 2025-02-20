@@ -7,7 +7,7 @@ export const CUSTOMER_TERM_REPOSITORY = Symbol('CustomerTermRepository');
 
 export interface ICustomerTermRepository {
   create(entity: CustomerTermEntity): Promise<CustomerTermEntity>;
-  saveAll(entities: CustomerTermEntity[]): Promise<void>;
+  saveAll(entities: CustomerTermEntity[]): Promise<CustomerTermEntity[]>;
 }
 
 @Injectable()
@@ -17,8 +17,8 @@ export class CustomerTermRepository implements ICustomerTermRepository {
     private readonly customerTermDB: Repository<CustomerTermEntity>,
   ) {}
 
-  async saveAll(entities: CustomerTermEntity[]): Promise<void> {
-    await this.customerTermDB.save(entities);
+  async saveAll(entities: CustomerTermEntity[]): Promise<CustomerTermEntity[]> {
+    return await this.customerTermDB.save(entities);
   }
 
   async create(entity: CustomerTermEntity): Promise<CustomerTermEntity> {

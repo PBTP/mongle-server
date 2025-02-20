@@ -7,8 +7,8 @@ export const TERM_REPOSITORY = Symbol('PetRepository');
 
 export interface ITermRepository {
   getOne(termId: number): Promise<TermEntity>;
-  findOne(termId: number): Promise<TermEntity | null>; // 특정 약관
-  findAll(): Promise<TermEntity[]>; // 전체 약관
+  findOne(termId: number): Promise<TermEntity | null>;
+  findAll(): Promise<TermEntity[]>;
   // findAgreedTermsByCustomer(customerId: number): Promise<TermEntity[]>; // 고객이 동의한 약관
 }
 @Injectable()
