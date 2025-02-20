@@ -71,6 +71,16 @@ export class TermService {
       this.uuidHolder,
       this.dateHolder,
     );
-    return CustomerTermEntity.create(dto, customerEntity, term);
+
+    // 중복 생성 방지 (CONSTRAINT unique_customer_term UNIQUE (customer_id, term_id))
+    const existingTerm =
+      await this.customerTermRepository.findByCustomerAndTerm(
+        customerEntity,
+        term,
+      );
+
+    return existingTerm
+      ? existingTerm
+      : CustomerTermEntity.create(dto, customerEntity, term);
   }
 }

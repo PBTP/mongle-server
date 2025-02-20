@@ -5,12 +5,14 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { CustomerTermDto } from '../terms/presentation/customer-terms.dto';
 import { CustomerEntity } from './customer.entity';
 import { TermEntity } from './terms.entity';
 
 @Entity({ name: 'customer_terms' })
+@Unique(['customer', 'term'])
 export class CustomerTermEntity {
   @PrimaryGeneratedColumn()
   public id: number;
