@@ -3,13 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TermEntity } from '../../schemas/terms.entity';
 
-export const TERM_REPOSITORY = Symbol('PetRepository');
+export const TERM_REPOSITORY = Symbol('TermRepository');
 
 export interface ITermRepository {
   getOne(termId: number): Promise<TermEntity>;
   findOne(termId: number): Promise<TermEntity | null>;
   findAll(): Promise<TermEntity[]>;
-  // findAgreedTermsByCustomer(customerId: number): Promise<TermEntity[]>; // 고객이 동의한 약관
+  findPendingTerms(customerId: number): Promise<TermEntity[]>; // 동의가 필요한 약관 (1 & 2)
+  findUnAgreedTerms(customerId: number): Promise<TermEntity[]>; // (1) 고객이 미동의한 약관
+  findOutdatedTerms(customerId: number): Promise<TermEntity[]>; // (2) 갱신된 고객 동의 약관
 }
 @Injectable()
 export class TermRepository implements ITermRepository {
@@ -35,5 +37,42 @@ export class TermRepository implements ITermRepository {
         termId: 'ASC',
       },
     });
+  }
+
+  async findPendingTerms(customerId: number): Promise<TermEntity[]> {
+    return this.termDB
+      .createQueryBuilder('t')
+      .leftJoin(
+        'customer_terms',
+        'ct',
+        't.termId = ct.term_id AND ct.customer_id = :customerId',
+        { customerId },
+      )
+      .where('ct.term_id IS NULL') // 미동의 약관
+      .orWhere('ct.version != t.version') // 갱신된 약관
+      .getMany();
+  }
+
+  findUnAgreedTerms(customerId: number): Promise<TermEntity[]> {
+    return this.termDB
+      .createQueryBuilder('t')
+      .leftJoinAndSelect(
+        't.customer_terms',
+        'ct',
+        'ct.customer.customerId = :customerId',
+        { customerId },
+      )
+      .where('ct.term IS NULL')
+      .getMany();
+  }
+
+  async findOutdatedTerms(customerId: number): Promise<TermEntity[]> {
+    return this.termDB
+      .createQueryBuilder('t')
+      .innerJoin('t.customerTerms', 'ct', 'ct.customerId = :customerId', {
+        customerId,
+      })
+      .where('ct.version != t.version')
+      .getMany();
   }
 }

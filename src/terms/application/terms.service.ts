@@ -11,7 +11,8 @@ import { CustomerEntity } from '../../schemas/customer.entity';
 import { TermEntity } from '../../schemas/terms.entity';
 import { ICustomerTermRepository } from '../port/customer-terms.repository';
 import { ITermRepository, TERM_REPOSITORY } from '../port/terms.repository';
-import { CustomerTermDto } from '../presentation/customter-terms.dto';
+import { CustomerTermDto } from '../presentation/customer-terms.dto';
+import { TermDto } from '../presentation/terms.dto';
 
 @Injectable()
 export class TermService {
@@ -49,13 +50,19 @@ export class TermService {
     );
   }
 
+  findPendingTerms(customer: ICustomer): Promise<TermDto[]> {
+    // todo: customerId?: number; 해결 필요
+    return this.termRepository.findPendingTerms(
+      customer.customerId ? customer.customerId : 0,
+    );
+  }
+
   async toCustomerTermEntity(
     // Customer, Term 엔티티 추출 후 Entity의 create 메소드 호출
     dto: CustomerTermDto,
     customer: ICustomer,
   ): Promise<CustomerTermEntity> {
     const [customerDomain, term] = await Promise.all([
-      // 병렬 실행으로 성능 최적화
       this.customerRepository.getOne(customer),
       this.termRepository.getOne(dto.termId),
     ]);
