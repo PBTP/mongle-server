@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, Query, Req } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { AuthDto, OtpRequestDto, OtpResponseDto } from './auth.dto';
 import {
@@ -16,6 +16,7 @@ import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { Builder } from 'builder-pattern';
 import { CrudGroup } from '../../common/validation/validation.data';
 import { ResponseEntity } from '../../common/dto/response.entity';
+import { ApiKeyGuard } from '../../common/guard/api-key.guard';
 
 @ApiTags('인증 관련 API')
 @Controller('/v1/auth')
@@ -100,7 +101,7 @@ export class AuthController {
     type: String,
   })
   @GroupValidation([CrudGroup.create])
-  @Auth(HttpStatus.CREATED)
+  @UseGuards(ApiKeyGuard)
   @Post('/otp')
   async generatedOtpAndSend(
     @Body() dto: OtpRequestDto,
