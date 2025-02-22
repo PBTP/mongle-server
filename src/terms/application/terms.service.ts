@@ -1,6 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { DATE_HOLDER, DateHolder } from '../../common/holder/date.holder';
-import { UUID_HOLDER, UUIDHolder } from '../../common/holder/uuid.holders';
 import { ICustomer } from '../../customer/customer.domain';
 import {
   CUSTOMER_REPOSITORY,
@@ -17,10 +15,6 @@ import { TermDto } from '../presentation/terms.dto';
 @Injectable()
 export class TermService {
   constructor(
-    @Inject(UUID_HOLDER)
-    private uuidHolder: UUIDHolder,
-    @Inject(DATE_HOLDER)
-    private dateHolder: DateHolder,
     @Inject(CUSTOMER_REPOSITORY)
     private customerRepository: ICustomerRepository,
     @Inject(TERM_REPOSITORY)
@@ -29,8 +23,9 @@ export class TermService {
     private customerTermRepository: ICustomerTermRepository,
   ) {}
 
-  async findOne(termId: number): Promise<TermEntity | null> {
-    return await this.termRepository.findOne(termId);
+  async findById(termId: number): Promise<TermDto | null> {
+    const term = await this.termRepository.findOne(termId);
+    return term ? TermDto.from(term) : null;
   }
 
   async findAll(): Promise<TermEntity[]> {
@@ -50,9 +45,35 @@ export class TermService {
     );
   }
 
+  async checkTerm(customer: ICustomer, termId: number): Promise<boolean> {
+    // todo: customerId?: number; 해결 필요
+    const customerTerm =
+      await this.customerTermRepository.findByCustomerIdAndTermId(
+        customer.customerId ? customer.customerId : 0,
+        termId,
+      );
+    return customerTerm
+      ? customerTerm.version === customerTerm.term.version
+      : false;
+  }
+
   findPendingTerms(customer: ICustomer): Promise<TermDto[]> {
     // todo: customerId?: number; 해결 필요
     return this.termRepository.findPendingTerms(
+      customer.customerId ? customer.customerId : 0,
+    );
+  }
+
+  findPendingMandatoryTerms(customer: ICustomer): Promise<TermDto[]> {
+    // todo: customerId?: number; 해결 필요
+    return this.termRepository.findPendingMandatoryTerms(
+      customer.customerId ? customer.customerId : 0,
+    );
+  }
+
+  async deleteCustomerTerms(customer: ICustomer): Promise<void> {
+    // todo: customerId?: number; 해결 필요
+    const terms = await this.customerTermRepository.deleteCustomerTerms(
       customer.customerId ? customer.customerId : 0,
     );
   }
@@ -66,11 +87,7 @@ export class TermService {
       this.customerRepository.getOne(customer),
       this.termRepository.getOne(dto.termId),
     ]);
-    const customerEntity = CustomerEntity.from(
-      customerDomain,
-      this.uuidHolder,
-      this.dateHolder,
-    );
+    const customerEntity = CustomerEntity.from(customerDomain);
 
     // 중복 생성 방지 (CONSTRAINT unique_customer_term UNIQUE (customer_id, term_id))
     const existingTerm =
