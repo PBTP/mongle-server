@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsDate,
@@ -10,12 +9,16 @@ import {
   Length,
   ValidateIf,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 import { CrudGroup } from '../../common/validation/validation.data';
 import { Appointment } from '../../schemas/appointments.entity';
-import { Gender, Pet } from '../../schemas/pets.entity';
-import { ChecklistType, PetChecklistCategory } from '../../schemas/pet-checklist.entity';
+import { Gender } from '../../schemas/pets.entity';
+import {
+  ChecklistType,
+  PetChecklistCategory,
+} from '../../schemas/pet-checklist.entity';
 import { Builder } from 'builder-pattern';
+import { ApiProperty } from '@nestjs/swagger';
+import { Pet } from '../pet.domain';
 
 export class PetDto {
   @ApiProperty({
