@@ -6,6 +6,7 @@ import { TermEntity } from '../../schemas/terms.entity';
 export const TERM_REPOSITORY = Symbol('TermRepository');
 
 export interface ITermRepository {
+  create(term: TermEntity): TermEntity;
   getOne(termId: number): Promise<TermEntity>;
   findOne(termId: number): Promise<TermEntity | null>;
   findAll(): Promise<TermEntity[]>;
@@ -21,6 +22,10 @@ export class TermRepository implements ITermRepository {
     @InjectRepository(TermEntity)
     private readonly termDB: Repository<TermEntity>,
   ) {}
+
+  create(term: TermEntity): TermEntity {
+    return this.termDB.create(term);
+  }
 
   async getOne(termId: number): Promise<TermEntity> {
     if (!termId) throw new BadRequestException('약관 ID가 필요합니다.');
