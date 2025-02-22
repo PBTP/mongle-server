@@ -7,6 +7,7 @@ export const TERM_REPOSITORY = Symbol('TermRepository');
 
 export interface ITermRepository {
   create(term: TermEntity): TermEntity;
+  save(term: TermEntity): Promise<TermEntity>;
   getOne(termId: number): Promise<TermEntity>;
   findOne(termId: number): Promise<TermEntity | null>;
   findAll(): Promise<TermEntity[]>;
@@ -25,6 +26,10 @@ export class TermRepository implements ITermRepository {
 
   create(term: TermEntity): TermEntity {
     return this.termDB.create(term);
+  }
+
+  async save(term: TermEntity): Promise<TermEntity> {
+    return await this.termDB.save(term);
   }
 
   async getOne(termId: number): Promise<TermEntity> {
