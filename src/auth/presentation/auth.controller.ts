@@ -1,11 +1,21 @@
-import { Body, Controller, HttpStatus, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { AuthDto, OtpRequestDto, OtpResponseDto } from './auth.dto';
 import {
   ApiCreatedResponse,
+  ApiHeaders,
   ApiOkResponse,
   ApiOperation,
-  ApiParam,
+  ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
@@ -98,12 +108,20 @@ export class AuthController {
     status: 403,
     description: 'Unauthorized / 요청한 고객이 없습니다.',
   })
-  @ApiParam({
+  @ApiQuery({
     name: 'sendType',
     description: 'OTP 전송 방법 ex) sms, email',
     required: false,
     type: String,
   })
+  @ApiHeaders([
+    {
+      name: 'X-API-KEY',
+      description:
+        'API Key를 넣으시면 됩니다 api key는 파라미터 스토어 security/api/key에 존재합니다.',
+      required: true,
+    },
+  ])
   @GroupValidation([CrudGroup.create])
   @UseGuards(ApiKeyGuard)
   @HttpCode(HttpStatus.CREATED)
