@@ -9,14 +9,16 @@ import {
   Length,
   ValidateIf,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-import { Gender, Pet } from '../../schemas/pets.entity';
+import { CrudGroup } from '../../common/validation/validation.data';
+import { Appointment } from '../../schemas/appointments.entity';
+import { Gender } from '../../schemas/pets.entity';
 import {
   ChecklistType,
   PetChecklistCategory,
 } from '../../schemas/pet-checklist.entity';
-import { CrudGroup } from '../../common/validation/validation.data';
 import { Builder } from 'builder-pattern';
+import { ApiProperty } from '@nestjs/swagger';
+import { Pet } from '../pet.domain';
 
 export class PetDto {
   @ApiProperty({
@@ -117,6 +119,13 @@ export class PetDto {
   @IsNumber()
   public breedId: number;
 
+  @ApiProperty({
+    required: false,
+    description: '예약 목록입니다.',
+  })
+  @IsOptional()
+  public appointments: Appointment[];
+
   static from(pet: Pet): PetDto {
     return Builder(PetDto)
       .petId(pet.petId)
@@ -179,6 +188,13 @@ export class PetChecklistDto {
 }
 
 export class PetChecklistAnswerDto {
+  @ApiProperty({
+    description: '반려동물 ID',
+    required: true,
+  })
+  @IsNotEmpty()
+  petId: number;
+
   @ApiProperty({
     description: '반려동물 체크리스트 ID',
     required: true,
@@ -244,4 +260,10 @@ export class PetChecklistChoiceDto {
     description: '해당 선택지가 선택되었는지에 대한 유무입니다.',
   })
   checked: boolean = false;
+}
+
+export class PetChecklistChoiceAnswerDto {
+  petId: number;
+  petChecklistId: number;
+  petChecklistChoiceId: number;
 }

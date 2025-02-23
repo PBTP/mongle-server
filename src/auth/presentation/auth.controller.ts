@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, Query, Req } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { AuthDto, OtpRequestDto, OtpResponseDto } from './auth.dto';
 import {
@@ -94,6 +94,10 @@ export class AuthController {
     status: 401,
     description: 'Unauthorized / 요청한 고객이 없습니다.',
   })
+  @ApiResponse({
+    status: 403,
+    description: 'Unauthorized / 요청한 고객이 없습니다.',
+  })
   @ApiParam({
     name: 'sendType',
     description: 'OTP 전송 방법 ex) sms, email',
@@ -102,6 +106,7 @@ export class AuthController {
   })
   @GroupValidation([CrudGroup.create])
   @UseGuards(ApiKeyGuard)
+  @HttpCode(HttpStatus.CREATED)
   @Post('/otp')
   async generatedOtpAndSend(
     @Body() dto: OtpRequestDto,
