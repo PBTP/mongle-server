@@ -138,7 +138,6 @@ export class AuthController {
     description: 'OTP 검증 성공',
   })
   @GroupValidation([CrudGroup.update])
-  @Auth(HttpStatus.OK)
   @Post('/otp/verification')
   async otpVerify(
     @CurrentUser() user: UserDto,
