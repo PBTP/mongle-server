@@ -143,6 +143,7 @@ export class AuthController {
     type: OtpResponseDto,
     description: 'OTP 검증 성공',
   })
+  @ApiKey()
   @GroupValidation([CrudGroup.update])
   @HttpCode(HttpStatus.OK)
   @Post('/otp/verification')
