@@ -14,6 +14,7 @@ import { HasUuid } from '../common/entity/parent.entity';
 import { Customer } from '../customer/customer.domain';
 import { Appointment } from './appointments.entity';
 import { CustomerChatRoom } from './customer-chat-room.entity';
+import { CustomerTermEntity } from './customer-terms.entity';
 import { Favorite } from './favorites.entity';
 import { ImageEntity } from './image.entity';
 import { PetEntity } from './pets.entity';

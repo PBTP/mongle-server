@@ -10,7 +10,7 @@ export class TermDto {
     readOnly: true,
   })
   @IsNumber()
-  public termId: number;
+  public termId?: number;
 
   @ApiProperty({
     description: '약관 버전',

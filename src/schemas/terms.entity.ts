@@ -20,7 +20,7 @@ export enum TermCategory {
 @Entity({ name: 'terms' })
 export class TermEntity {
   @PrimaryGeneratedColumn()
-  public termId: number;
+  public termId?: number;
 
   @Column()
   public version: number;

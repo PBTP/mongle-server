@@ -29,7 +29,7 @@ export class CustomerTermDto {
 
   static from(customerTerm: CustomerTermEntity): CustomerTermDto {
     return Builder(CustomerTermDto)
-      .termId(customerTerm.term.termId)
+      .termId(customerTerm.term.termId ? customerTerm.term.termId : 0) // todo: id
       .customerId(customerTerm.customer.customerId)
       .version(customerTerm.version)
       .build();
