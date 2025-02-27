@@ -7,7 +7,7 @@ export class FakePetChecklistChoiceAnswerRepository
 {
   private choiceAnswers: PetChecklistChoiceAnswerEntity[] = [];
 
-  async create(
+  async create( // create는 save랑 다른데..?
     choiceAnswer: PetChecklistChoiceAnswer,
   ): Promise<PetChecklistChoiceAnswerEntity> {
     const newChoiceAnswer = PetChecklistChoiceAnswerEntity.create(choiceAnswer);
