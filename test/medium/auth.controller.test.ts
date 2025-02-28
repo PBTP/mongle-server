@@ -15,7 +15,6 @@ import { BusinessModule } from '../../src/business/business.module';
 import { CustomerModule } from '../../src/customer/customer.module';
 import { ImageModule } from '../../src/common/image/image.module';
 import { CLOUD_STORAGE } from '../../src/common/cloud/aws/s3/application/s3.service';
-import { FakeCloudStorageService } from '../mock/fake.cloud-storage.service';
 import { CloudModule } from '../../src/common/cloud/cloud.module';
 import { FakeConfigService } from '../mock/fake.config.service';
 import { HttpStatusCode } from 'axios';
@@ -32,6 +31,7 @@ import { AuthDto } from '../../src/auth/presentation/auth.dto';
 import { SMS_SERVICE } from '../../src/common/sender/sms/application/sms.service';
 import { FakeSmsService } from '../mock/fake.sms.service';
 import { JwtAccessStrategy } from '../../src/auth/application/jwt-access.strategy';
+import { FakeCloudStorage } from '../mock/fake.cloud-storage';
 
 describe('AuthController E2E 테스트', () => {
   let app: INestApplication;
@@ -82,7 +82,7 @@ describe('AuthController E2E 테스트', () => {
       .overrideProvider(ConfigService)
       .useClass(FakeConfigService)
       .overrideProvider(CLOUD_STORAGE)
-      .useClass(FakeCloudStorageService)
+      .useClass(FakeCloudStorage)
       .compile();
 
     app = moduleFutures.createNestApplication();
