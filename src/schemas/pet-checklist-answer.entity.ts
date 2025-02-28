@@ -1,26 +1,53 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { PetChecklist } from "./pet-checklist.entity";
-import { Pet } from "./pets.entity";
+import { BadRequestException } from '@nestjs/common/exceptions';
+import { Builder } from 'builder-pattern';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { PetChecklistAnswer } from '../pet/pet.checklist-answer.domain';
+import { PetChecklistEntity } from './pet-checklist.entity';
+import { PetEntity } from './pets.entity';
 
 @Entity('pet_checklist_answers')
-export class PetChecklistAnswer {
+export class PetChecklistAnswerEntity {
+  @PrimaryGeneratedColumn()
+  petChecklistAnswerId: number;
+
   @PrimaryColumn()
   petId: number;
 
   @PrimaryColumn()
   petChecklistId: number;
 
-  @ManyToOne(() => Pet, (pet) => pet.petChecklistAnswer)
+  @ManyToOne(() => PetEntity, (pet) => pet.petChecklistAnswer)
   @JoinColumn({ name: 'pet_id' })
-  pet: Pet;
+  pet: PetEntity;
 
   @ManyToOne(
-    () => PetChecklist,
+    () => PetChecklistEntity,
     (petChecklist) => petChecklist.petChecklistAnswers,
   )
   @JoinColumn({ name: 'pet_checklist_id' })
-  petChecklist: PetChecklist;
+  petChecklist: PetChecklistEntity;
 
   @Column('text')
   petChecklistAnswer: string;
+
+  static create(
+    petChceklistAnswer: PetChecklistAnswer,
+  ): PetChecklistAnswerEntity {
+    if (!petChceklistAnswer.petId || !petChceklistAnswer.petChecklistId) {
+      throw new BadRequestException('필수 입력값이 누락되었습니다.');
+    }
+
+    return Builder(PetChecklistAnswerEntity)
+      .petId(petChceklistAnswer.petId)
+      .petChecklistId(petChceklistAnswer.petChecklistId)
+      .petChecklistAnswer(petChceklistAnswer.petChecklistAnswer)
+      .build();
+  }
 }

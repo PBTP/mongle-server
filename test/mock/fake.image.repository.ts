@@ -7,13 +7,18 @@ export class FakeImageRepository implements IImageRepository {
   create(image: Partial<Image>): Image {
     return image as Image;
   }
-  async findOne(image: Partial<Image>): Promise<Image> {
+  async getOne(image: Partial<Image>): Promise<Image> {
     const findImage = this.images.find((i) => i.imageUrl === image.imageUrl);
     if (!findImage) {
       throw new Error('존재하지 않는 이미지입니다.');
     }
     return findImage;
   }
+
+  async findOne(image: Partial<Image>): Promise<Image | undefined> {
+    return this.images.find((i) => i.imageUrl === image.imageUrl);
+  }
+
   async save(image: Image): Promise<Image> {
     this.images.push(image);
     return image;

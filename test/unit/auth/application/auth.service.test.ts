@@ -2,7 +2,7 @@ import { AuthService } from '../../../../src/auth/application/auth.service';
 import { CustomerService } from '../../../../src/customer/application/customer.service';
 import { FakeCustomerRepository } from '../../../mock/fake.customer.repository';
 import { ImageService } from '../../../../src/common/image/application/image.service';
-import { FakeCloudStorageService } from '../../../mock/fake.cloud-storage.service';
+import { FakeCloudStorage } from '../../../mock/fake.cloud-storage';
 import { FakeImageRepository } from '../../../mock/fake.image.repository';
 import { JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { FakeConfigService } from '../../../mock/fake.config.service';
@@ -54,10 +54,7 @@ describe('AuthService', () => {
     customerService = new CustomerService(
       new FakeCustomerRepository(),
       new SecurityService(new FakeConfigService()),
-      new ImageService(
-        new FakeCloudStorageService(),
-        new FakeImageRepository(),
-      ),
+      new ImageService(new FakeCloudStorage(), new FakeImageRepository()),
       new FakeUuidHolder(),
       new FakeDateHolder(date),
     );

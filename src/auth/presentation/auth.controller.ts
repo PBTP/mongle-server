@@ -1,8 +1,15 @@
 import { Body, Controller, HttpStatus, Post, Query, Req } from '@nestjs/common';
 import { AuthService } from '../application/auth.service';
 import { AuthDto, OtpRequestDto, OtpResponseDto } from './auth.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Auth, CurrentUser } from '../decorator/auth.decorator';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ApiKey, Auth, CurrentUser } from '../decorator/auth.decorator';
 import { UserDto, UserGroup } from './user.dto';
 import { GroupValidation } from '../../common/validation/validation.decorator';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
@@ -31,7 +38,7 @@ export class AuthController {
   @Post('/login')
   @GroupValidation([UserGroup.login])
   async login(@Body() dto: UserDto): Promise<ResponseEntity<AuthDto>> {
-    return ResponseEntity.CREATED(await this.authService.login(dto));
+    return ResponseEntity.OK(await this.authService.login(dto));
   }
 
   @ApiOperation({
@@ -86,14 +93,14 @@ export class AuthController {
     status: 401,
     description: 'Unauthorized / 요청한 고객이 없습니다.',
   })
-  @ApiParam({
+  @ApiQuery({
     name: 'sendType',
     description: 'OTP 전송 방법 ex) sms, email',
     required: false,
     type: String,
   })
   @GroupValidation([CrudGroup.create])
-  @Auth(HttpStatus.CREATED)
+  @ApiKey(HttpStatus.CREATED)
   @Post('/otp')
   async generatedOtpAndSend(
     @Body() dto: OtpRequestDto,
@@ -106,10 +113,7 @@ export class AuthController {
       );
 
       return ResponseEntity.CREATED(
-        Builder<OtpResponseDto>()
-          .otp(generatedOtpNumber)
-          .sendType(sendType)
-          .build(),
+        Builder<OtpResponseDto>().otp(generatedOtpNumber).build(),
       );
     }
 

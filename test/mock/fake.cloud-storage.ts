@@ -5,7 +5,7 @@ import {
   PresignedUrlDto,
 } from '../../src/common/cloud/aws/s3/presentation/presigned-url.dto';
 
-export class FakeCloudStorageService implements ICloudStorage {
+export class FakeCloudStorage implements ICloudStorage {
   async generatePreSignedUrl(
     key: string,
     metadata: ImageMetaDataDto,

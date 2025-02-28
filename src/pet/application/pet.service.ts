@@ -1,76 +1,72 @@
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common/exceptions';
+import { Builder } from 'builder-pattern';
+import { DATE_HOLDER, DateHolder } from '../../common/holder/date.holder';
+import { UUID_HOLDER, UUIDHolder } from '../../common/holder/uuid.holders';
+import { ICustomer } from '../../customer/customer.domain';
 import {
-  ForbiddenException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
-import { Pet } from '../../schemas/pets.entity';
-import { Breed } from '../../schemas/breed.entity';
+  ChecklistType,
+  PetChecklistCategory,
+} from '../../schemas/pet-checklist.entity';
+import { PetEntity } from '../../schemas/pets.entity';
+import { PetChecklistAnswer } from '../pet.checklist-answer.domain';
+import { PetChecklistChoiceAnswer } from '../pet.checklist-choice-answer.domain';
+import { Pet } from '../pet.domain';
+import { BREED_REPOSITORY, IBreedRepository } from '../port/bree.repository';
+import {
+  IPetChecklistAnswerRepository,
+  PET_CHECKLIST_ANSWER_REPOSITORY,
+} from '../port/pet.checklist-answer.repository';
+import { IPetChecklistChoiceAnswerRepository } from '../port/pet.checklist-choice-answer.repository';
+import { PET_CHECKLIST_CHOICE_REPOSITORY } from '../port/pet.checklist-choice.repository';
+import {
+  IPetChecklistRepository,
+  PET_CHECKLIST_REPOSITORY,
+} from '../port/pet.checklist.repository';
+import { IPetRepository, PET_REPOSITORY } from '../port/pet.repository';
 import {
   PetChecklistAnswerDto,
   PetChecklistChoiceDto,
   PetChecklistDto,
   PetDto,
 } from '../presentation/pet.dto';
-import {
-  ChecklistType,
-  PetChecklist,
-  PetChecklistCategory,
-} from '../../schemas/pet-checklist.entity';
-import { PetChecklistChoice } from '../../schemas/pet-checklist-chocie.entity';
-import { PetChecklistAnswer } from '../../schemas/pet-checklist-answer.entity';
-import { PetChecklistChoiceAnswer } from '../../schemas/pet-checklist-chocie-answer.entity';
-import { Builder } from 'builder-pattern';
-import { CustomerService } from '../../customer/application/customer.service';
-import { BadRequestException } from '@nestjs/common/exceptions';
-import { ICustomer } from '../../customer/customer.domain';
 
 @Injectable()
 export class PetService {
   constructor(
-    private customerService: CustomerService,
-    @InjectRepository(Pet)
-    private petRepository: Repository<Pet>,
-    @InjectRepository(PetChecklist)
-    private petChecklistRepository: Repository<PetChecklist>,
-    @InjectRepository(PetChecklistAnswer)
-    private petChecklistAnswerRepository: Repository<PetChecklistAnswer>,
-    @InjectRepository(PetChecklistChoiceAnswer)
-    private petChecklistChoiceAnswerRepository: Repository<PetChecklistChoiceAnswer>,
-    @InjectRepository(Breed)
-    private breedRepository: Repository<Breed>,
+    @Inject(UUID_HOLDER)
+    private uuidHolder: UUIDHolder,
+    @Inject(DATE_HOLDER)
+    private dateHolder: DateHolder,
+    @Inject(PET_REPOSITORY)
+    private petRepository: IPetRepository,
+    @Inject(PET_CHECKLIST_REPOSITORY)
+    private petChecklistRepository: IPetChecklistRepository,
+    @Inject(PET_CHECKLIST_ANSWER_REPOSITORY)
+    private petChecklistAnswerRepository: IPetChecklistAnswerRepository,
+    @Inject(PET_CHECKLIST_CHOICE_REPOSITORY)
+    private petChecklistChoiceAnswerRepository: IPetChecklistChoiceAnswerRepository,
+    @Inject(BREED_REPOSITORY)
+    private breedRepository: IBreedRepository,
   ) {}
 
   async create(dto: PetDto, customer: ICustomer): Promise<Pet> {
-    const breed = await this.breedRepository.findOneOrFail({
-      where: { breedId: dto.breedId },
-    });
+    const breed = await this.breedRepository.getBreed(dto.breedId);
 
-    if (!breed) {
-      throw new NotFoundException('견종을 찾을 수 없습니다.');
-    }
-
-    const newPet = this.petRepository.create({
-      ...dto,
-      breed,
+    return await this.petRepository.create(
+      Pet.create(dto, breed, customer, this.uuidHolder, this.dateHolder),
       customer,
-    });
-
-    return await this.petRepository.save(newPet);
+      this.dateHolder,
+      this.uuidHolder,
+    );
   }
 
-  async findAll(customer: ICustomer): Promise<Pet[]> {
-    return await this.petRepository.find({
-      where: { customer: { customerId: customer.customerId } },
-      relations: ['breed'],
-    });
+  async findAll(customer: ICustomer): Promise<PetEntity[]> {
+    return await this.petRepository.findAllByCustomer(customer);
   }
-  async findOne(id: number, customer: ICustomer): Promise<Pet> {
-    const pet = await this.petRepository.findOneOrFail({
-      where: { petId: id },
-      relations: ['breed', 'customer'],
-    });
+
+  async getOne(id: number, customer: ICustomer): Promise<PetEntity> {
+    const pet = await this.petRepository.getOne(id);
 
     if (pet.customer.customerId !== customer.customerId) {
       throw new ForbiddenException('해당 반려동물에 접근할 수 없습니다.');
@@ -84,12 +80,10 @@ export class PetService {
     dto: Partial<PetDto>,
     customer: ICustomer,
   ): Promise<Pet> {
-    const pet = await this.findOne(id, customer);
+    const pet = await this.getOne(id, customer);
 
     if (dto.breedId && dto.breedId !== pet.breed.breedId) {
-      pet.breed = await this.breedRepository.findOneOrFail({
-        where: { breedId: dto.breedId },
-      });
+      pet.breed = await this.breedRepository.getBreed(dto.breedId);
     }
 
     pet.petName = dto.petName ?? pet.petName;
@@ -100,59 +94,26 @@ export class PetService {
     pet.vaccinationStatus = dto.vaccinationStatus ?? pet.vaccinationStatus;
     pet.petGender = dto.petGender ?? pet.petGender;
 
-    return await this.petRepository.save(pet);
+    return await this.petRepository.update(pet, this.dateHolder);
   }
 
   async delete(id: number, customer: ICustomer): Promise<void> {
-    const pet = await this.findOne(id, customer);
+    const pet = await this.getOne(id, customer);
 
-    await this.petRepository.softDelete(pet.petId);
+    await this.petRepository.delete(pet);
   }
 
   async findCheckList(
     category: PetChecklistCategory,
     type: ChecklistType,
     petId: number | null,
-    customer: ICustomer,
   ): Promise<PetChecklistDto[]> {
-    let query = this.petChecklistRepository
-      .createQueryBuilder('PC')
-      .leftJoinAndMapMany(
-        'PC.petChecklistChoices',
-        PetChecklistChoice,
-        'PCC',
-        'PC.pet_checklist_id = PCC.pet_checklist_id',
-      );
+    const data = await this.petChecklistRepository.findCheckList(
+      category,
+      type,
+      petId,
+    );
 
-    if (petId) {
-      await this.findOne(petId, customer);
-
-      query = query
-        .leftJoinAndMapOne(
-          'PCC.petChecklistChoiceAnswers',
-          PetChecklistChoiceAnswer,
-          'PCCA',
-          `PCC.pet_checklist_id = PCCA.pet_checklist_id 
-            AND PCC.pet_checklist_choice_id = PCCA.pet_checklist_choice_id 
-            AND PCCA.pet_id = :petId`,
-          { petId },
-        )
-        .leftJoinAndMapMany(
-          'PC.petChecklistAnswers',
-          PetChecklistAnswer,
-          'PCA',
-          'PC.pet_checklist_id = PCA.pet_checklist_id AND PCA.pet_id = :petId',
-          { petId },
-        );
-    }
-
-    type && query.andWhere('PC.pet_checklist_type = :type', { type });
-    category &&
-      query.andWhere('PC.pet_checklist_category = :category', { category });
-
-    query.orderBy('PC.pet_checklist_id');
-
-    const data = await query.getMany();
     return data.map((checklist) => {
       const dto = Builder<PetChecklistDto>()
         .petChecklistId(checklist.petChecklistId)
@@ -190,46 +151,49 @@ export class PetService {
     dto: PetChecklistAnswerDto[],
     customer: ICustomer,
   ) {
-    const pet = await this.findOne(petId, customer);
+    const pet = await this.getOne(petId, customer);
 
-    const checklist = await this.petChecklistRepository.find({
-      where: {
-        petChecklistId: In(dto.map((v) => v.petChecklistId)),
-      },
-    });
+    const checklists = await this.petChecklistRepository.findByIds(
+      dto.map((v) => v.petChecklistId),
+    );
 
-    for (const v of checklist) {
-      const answer = dto.find((d) => d.petChecklistId === v.petChecklistId);
+    for (const checklist of checklists) {
+      const answer = dto.find(
+        (d) => d.petChecklistId === checklist.petChecklistId,
+      );
 
-      if (v.petChecklistType === ChecklistType.ANSWER) {
+      if (checklist.petChecklistType === ChecklistType.ANSWER) {
         if (!answer?.petChecklistAnswer) {
           throw new BadRequestException('답변을 적어주세요');
         }
-
-        await this.petChecklistAnswerRepository.save({
-          pet,
-          petChecklistId: v.petChecklistId,
-          petChecklistAnswer: answer?.petChecklistAnswer,
-        });
+        await this.petChecklistAnswerRepository.create(
+          Builder(PetChecklistAnswer)
+            .petId(pet.petId)
+            .petChecklistId(checklist.petChecklistId)
+            .petChecklistAnswer(answer.petChecklistAnswer)
+            .build(),
+        );
       } else {
         if (!answer?.petChecklistChoiceId) {
           throw new BadRequestException('선택지를 선택해주세요');
         }
 
+        const petChecklistChoiceAnswer = Builder(PetChecklistChoiceAnswer)
+          .petId(pet.petId)
+          .petChecklistId(checklist.petChecklistId)
+          .petChecklistChoiceId(answer.petChecklistChoiceId)
+          .build();
+
         if (answer.checked) {
-          await this.petChecklistChoiceAnswerRepository.save({
-            petId,
-            petChecklistId: v.petChecklistId,
-            petChecklistChoiceId: answer.petChecklistChoiceId,
-          });
+          await this.petChecklistChoiceAnswerRepository.create(
+            petChecklistChoiceAnswer,
+          );
           return;
         }
 
-        await this.petChecklistChoiceAnswerRepository.delete({
-          petId,
-          petChecklistId: v.petChecklistId,
-          petChecklistChoiceId: answer.petChecklistChoiceId,
-        });
+        await this.petChecklistChoiceAnswerRepository.delete(
+          petChecklistChoiceAnswer,
+        );
       }
     }
   }

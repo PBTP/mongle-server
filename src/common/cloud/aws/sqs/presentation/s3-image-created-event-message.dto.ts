@@ -7,13 +7,13 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-class S3Bucket {
+export class S3Bucket {
   @IsString()
   @IsNotEmpty()
   name: string;
 }
 
-class S3Object {
+export class S3Object {
   @IsString()
   @IsNotEmpty()
   key: string;
@@ -31,7 +31,7 @@ class S3Object {
   sequencer: string;
 }
 
-class S3Detail {
+export class S3Detail {
   @IsString()
   @IsNotEmpty()
   version: string;

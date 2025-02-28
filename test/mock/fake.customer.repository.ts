@@ -1,10 +1,10 @@
-import { CustomerEntity } from '../../src/schemas/customer.entity';
-import { ICustomerRepository } from '../../src/customer/port/customer.repository';
-import { Customer, ICustomer } from '../../src/customer/customer.domain';
+import { BadRequestException } from '@nestjs/common/exceptions';
 import { Builder } from 'builder-pattern';
 import { getTsid } from 'tsid-ts';
+import { Customer, ICustomer } from '../../src/customer/customer.domain';
+import { ICustomerRepository } from '../../src/customer/port/customer.repository';
 import { CustomerDto } from '../../src/customer/presentation/customer.dto';
-import { BadRequestException } from '@nestjs/common/exceptions';
+import { CustomerEntity } from '../../src/schemas/customer.entity';
 
 export class FakeCustomerRepository implements ICustomerRepository {
   customers: Customer[] = [];
@@ -12,6 +12,7 @@ export class FakeCustomerRepository implements ICustomerRepository {
   create(customer: Customer): CustomerEntity {
     return Builder<CustomerEntity>()
       .uuid(customer.uuid ?? getTsid().toString())
+      .customerId(this.customers.length + 1)
       .customerName(customer.customerName)
       .customerPhoneNumber(customer.customerPhoneNumber)
       .customerAddress(customer.customerAddress)

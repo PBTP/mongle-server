@@ -1,3 +1,4 @@
+import { Builder } from 'builder-pattern';
 import {
   Column,
   CreateDateColumn,
@@ -6,22 +7,20 @@ import {
   OneToMany,
   Point,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
-import { Appointment } from './appointments.entity';
-import { Favorite } from './favorites.entity';
-import { Pet } from './pets.entity';
-import { Review } from './reviews.entity';
-import { CustomerChatRoom } from './customer-chat-room.entity';
-import { ImageEntity } from './image.entity';
+import { AuthProvider } from '../auth/presentation/user.dto';
+import { HasUuid } from '../common/entity/parent.entity';
 import { Customer } from '../customer/customer.domain';
-import { Builder } from 'builder-pattern';
-import { IUUIDHolder } from '../common/holder/uuid.holders';
-import { IDateHolder } from '../common/holder/date.holder';
-import { UserEntity } from '../common/entity/user.entity';
+import { Appointment } from './appointments.entity';
+import { CustomerChatRoom } from './customer-chat-room.entity';
+import { Favorite } from './favorites.entity';
+import { ImageEntity } from './image.entity';
+import { PetEntity } from './pets.entity';
+import { Review } from './reviews.entity';
 
 @Entity({ name: 'customers' })
-export class CustomerEntity extends UserEntity {
+export class CustomerEntity extends HasUuid {
   @PrimaryGeneratedColumn()
   customerId: number;
 
@@ -45,6 +44,9 @@ export class CustomerEntity extends UserEntity {
   })
   customerLocation?: Point;
 
+  @Column({ type: 'enum', enum: AuthProvider, nullable: false })
+  authProvider: AuthProvider;
+
   @CreateDateColumn({ nullable: false })
   createdAt: Date;
 
@@ -66,8 +68,8 @@ export class CustomerEntity extends UserEntity {
   @OneToMany(() => Appointment, (appointments) => appointments.customer)
   appointments: Appointment[];
 
-  @OneToMany(() => Pet, (pets) => pets.customer)
-  pets: Pet[];
+  @OneToMany(() => PetEntity, (pets) => pets.customer)
+  pets: PetEntity[];
 
   @OneToMany(() => CustomerChatRoom, (room) => room.chatRoom)
   chatRooms: CustomerChatRoom[];
@@ -75,30 +77,25 @@ export class CustomerEntity extends UserEntity {
   // not column properties
   profileImage?: ImageEntity;
 
-  static from(
-    customer: Customer,
-    uuidHolder: IUUIDHolder,
-    dateHolder: IDateHolder,
-  ): CustomerEntity {
-    return Builder<CustomerEntity>()
+  static from(customer: Customer): CustomerEntity {
+    const builder = Builder<CustomerEntity>()
       .customerName(customer.customerName)
       .customerPhoneNumber(customer.customerPhoneNumber)
       .customerAddress(customer.customerAddress)
       .customerDetailAddress(customer.customerDetailAddress)
       .customerLocation(customer.customerLocation)
       .authProvider(customer.authProvider)
-      .createdAt(dateHolder.now())
-      .modifiedAt(dateHolder.now())
-      .deletedAt(undefined)
-      .refreshToken(customer.refreshToken)
-      .uuid(uuidHolder.generatedUuid())
-      .build();
+      .refreshToken(customer.refreshToken);
+
+    if (customer.customerId !== undefined) {
+      builder.customerId(customer.customerId);
+    }
+
+    return builder.build();
   }
 
   static toModel(customer: CustomerEntity): Customer {
     return Builder<Customer>()
-      .uuid(customer.uuid)
-      .customerName(customer.customerName)
       .customerId(customer.customerId)
       .customerName(customer.customerName)
       .customerPhoneNumber(customer.customerPhoneNumber)

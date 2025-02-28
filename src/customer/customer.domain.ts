@@ -3,7 +3,7 @@ import { AuthProvider, UserDto } from '../auth/presentation/user.dto';
 import { Favorite } from '../schemas/favorites.entity';
 import { Review } from '../schemas/reviews.entity';
 import { Appointment } from '../schemas/appointments.entity';
-import { Pet } from '../schemas/pets.entity';
+import { PetEntity } from '../schemas/pets.entity';
 import { CustomerChatRoom } from '../schemas/customer-chat-room.entity';
 import { AuthDto } from '../auth/presentation/auth.dto';
 import { CustomerDto } from './presentation/customer.dto';
@@ -26,7 +26,7 @@ export interface ICustomer extends AuthDto {
   favorites?: Favorite[];
   reviews?: Review[];
   appointments?: Appointment[];
-  pets?: Pet[];
+  pets?: PetEntity[];
   chatRooms?: CustomerChatRoom[];
   createdAt?: Date;
   modifiedAt?: Date;
@@ -46,7 +46,7 @@ export class Customer implements ICustomer, UserDto {
   favorites?: Favorite[];
   reviews?: Review[];
   appointments?: Appointment[];
-  pets?: Pet[];
+  pets?: PetEntity[];
   chatRooms?: CustomerChatRoom[];
   createdAt?: Date;
   modifiedAt?: Date;

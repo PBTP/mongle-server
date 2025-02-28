@@ -7,6 +7,7 @@ export class FakeConfigService extends ConfigService {
     super();
     this.configMap['security/crypto/algorithm'] = 'aes-256-cbc';
     this.configMap['security/crypto/key'] = 'mgmg_crypto_HSphC1OlzYwJmSS1Or1K';
+    this.configMap['security/api/key'] = 'test-api-key';
     this.configMap['jwt/access/secret'] = 'access_secret';
     this.configMap['jwt/access/expire'] = 3600; // 1 hour
     this.configMap['jwt/access/strategy'] = 'unique';
