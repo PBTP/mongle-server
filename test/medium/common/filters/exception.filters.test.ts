@@ -1,12 +1,3 @@
-import {
-  AllExceptionFilter,
-  BadRequestExceptionFilter,
-  EntityNotFoundExceptionFilter,
-  ForbiddenExceptionFilter,
-  HttpExceptionFilter,
-  NotFoundExceptionFilter,
-  UnauthorizedExceptionFilter,
-} from '../../src/common/filters/exception.filters';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   ArgumentsHost,
@@ -19,6 +10,15 @@ import {
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common/exceptions';
+import {
+  AllExceptionFilter,
+  BadRequestExceptionFilter,
+  EntityNotFoundExceptionFilter,
+  ForbiddenExceptionFilter,
+  HttpExceptionFilter,
+  NotFoundExceptionFilter,
+  UnauthorizedExceptionFilter,
+} from '../../../../src/common/filters/exception.filters';
 
 describe('ExceptionFilter 테스트', () => {
   describe('AllExceptionFilter 테스트', () => {
