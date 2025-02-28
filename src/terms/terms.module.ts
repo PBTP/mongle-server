@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { TermController } from "./presentation/terms.controller";
+import { CustomerTermEntity } from "src/schemas/customer-terms.entity";
+import { TermEntity } from "src/schemas/terms.entity";
 import { TermService } from "./application/terms.service";
-import { TERM_REPOSITORY, TermRepository } from "./port/terms.repository";
 import { CUSTOMER_TERM_REPOSITORY, CustomerTermRepository } from "./port/customer-terms.repository";
-import { TermEntity } from "../schemas/terms.entity";
-import { CustomerTermEntity } from "../schemas/customer-terms.entity";
+import { TERM_REPOSITORY, TermRepository } from "./port/terms.repository";
+import { TermController } from "./presentation/terms.controller";
 
 @Module({
     imports: [

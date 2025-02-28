@@ -89,24 +89,14 @@ export class AuthController {
     type: OtpResponseDto,
     description: 'OTP 발급 성공',
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized / 요청한 고객이 없습니다.',
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'Unauthorized / 요청한 고객이 없습니다.',
-  })
   @ApiQuery({
->>>>>>> 57208ad (feature: ApiKeyGuard 추가)
     name: 'sendType',
     description: 'OTP 전송 방법 ex) sms, email',
     required: false,
     type: String,
   })
   @GroupValidation([CrudGroup.create])
-  @UseGuards(ApiKeyGuard)
-  @HttpCode(HttpStatus.CREATED)
+  @ApiKey(HttpStatus.CREATED)
   @Post('/otp')
   async generatedOtpAndSend(
     @Body() dto: OtpRequestDto,
@@ -145,7 +135,6 @@ export class AuthController {
   })
   @ApiKey()
   @GroupValidation([CrudGroup.update])
-  @HttpCode(HttpStatus.OK)
   @Post('/otp/verification')
   async otpVerify(
     @CurrentUser() user: UserDto,
