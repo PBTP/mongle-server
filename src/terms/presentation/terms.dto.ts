@@ -1,17 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Builder } from 'builder-pattern';
 import { IsBoolean, IsNumber } from 'class-validator';
-import { TermEntity } from '../../schemas/terms.entity';
+import { TermCategory, TermEntity } from '../../schemas/terms.entity';
 
-export class TermDto {
-  @ApiProperty({
-    description: '약관 ID',
-    required: true,
-    readOnly: true,
-  })
-  @IsNumber()
-  public termId?: number;
+type TermType = {
+  version: number;
+  title: string;
+  description: string;
+  isMandatory: boolean;
+  termCategory: TermCategory;
+};
 
+export class TermDto implements TermType {
   @ApiProperty({
     description: '약관 버전',
     required: true,
@@ -42,16 +41,32 @@ export class TermDto {
     description: '관련 기능',
     required: true,
   })
-  public termCategory: string;
+  public termCategory: TermCategory;
 
-  static from(term: TermEntity): TermDto {
-    return Builder(TermDto)
-      .termId(term.termId)
-      .title(term.title)
-      .description(term.description)
-      .version(term.version)
-      .isMandatory(term.isMandatory)
-      .termCategory(term.termCategory)
-      .build();
+  static from<T extends TermDto>(term: TermEntity, dtoType: new () => T): T {
+    const dto = Object.assign(new dtoType(), {
+      version: term.version,
+      title: term.title,
+      description: term.description,
+      isMandatory: term.isMandatory,
+      termCategory: term.termCategory
+    });
+    if (dto instanceof UpdateTermDto) (dto as UpdateTermDto).termId = term.termId;
+    return dto;
   }
 }
+
+export class CreateTermDto extends TermDto { }
+
+export class UpdateTermDto extends TermDto {
+  @ApiProperty({
+    description: '약관 ID',
+    required: true,
+    readOnly: true,
+  })
+  @IsNumber()
+  termId: number;
+}
+
+
+

@@ -3,7 +3,13 @@ import { Builder } from 'builder-pattern';
 import { IsNumber } from 'class-validator';
 import { CustomerTermEntity } from '../../schemas/customer-terms.entity';
 
-export class CustomerTermDto {
+type CustomerTermType = {
+  termId: number;
+  customerId: number;
+  version: number;
+}
+
+export class CustomerTermDto implements CustomerTermType {
   @ApiProperty({
     description: '약관 ID',
     required: true,
@@ -29,7 +35,7 @@ export class CustomerTermDto {
 
   static from(customerTerm: CustomerTermEntity): CustomerTermDto {
     return Builder(CustomerTermDto)
-      .termId(customerTerm.term.termId ? customerTerm.term.termId : 0) // todo: id
+      .termId(customerTerm.term.termId)
       .customerId(customerTerm.customer.customerId)
       .version(customerTerm.version)
       .build();

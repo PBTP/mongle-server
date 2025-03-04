@@ -20,7 +20,7 @@ export enum TermCategory {
 @Entity({ name: 'terms' })
 export class TermEntity {
   @PrimaryGeneratedColumn()
-  public termId?: number;
+  public termId: number;
 
   @Column()
   public version: number;
@@ -39,7 +39,7 @@ export class TermEntity {
     enum: TermCategory,
     default: TermCategory.SERVICE,
   })
-  public termCategory: string;
+  public termCategory: TermCategory;
 
   @CreateDateColumn()
   public createdAt?: Date;
