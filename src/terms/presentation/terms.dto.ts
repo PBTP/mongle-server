@@ -1,13 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNumber } from 'class-validator';
 import { TermCategory, TermEntity } from '../../schemas/terms.entity';
+import { Expose } from 'class-transformer';
 
 type TermType = {
-  version: number;
-  title: string;
-  description: string;
-  isMandatory: boolean;
-  termCategory: TermCategory;
+  get version(): number;
+  set version(value: number);
+  get title(): string;
+  set title(value: string);
+  get description(): string;
+  set description(value: string);
+  get isMandatory(): boolean;
+  set isMandatory(value: boolean);
+  get termCategory(): TermCategory;
+  set termCategory(value: TermCategory);
 };
 
 export class TermDto implements TermType {
@@ -16,32 +22,76 @@ export class TermDto implements TermType {
     required: true,
   })
   @IsNumber()
-  public version: number;
+  @Expose()
+  private _version: number;
 
   @ApiProperty({
     description: '약관명',
     required: true,
   })
-  public title: string;
+  private _title: string;
 
   @ApiProperty({
     description: '약관 내용',
     required: true,
   })
-  public description: string;
+  @Expose()
+  private _description: string;
 
   @ApiProperty({
     description: '필수 여부',
     required: true,
   })
   @IsBoolean()
-  public isMandatory: boolean = false;
+  @Expose()
+  private _isMandatory: boolean = false;
 
   @ApiProperty({
     description: '관련 기능',
     required: true,
   })
-  public termCategory: TermCategory;
+  @Expose()
+  private _termCategory: TermCategory;
+
+  get version(): number {
+    return this._version;
+  }
+
+  set version(value: number) {
+    this._version = value;
+  }
+
+  get title(): string {
+    return this._title;
+  }
+
+  set title(value: string) {
+    this._title = value;
+  }
+
+  get description(): string {
+    return this._description;
+  }
+
+  set description(value: string) {
+    this._description = value;
+  }
+
+  get isMandatory(): boolean {
+    return this._isMandatory;
+  }
+
+  set isMandatory(value: boolean) {
+    this._isMandatory = value;
+  }
+
+  get termCategory(): TermCategory {
+    return this._termCategory;
+  }
+
+  set termCategory(value: TermCategory) {
+    this._termCategory = value;
+  }
 
   static from<T extends TermDto>(term: TermEntity, dtoType: new () => T): T {
     const dto = Object.assign(new dtoType(), {
@@ -51,8 +101,9 @@ export class TermDto implements TermType {
       isMandatory: term.isMandatory,
       termCategory: term.termCategory
     });
-    if (dto instanceof UpdateTermDto) (dto as UpdateTermDto).termId = term.termId;
-    return dto;
+    if (dto instanceof UpdateTermDto) {
+      (dto as UpdateTermDto).termId = term.termId;
+    } return dto;
   }
 }
 
@@ -65,7 +116,15 @@ export class UpdateTermDto extends TermDto {
     readOnly: true,
   })
   @IsNumber()
-  termId: number;
+  private _termId: number;
+
+  get termId(): number {
+    return this._termId;
+  }
+
+  set termId(value: number) {
+    this._termId = value;
+  }
 }
 
 
