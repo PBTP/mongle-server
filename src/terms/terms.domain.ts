@@ -3,7 +3,7 @@ import { Builder } from 'builder-pattern';
 import { DateHolder } from '../common/holder/date.holder';
 import { UUIDHolder } from '../common/holder/uuid.holders';
 import { TermCategory, TermEntity } from 'src/schemas/terms.entity';
-import { CreateTermDto, BaseTermDto, UpdateTermDto } from './presentation/terms.dto';
+import { CreateTermDto, BaseTermDto, TermDto } from './presentation/terms.dto';
 
 export class Term {
     termId: number;
@@ -32,7 +32,7 @@ export class Term {
     }
 
     // Domain → Entity
-    to(): TermEntity {
+    toEntity(): TermEntity {
         return Builder(TermEntity)
             .termId(this.termId)
             .version(this.version)
@@ -46,43 +46,9 @@ export class Term {
             .build();
     }
 
-    // CreateTermDTO → Domain
-    static createFromCreateDto(dto: CreateTermDto, dateHolder: DateHolder): Term {
-        if (!dto.version || !dto.title || !dto.description || dto.isMandatory === undefined || !dto.termCategory) {
-            throw new BadRequestException('필수 입력값이 누락되었습니다.');
-        }
-
-        return Builder(Term)
-            .version(dto.version)
-            .title(dto.title)
-            .description(dto.description)
-            .isMandatory(dto.isMandatory)
-            .termCategory(dto.termCategory)
-            .createdAt(dateHolder.now())
-            .modifiedAt(dateHolder.now())
-            .build();
-    }
-
-    // TermDto → Domain
-    static create(dto: UpdateTermDto, dateHolder: DateHolder): Term {
-        if (!dto.termId || !dto.version || !dto.title || !dto.description || dto.isMandatory === undefined || !dto.termCategory) {
-            throw new BadRequestException('필수 입력값이 누락되었습니다.');
-        }
-
-        return Builder(Term)
-            .termId(dto.termId)
-            .version(dto.version)
-            .title(dto.title)
-            .description(dto.description)
-            .isMandatory(dto.isMandatory)
-            .termCategory(dto.termCategory)
-            .modifiedAt(dateHolder.now())
-            .build();
-    }
-
     // Domain → TermDto
-    toDto(): UpdateTermDto {
-        return Builder(UpdateTermDto)
+    toDto(): TermDto {
+        return Builder(TermDto)
             .termId(this.termId)
             .version(this.version)
             .title(this.title)
@@ -91,4 +57,38 @@ export class Term {
             .termCategory(this.termCategory)
             .build();
     }
+
+    // // CreateTermDTO → Domain
+    // static fromCreateDto(dto: CreateTermDto, dateHolder: DateHolder): Term {
+    //     if (!dto.version || !dto.title || !dto.description || dto.isMandatory === undefined || !dto.termCategory) {
+    //         throw new BadRequestException('필수 입력값이 누락되었습니다.');
+    //     }
+
+    //     return Builder(Term)
+    //         .version(dto.version)
+    //         .title(dto.title)
+    //         .description(dto.description)
+    //         .isMandatory(dto.isMandatory)
+    //         .termCategory(dto.termCategory)
+    //         .createdAt(dateHolder.now())
+    //         .modifiedAt(dateHolder.now())
+    //         .build();
+    // }
+
+    // // TermDto → Domain
+    // static fromDto(dto: TermDto, dateHolder: DateHolder): Term {
+    //     if (!dto.termId || !dto.version || !dto.title || !dto.description || dto.isMandatory === undefined || !dto.termCategory) {
+    //         throw new BadRequestException('필수 입력값이 누락되었습니다.');
+    //     }
+
+    //     return Builder(Term)
+    //         .termId(dto.termId)
+    //         .version(dto.version)
+    //         .title(dto.title)
+    //         .description(dto.description)
+    //         .isMandatory(dto.isMandatory)
+    //         .termCategory(dto.termCategory)
+    //         .modifiedAt(dateHolder.now())
+    //         .build();
+    // }
 }

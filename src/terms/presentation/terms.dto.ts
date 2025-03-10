@@ -2,6 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNumber } from 'class-validator';
 import { TermCategory, TermEntity } from '../../schemas/terms.entity';
 import { Expose } from 'class-transformer';
+import { Builder } from 'builder-pattern';
+import { Term } from '../terms.domain';
 
 type TermType = {
   get version(): number;
@@ -22,7 +24,6 @@ export class BaseTermDto implements TermType {
     required: true,
   })
   @IsNumber()
-  @Expose()
   private _version: number;
 
   @ApiProperty({
@@ -35,7 +36,6 @@ export class BaseTermDto implements TermType {
     description: '약관 내용',
     required: true,
   })
-  @Expose()
   private _description: string;
 
   @ApiProperty({
@@ -43,16 +43,15 @@ export class BaseTermDto implements TermType {
     required: true,
   })
   @IsBoolean()
-  @Expose()
   private _isMandatory: boolean = false;
 
   @ApiProperty({
     description: '관련 기능',
     required: true,
   })
-  @Expose()
   private _termCategory: TermCategory;
 
+  @Expose()
   get version(): number {
     return this._version;
   }
@@ -61,6 +60,7 @@ export class BaseTermDto implements TermType {
     this._version = value;
   }
 
+  @Expose()
   get title(): string {
     return this._title;
   }
@@ -69,6 +69,7 @@ export class BaseTermDto implements TermType {
     this._title = value;
   }
 
+  @Expose()
   get description(): string {
     return this._description;
   }
@@ -77,6 +78,7 @@ export class BaseTermDto implements TermType {
     this._description = value;
   }
 
+  @Expose()
   get isMandatory(): boolean {
     return this._isMandatory;
   }
@@ -85,6 +87,7 @@ export class BaseTermDto implements TermType {
     this._isMandatory = value;
   }
 
+  @Expose()
   get termCategory(): TermCategory {
     return this._termCategory;
   }
@@ -93,6 +96,7 @@ export class BaseTermDto implements TermType {
     this._termCategory = value;
   }
 
+  // Entity → DTO
   static from<T extends BaseTermDto>(term: TermEntity, dtoType: new () => T): T {
     const dto = Object.assign(new dtoType(), {
       version: term.version,
@@ -101,10 +105,21 @@ export class BaseTermDto implements TermType {
       isMandatory: term.isMandatory,
       termCategory: term.termCategory
     });
-    if (dto instanceof TermDto) {
-      (dto as TermDto).termId = term.termId;
-    }
+    if (dto instanceof TermDto) (dto as TermDto).termId = term.termId;
     return dto;
+  }
+
+  // DTO → Domain
+  toModel(): Term {
+    const term = Builder(Term)
+      .version(this.version)
+      .title(this.title)
+      .description(this.description)
+      .isMandatory(this.isMandatory)
+      .termCategory(this.termCategory)
+      .build();
+    if (this instanceof TermDto) term.termId = (this as TermDto).termId;
+    return term;
   }
 }
 
@@ -119,6 +134,7 @@ export class TermDto extends BaseTermDto {
   @IsNumber()
   private _termId: number;
 
+  @Expose()
   get termId(): number {
     return this._termId;
   }
