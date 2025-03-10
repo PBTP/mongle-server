@@ -103,7 +103,8 @@ export class TermDto implements TermType {
     });
     if (dto instanceof UpdateTermDto) {
       (dto as UpdateTermDto).termId = term.termId;
-    } return dto;
+    }
+    return dto;
   }
 }
 

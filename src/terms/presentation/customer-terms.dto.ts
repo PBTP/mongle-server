@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Builder } from 'builder-pattern';
-import { IsNumber } from 'class-validator';
+import { IsDate, IsNumber } from 'class-validator';
 import { Expose } from 'class-transformer';
 import { CustomerTermEntity } from '../../schemas/customer-terms.entity';
 
@@ -11,6 +11,8 @@ type CustomerTermType = {
   set customerId(value: number);
   get version(): number;
   set version(value: number);
+  get agreedAt(): Date;
+  set agreedAt(value: Date);
 };
 
 export class CustomerTermDto implements CustomerTermType {
@@ -29,10 +31,16 @@ export class CustomerTermDto implements CustomerTermType {
   @Expose()
   private _version: number;
 
-  constructor(termId: number, customerId: number, version: number) {
+  @ApiProperty({ description: '동의 일시', required: true })
+  @IsDate()
+  @Expose()
+  private _agreedAt: Date;
+
+  constructor(termId: number, customerId: number, version: number, agreedAt: Date) {
     this._termId = termId;
     this._customerId = customerId;
     this._version = version;
+    this._agreedAt = agreedAt;
   }
 
   get termId(): number {
@@ -59,11 +67,21 @@ export class CustomerTermDto implements CustomerTermType {
     this._version = value;
   }
 
+  get agreedAt(): Date {
+    return this._agreedAt;
+  }
+
+  set agreedAt(agreedAt: Date) {
+    this._agreedAt = agreedAt;
+  }
+
+  // Entity → DTO
   static from(customerTerm: CustomerTermEntity): CustomerTermDto {
     return new CustomerTermDto(
       customerTerm.term.termId,
       customerTerm.customer.customerId,
-      customerTerm.version
+      customerTerm.version,
+      customerTerm.agreedAt
     );
   }
 }

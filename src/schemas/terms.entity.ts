@@ -42,7 +42,7 @@ export class TermEntity {
   public termCategory: TermCategory;
 
   @CreateDateColumn()
-  public createdAt?: Date;
+  public createdAt: Date;
 
   @UpdateDateColumn()
   public modifiedAt?: Date;

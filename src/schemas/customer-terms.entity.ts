@@ -14,14 +14,11 @@ import { TermEntity } from './terms.entity';
 @Entity({ name: 'customer_terms' })
 @Unique(['customer', 'term'])
 export class CustomerTermEntity {
-  @PrimaryGeneratedColumn()
-  public id: number;
-
   @Column()
   public version: number;
 
   @CreateDateColumn()
-  public agreedAt?: Date;
+  public agreedAt: Date;
 
   @ManyToOne(() => CustomerEntity, (customer) => customer.customerTerms)
   @JoinColumn({ name: 'customer_id' })
@@ -40,6 +37,7 @@ export class CustomerTermEntity {
     entity.customer = customer;
     entity.term = term;
     entity.version = dto.version;
+    entity.agreedAt = dto.agreedAt;
     return entity;
   }
 }
