@@ -22,7 +22,7 @@ export class TermRepository implements ITermRepository {
   constructor(
     @InjectRepository(TermEntity)
     private readonly termDB: Repository<TermEntity>,
-  ) {}
+  ) { }
 
   create(term: TermEntity): TermEntity {
     return this.termDB.create(term);
@@ -93,7 +93,7 @@ export class TermRepository implements ITermRepository {
       .getMany();
   }
 
-  findUnAgreedTerms(customerId: number): Promise<TermEntity[]> {
+  async findUnAgreedTerms(customerId: number): Promise<TermEntity[]> {
     return this.termDB
       .createQueryBuilder('t')
       .leftJoinAndSelect(

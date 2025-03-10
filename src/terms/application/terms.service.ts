@@ -10,7 +10,10 @@ import { TermEntity } from '../../schemas/terms.entity';
 import { ICustomerTermRepository } from '../port/customer-terms.repository';
 import { ITermRepository, TERM_REPOSITORY } from '../port/terms.repository';
 import { CustomerTermDto } from '../presentation/customer-terms.dto';
-import { TermDto } from '../presentation/terms.dto';
+import { BaseTermDto, TermDto } from '../presentation/terms.dto';
+import { Term } from '../terms.domain';
+import { CustomerTerm } from '../customer-terms.domain';
+import { DATE_HOLDER, DateHolder, IDateHolder } from 'src/common/holder/date.holder';
 
 @Injectable()
 export class TermService {
@@ -21,83 +24,85 @@ export class TermService {
     private termRepository: ITermRepository,
     @Inject(TERM_REPOSITORY)
     private customerTermRepository: ICustomerTermRepository,
-  ) {}
+    @Inject(DATE_HOLDER)
+    private readonly dateHolder: IDateHolder,
+  ) { }
 
   async findById(termId: number): Promise<TermDto | null> {
-    const term = await this.termRepository.findOne(termId);
-    return term ? TermDto.from(term) : null;
+    const termEntity = await this.termRepository.findOne(termId);
+    return termEntity ? Term.from(termEntity).toDto() : null;
   }
 
-  async findAll(): Promise<TermEntity[]> {
-    return await this.termRepository.findAll();
+  async findAll(): Promise<TermDto[]> {
+    const terms: TermEntity[] = await this.termRepository.findAll();
+    return terms.map((entity: TermEntity) => Term.from(entity).toDto());
   }
 
   async saveCustomerTerms(
     customerTerms: CustomerTermDto[],
     customer: ICustomer,
   ): Promise<CustomerTermDto[]> {
-    const entitiesBefore = await Promise.all(
-      customerTerms.map((dto) => this.toCustomerTermEntity(dto, customer)),
-    );
-    const entities = await this.customerTermRepository.saveAll(entitiesBefore);
-    return entities.map((entity: CustomerTermEntity) =>
-      CustomerTermDto.from(entity),
-    );
+    const termDomains = await Promise.all(customerTerms.map(async (dto) => Term.from(await this.termRepository.getOne(dto.termId))));
+    const customerTermsDomains = customerTerms.map((dto, i) => CustomerTerm.create(dto, customer, termDomains[i], this.dateHolder));
+    const entities = await this.customerTermRepository.saveAll(customerTermsDomains.map((domain) => domain.toEntity()));
+    return entities.map((entity: CustomerTermEntity) => CustomerTerm.from(entity).toDto());
   }
 
   async checkTerm(customer: ICustomer, termId: number): Promise<boolean> {
-    // todo: customerId?: number; 해결 필요
-    const customerTerm =
+    // TODO: customerId?: number; 해결 필요
+    const entity =
       await this.customerTermRepository.findByCustomerIdAndTermId(
         customer.customerId ? customer.customerId : 0,
         termId,
       );
-    return customerTerm
-      ? customerTerm.version === customerTerm.term.version
-      : false;
+    if (!entity) return false;
+    const customerTerm = CustomerTerm.from(entity);
+    return customerTerm.version === customerTerm.term.version;
   }
 
-  findPendingTerms(customer: ICustomer): Promise<TermDto[]> {
-    // todo: customerId?: number; 해결 필요
-    return this.termRepository.findPendingTerms(
+  async findPendingTerms(customer: ICustomer): Promise<TermDto[]> {
+    // TODO: customerId?: number; 해결 필요
+    const terms: TermEntity[] = await this.termRepository.findPendingTerms(
       customer.customerId ? customer.customerId : 0,
     );
+    return terms.map((entity: TermEntity) => TermDto.from(entity, TermDto));
   }
 
-  findPendingMandatoryTerms(customer: ICustomer): Promise<TermDto[]> {
-    // todo: customerId?: number; 해결 필요
-    return this.termRepository.findPendingMandatoryTerms(
+  async findPendingMandatoryTerms(customer: ICustomer): Promise<TermDto[]> {
+    // TODO: customerId?: number; 해결 필요
+    const terms = await this.termRepository.findPendingMandatoryTerms(
       customer.customerId ? customer.customerId : 0,
     );
+    return terms.map((entity: TermEntity) => Term.from(entity).toDto());
   }
 
   async deleteCustomerTerms(customer: ICustomer): Promise<void> {
-    // todo: customerId?: number; 해결 필요
+    // TODO: customerId?: number; 해결 필요
     const terms = await this.customerTermRepository.deleteCustomerTerms(
       customer.customerId ? customer.customerId : 0,
     );
   }
 
-  async toCustomerTermEntity(
-    // Customer, Term 엔티티 추출 후 Entity의 create 메소드 호출
-    dto: CustomerTermDto,
-    customer: ICustomer,
-  ): Promise<CustomerTermEntity> {
-    const [customerDomain, term] = await Promise.all([
-      this.customerRepository.getOne(customer),
-      this.termRepository.getOne(dto.termId),
-    ]);
-    const customerEntity = CustomerEntity.from(customerDomain);
+  // async toCustomerTermEntity(
+  //   // Customer, Term 엔티티 추출 후 Entity의 create 메소드 호출
+  //   dto: CustomerTermDto,
+  //   customer: ICustomer,
+  // ): Promise<CustomerTermEntity> {
+  //   const [customerDomain, term] = await Promise.all([
+  //     this.customerRepository.getOne(customer),
+  //     this.termRepository.getOne(dto.termId),
+  //   ]);
+  //   const customerEntity = CustomerEntity.from(customerDomain);
 
-    // 중복 생성 방지 (CONSTRAINT unique_customer_term UNIQUE (customer_id, term_id))
-    const existingTerm =
-      await this.customerTermRepository.findByCustomerAndTerm(
-        customerEntity,
-        term,
-      );
+  //   // 중복 생성 방지 (CONSTRAINT unique_customer_term UNIQUE (customer_id, term_id))
+  //   const existingTerm =
+  //     await this.customerTermRepository.findByCustomerAndTerm(
+  //       customerEntity,
+  //       term,
+  //     );
 
-    return existingTerm
-      ? existingTerm
-      : CustomerTermEntity.create(dto, customerEntity, term);
-  }
+  //   return existingTerm
+  //     ? existingTerm
+  //     : CustomerTermEntity.create(dto, customerEntity, term);
+  // }
 }

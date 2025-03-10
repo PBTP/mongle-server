@@ -3,7 +3,7 @@ import { Builder } from 'builder-pattern';
 import { DateHolder } from '../common/holder/date.holder';
 import { UUIDHolder } from '../common/holder/uuid.holders';
 import { TermCategory, TermEntity } from 'src/schemas/terms.entity';
-import { CreateTermDto, TermDto, UpdateTermDto } from './presentation/terms.dto';
+import { CreateTermDto, BaseTermDto, UpdateTermDto } from './presentation/terms.dto';
 
 export class Term {
     termId: number;
@@ -46,19 +46,8 @@ export class Term {
             .build();
     }
 
-    // Domain → DTO
-    toDto(): TermDto {
-        return Builder(TermDto)
-            .version(this.version)
-            .title(this.title)
-            .description(this.description)
-            .isMandatory(this.isMandatory)
-            .termCategory(this.termCategory)
-            .build();
-    }
-
     // CreateTermDTO → Domain
-    static create(dto: CreateTermDto, uuidHolder: UUIDHolder, dateHolder: DateHolder): Term {
+    static createFromCreateDto(dto: CreateTermDto, dateHolder: DateHolder): Term {
         if (!dto.version || !dto.title || !dto.description || dto.isMandatory === undefined || !dto.termCategory) {
             throw new BadRequestException('필수 입력값이 누락되었습니다.');
         }
@@ -74,8 +63,8 @@ export class Term {
             .build();
     }
 
-    // UpdateTermDto → Domain
-    static createFromUpdateDto(dto: UpdateTermDto, dateHolder: DateHolder): Term {
+    // TermDto → Domain
+    static create(dto: UpdateTermDto, dateHolder: DateHolder): Term {
         if (!dto.termId || !dto.version || !dto.title || !dto.description || dto.isMandatory === undefined || !dto.termCategory) {
             throw new BadRequestException('필수 입력값이 누락되었습니다.');
         }
@@ -91,8 +80,8 @@ export class Term {
             .build();
     }
 
-    // Domain → UpdateTermDto
-    toUpdateDto(): UpdateTermDto {
+    // Domain → TermDto
+    toDto(): UpdateTermDto {
         return Builder(UpdateTermDto)
             .termId(this.termId)
             .version(this.version)

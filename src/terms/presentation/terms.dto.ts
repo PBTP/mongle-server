@@ -16,7 +16,7 @@ type TermType = {
   set termCategory(value: TermCategory);
 };
 
-export class TermDto implements TermType {
+export class BaseTermDto implements TermType {
   @ApiProperty({
     description: '약관 버전',
     required: true,
@@ -93,7 +93,7 @@ export class TermDto implements TermType {
     this._termCategory = value;
   }
 
-  static from<T extends TermDto>(term: TermEntity, dtoType: new () => T): T {
+  static from<T extends BaseTermDto>(term: TermEntity, dtoType: new () => T): T {
     const dto = Object.assign(new dtoType(), {
       version: term.version,
       title: term.title,
@@ -101,16 +101,16 @@ export class TermDto implements TermType {
       isMandatory: term.isMandatory,
       termCategory: term.termCategory
     });
-    if (dto instanceof UpdateTermDto) {
-      (dto as UpdateTermDto).termId = term.termId;
+    if (dto instanceof TermDto) {
+      (dto as TermDto).termId = term.termId;
     }
     return dto;
   }
 }
 
-export class CreateTermDto extends TermDto { }
+export class CreateTermDto extends BaseTermDto { }
 
-export class UpdateTermDto extends TermDto {
+export class TermDto extends BaseTermDto {
   @ApiProperty({
     description: '약관 ID',
     required: true,

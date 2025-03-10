@@ -45,7 +45,7 @@ export class CustomerTerm {
     toDto(): CustomerTermDto {
         return new CustomerTermDto(
             this.term.termId,
-            this.customer.customerId ? this.customer.customerId : 0, // todo: customerId undefined 처리
+            this.customer.customerId ? this.customer.customerId : 0, // TODO: customerId undefined 처리
             this.version,
             this.agreedAt,
 

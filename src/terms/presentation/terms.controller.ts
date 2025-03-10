@@ -18,7 +18,7 @@ import { TermDto } from './terms.dto';
 @ApiTags('약관 관련 API')
 @Controller('/v1/terms')
 export class TermController {
-  constructor(private readonly termService: TermService) {}
+  constructor(private readonly termService: TermService) { }
 
   @ApiOperation({
     summary: '전체 약관 목록 조회',
@@ -31,6 +31,20 @@ export class TermController {
   }
 
   @ApiOperation({
+    summary: '고객 약관 동의 내역 등록',
+    description: '특정 고객의 약관 동의 내역을 등록합니다.',
+  })
+  @ApiOkResponse({ type: [CustomerTermDto] })
+  @Post('/term') // 신규 등록
+  @Patch('/term') // 기존 수정 //TODO: POST & PATCH 처리를 이런 식으로 해도 되나
+  async saveCustomerTerms(
+    @Body() terms: CustomerTermDto[],
+    @CurrentCustomer() customer: CustomerEntity,
+  ): Promise<CustomerTermDto[]> {
+    return await this.termService.saveCustomerTerms(terms, customer);
+  }
+
+  @ApiOperation({
     summary: '특정 약관 조회',
     description: '약관 ID를 기반으로 특정 약관 정보를 조회합니다.',
   })
@@ -39,7 +53,7 @@ export class TermController {
   async findTermsById(
     @Param('termId') termId: number,
   ): Promise<TermDto | null> {
-    // todo: null 가능여부 확인
+    // TODO: null 가능여부 확인
     return await this.termService.findById(termId);
   }
 
@@ -48,7 +62,7 @@ export class TermController {
     description: '특정 고객이 미동의한 약관 목록을 불러옵니다.',
   })
   @ApiOkResponse({ type: [TermDto] })
-  @Get('/term/my')
+  @Get('/term/pending')
   async findPendingTerms(
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<TermDto[]> {
@@ -61,7 +75,7 @@ export class TermController {
       '고객이 특정 약관을 새로 동의할 필요가 있는지 확인합니다. (최신 버전 약관 동의 여부 확인)',
   })
   @ApiOkResponse({ type: Boolean })
-  @Get('/term/my/:termId/agreed')
+  @Get('/term/:termId/agreed')
   async checkTerm(
     @CurrentCustomer() customer: CustomerEntity,
     @Param('termId') termId: number,
@@ -70,25 +84,11 @@ export class TermController {
   }
 
   @ApiOperation({
-    summary: '고객 약관 동의 내역 등록',
-    description: '특정 고객의 약관 동의 내역을 등록합니다.',
-  })
-  @ApiOkResponse({ type: [CustomerTermDto] })
-  @Post('/term') // 신규 등록
-  @Patch('/term') // 기존 수정 //todo: POST & PATCH 처리를 이런 식으로 해도 되나
-  async saveCustomerTerms(
-    @Body() terms: CustomerTermDto[],
-    @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<CustomerTermDto[]> {
-    return await this.termService.saveCustomerTerms(terms, customer);
-  }
-
-  @ApiOperation({
     summary: '동의가 필요한 필수 약관 조회',
     description: '특정 고객이 미동의한 **필수** 약관 목록을 불러옵니다.',
   })
   @ApiOkResponse({ type: [CustomerTermDto] })
-  @Get('/term/my/mandatory')
+  @Get('/term/pending/mandatory')
   async findPendingMandatoryTerms(
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<TermDto[]> {
@@ -97,10 +97,10 @@ export class TermController {
 
   @ApiOperation({
     summary: '고객 약관 정보 삭제',
-    description: '특정 고객의 약관 데이터를 삭제합니다.',
+    description: '특정 고객 탈퇴 시 해당 고객의 약관 데이터를 삭제합니다.',
   })
   @ApiOkResponse({ description: '고객 약관 정보 삭제 성공' })
-  @Delete('/term/my')
+  @Delete('/term')
   async deleteCustomerTerms(
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<ResponseEntity<void>> {
