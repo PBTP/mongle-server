@@ -4,21 +4,20 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   Unique,
 } from 'typeorm';
-import { CustomerTermDto } from '../terms/presentation/customer-terms.dto';
 import { CustomerEntity } from './customer.entity';
 import { TermEntity } from './terms.entity';
+import { CustomerTerm } from 'src/terms/customer-terms.domain';
 
 @Entity({ name: 'customer_terms' })
-@Unique(['customer', 'term'])
 export class CustomerTermEntity {
-  @Column()
-  public version: number;
+  @PrimaryColumn({ name: 'customer_id', type: 'int' })
+  public customerId: number;
 
-  @CreateDateColumn()
-  public agreedAt: Date;
+  @PrimaryColumn({ name: 'term_id', type: 'int' })
+  public termId: number;
 
   @ManyToOne(() => CustomerEntity, (customer) => customer.customerTerms)
   @JoinColumn({ name: 'customer_id' })
@@ -28,16 +27,14 @@ export class CustomerTermEntity {
   @JoinColumn({ name: 'term_id' })
   public term: TermEntity;
 
-  static create(
-    dto: CustomerTermDto,
-    customer: CustomerEntity,
-    term: TermEntity,
-  ): CustomerTermEntity {
-    const entity = new CustomerTermEntity();
-    entity.customer = customer;
-    entity.term = term;
-    entity.version = dto.version;
-    entity.agreedAt = dto.agreedAt;
-    return entity;
+  @Column()
+  public version: number;
+
+  @CreateDateColumn()
+  public agreedAt: Date;
+
+  toModel(): CustomerTerm {
+    return CustomerTerm.from(this);
   }
 }
+

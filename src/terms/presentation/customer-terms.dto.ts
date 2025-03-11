@@ -3,6 +3,11 @@ import { Builder } from 'builder-pattern';
 import { IsDate, IsNumber } from 'class-validator';
 import { Expose } from 'class-transformer';
 import { CustomerTermEntity } from '../../schemas/customer-terms.entity';
+import { CustomerTerm } from '../customer-terms.domain';
+import { Customer } from 'src/customer/customer.domain';
+import { Term } from '../terms.domain';
+import { DateHolder } from 'src/common/holder/date.holder';
+import { BadRequestException } from '@nestjs/common';
 
 type CustomerTermType = {
   get termId(): number;
@@ -15,34 +20,24 @@ type CustomerTermType = {
   set agreedAt(value: Date);
 };
 
-export class CustomerTermDto implements CustomerTermType {
+export class BaseCustomerTermDto implements CustomerTermType {
   @ApiProperty({ description: '약관 ID', required: true, readOnly: true })
   @IsNumber()
-  @Expose()
   private _termId: number;
 
   @ApiProperty({ description: '고객 ID', required: true, readOnly: true })
   @IsNumber()
-  @Expose()
   private _customerId: number;
 
   @ApiProperty({ description: '고객 동의 약관 버전', required: true })
   @IsNumber()
-  @Expose()
   private _version: number;
 
   @ApiProperty({ description: '동의 일시', required: true })
   @IsDate()
-  @Expose()
   private _agreedAt: Date;
 
-  constructor(termId: number, customerId: number, version: number, agreedAt: Date) {
-    this._termId = termId;
-    this._customerId = customerId;
-    this._version = version;
-    this._agreedAt = agreedAt;
-  }
-
+  @Expose()
   get termId(): number {
     return this._termId;
   }
@@ -51,6 +46,7 @@ export class CustomerTermDto implements CustomerTermType {
     this._termId = value;
   }
 
+  @Expose()
   get customerId(): number {
     return this._customerId;
   }
@@ -59,6 +55,7 @@ export class CustomerTermDto implements CustomerTermType {
     this._customerId = value;
   }
 
+  @Expose()
   get version(): number {
     return this._version;
   }
@@ -67,6 +64,7 @@ export class CustomerTermDto implements CustomerTermType {
     this._version = value;
   }
 
+  @Expose()
   get agreedAt(): Date {
     return this._agreedAt;
   }
@@ -76,12 +74,25 @@ export class CustomerTermDto implements CustomerTermType {
   }
 
   // Entity → DTO
-  static from(customerTerm: CustomerTermEntity): CustomerTermDto {
-    return new CustomerTermDto(
-      customerTerm.term.termId,
-      customerTerm.customer.customerId,
-      customerTerm.version,
-      customerTerm.agreedAt
-    );
+  static from<T extends BaseCustomerTermDto>(customerTerm: CustomerTermEntity, dtoType: new () => T): T {
+    const dto = Object.assign(new dtoType(), {
+      term: customerTerm.term,
+      customer: customerTerm.customer,
+      version: customerTerm.version,
+      agreedAt: customerTerm.agreedAt
+    })
+    return dto;
+  }
+
+  // DTO → Domain
+  toModel(dateHolder: DateHolder, customer: Customer, term: Term): CustomerTerm {
+    return Builder(CustomerTerm)
+      .version(this.version)
+      .agreedAt(this.agreedAt || dateHolder.now()) // 날짜 설정
+      .customer(customer)
+      .term(term)
+      .build();
   }
 }
+
+export class CustomerTermDto extends BaseCustomerTermDto { }

@@ -2,9 +2,10 @@ import { Customer } from "src/customer/customer.domain";
 import { Term } from "./terms.domain";
 import { CustomerTermEntity } from "src/schemas/customer-terms.entity";
 import { Builder } from "builder-pattern";
-import { CustomerTermDto } from "./presentation/customer-terms.dto";
-import { DateHolder } from "src/common/holder/date.holder";
+import { DateHolder, IDateHolder } from "src/common/holder/date.holder";
 import { CustomerEntity } from "src/schemas/customer.entity";
+import { BadRequestException } from "@nestjs/common";
+import { CustomerTermDto } from "./presentation/customer-terms.dto";
 
 export class CustomerTerm {
     version: number;
@@ -16,6 +17,7 @@ export class CustomerTerm {
     static from(entity: CustomerTermEntity): CustomerTerm {
         return Builder(CustomerTerm)
             .version(entity.version)
+            .agreedAt(entity.agreedAt)
             .customer(entity.customer)
             .term(Term.from(entity.term))
             .build();
@@ -23,33 +25,24 @@ export class CustomerTerm {
 
     // Domain → Entity
     toEntity(): CustomerTermEntity {
-        return Builder(CustomerTermEntity)
+        const entity = Builder(CustomerTermEntity)
+            .customerId(this.customer.customerId ? this.customer.customerId : 0) // TODO: customerId undefined 해결
+            .termId(this.term.termId)
             .version(this.version)
             .agreedAt(this.agreedAt)
             .customer(CustomerEntity.from(this.customer))
-            .term(this.term.to())
+            .term(this.term.toEntity())
             .build();
-    }
-
-    // DTO → Domain
-    static create(dto: CustomerTermDto, customer: Customer, term: Term, dateHolder: DateHolder): CustomerTerm {
-        return Builder(CustomerTerm)
-            .version(dto.version)
-            .agreedAt(dto.agreedAt || dateHolder.now())
-            .customer(customer)
-            .term(term)
-            .build();
+        return entity;
     }
 
     // Domain → DTO
     toDto(): CustomerTermDto {
-        return new CustomerTermDto(
-            this.term.termId,
-            this.customer.customerId ? this.customer.customerId : 0, // TODO: customerId undefined 처리
-            this.version,
-            this.agreedAt,
-
-        );
+        return Builder(CustomerTermDto)
+            .version(this.version)
+            .agreedAt(this.agreedAt)
+            .customerId(this.customer.customerId ? this.customer.customerId : 0) // TODO: customerId 해결
+            .termId(this.term.termId)
+            .build();
     }
-
 }
