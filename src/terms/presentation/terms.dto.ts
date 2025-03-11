@@ -97,7 +97,7 @@ export class BaseTermDto implements TermType {
   }
 
   // Entity → DTO
-  static from<T extends BaseTermDto>(term: TermEntity, dtoType: new () => T): T {
+  static fromEntity<T extends BaseTermDto>(term: TermEntity, dtoType: new () => T): T {
     const dto = Object.assign(new dtoType(), {
       version: term.version,
       title: term.title,
@@ -121,6 +121,17 @@ export class BaseTermDto implements TermType {
     if (this instanceof TermDto) term.termId = (this as TermDto).termId;
     return term;
   }
+
+  // Domain → DTO
+  static from(term: Term): BaseTermDto {
+    return Builder(BaseTermDto)
+      .version(term.version)
+      .title(term.title)
+      .description(term.description)
+      .isMandatory(term.isMandatory)
+      .termCategory(term.termCategory)
+      .build();
+  }
 }
 
 export class CreateTermDto extends BaseTermDto { }
@@ -141,6 +152,17 @@ export class TermDto extends BaseTermDto {
 
   set termId(value: number) {
     this._termId = value;
+  }
+
+  static override from(term: Term): TermDto {
+    return Builder(TermDto)
+      .termId(term.termId)
+      .version(term.version)
+      .title(term.title)
+      .description(term.description)
+      .isMandatory(term.isMandatory)
+      .termCategory(term.termCategory)
+      .build();
   }
 }
 

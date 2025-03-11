@@ -73,7 +73,7 @@ export class BaseCustomerTermDto implements CustomerTermType {
   }
 
   // Entity → DTO
-  static from<T extends BaseCustomerTermDto>(customerTerm: CustomerTermEntity, dtoType: new () => T): T {
+  static fromEntity<T extends BaseCustomerTermDto>(customerTerm: CustomerTermEntity, dtoType: new () => T): T {
     const dto = Object.assign(new dtoType(), {
       term: customerTerm.term,
       customer: customerTerm.customer,
@@ -90,6 +90,16 @@ export class BaseCustomerTermDto implements CustomerTermType {
       .agreedAt(this.agreedAt || dateHolder.now()) // 날짜 설정
       .customer(customer)
       .term(term)
+      .build();
+  }
+
+  // Domain → DTO
+  static from(domain: CustomerTerm): CustomerTermDto {
+    return Builder(CustomerTermDto)
+      .version(domain.version)
+      .agreedAt(domain.agreedAt)
+      .customerId(domain.customer.customerId ? domain.customer.customerId : 0)
+      .termId(domain.term.termId)
       .build();
   }
 }

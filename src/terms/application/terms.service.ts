@@ -1,25 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ICustomer } from '../../customer/customer.domain';
-import {
-  CUSTOMER_REPOSITORY,
-  ICustomerRepository,
-} from '../../customer/port/customer.repository';
-import { CustomerTermEntity } from '../../schemas/customer-terms.entity';
-import { CustomerEntity } from '../../schemas/customer.entity';
 import { TermEntity } from '../../schemas/terms.entity';
 import { CUSTOMER_TERM_REPOSITORY, ICustomerTermRepository } from '../port/customer-terms.repository';
 import { ITermRepository, TERM_REPOSITORY } from '../port/terms.repository';
 import { CustomerTermDto } from '../presentation/customer-terms.dto';
-import { BaseTermDto, TermDto } from '../presentation/terms.dto';
 import { Term } from '../terms.domain';
 import { CustomerTerm } from '../customer-terms.domain';
-import { DATE_HOLDER, DateHolder, IDateHolder } from 'src/common/holder/date.holder';
+import { DATE_HOLDER, IDateHolder } from 'src/common/holder/date.holder';
 
 @Injectable()
 export class TermService {
   constructor(
-    @Inject(CUSTOMER_REPOSITORY)
-    private customerRepository: ICustomerRepository,
     @Inject(TERM_REPOSITORY)
     private termRepository: ITermRepository,
     @Inject(CUSTOMER_TERM_REPOSITORY)
@@ -30,12 +21,12 @@ export class TermService {
 
   async findById(termId: number): Promise<Term | null> {
     const termEntity = await this.termRepository.findOne(termId);
-    return termEntity ? termEntity.toModel() : null;
+    return termEntity ? Term.from(termEntity) : null;
   }
 
   async findAll(): Promise<Term[]> {
     const terms: TermEntity[] = await this.termRepository.findAll();
-    return terms.map(entity => entity.toModel());
+    return terms.map(Term.from);
   }
 
   async saveCustomerTerms(
@@ -45,7 +36,7 @@ export class TermService {
     const termDomains = await Promise.all(customerTerms.map(async (dto) => Term.from(await this.termRepository.getOne(dto.termId))));
     const customerTermsDomains = customerTerms.map((dto, i) => dto.toModel(customer, termDomains[i], this.dateHolder));
     const entities = await this.customerTermRepository.saveAll(customerTermsDomains.map((domain) => domain.toEntity()));
-    return entities.map(entity => entity.toModel());
+    return entities.map(CustomerTerm.from);
   }
 
   async checkTerm(customer: ICustomer, termId: number): Promise<boolean> {
@@ -65,7 +56,7 @@ export class TermService {
     const terms: TermEntity[] = await this.termRepository.findPendingTerms(
       customer.customerId ? customer.customerId : 0,
     );
-    return terms.map(entity => entity.toModel());
+    return terms.map(Term.from);
   }
 
   async findPendingMandatoryTerms(customer: ICustomer): Promise<Term[]> {
@@ -73,7 +64,7 @@ export class TermService {
     const terms = await this.termRepository.findPendingMandatoryTerms(
       customer.customerId ? customer.customerId : 0,
     );
-    return terms.map(entity => entity.toModel());
+    return terms.map(Term.from);
   }
 
   async deleteCustomerTerms(customer: ICustomer): Promise<void> {

@@ -4,8 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
-  Post,
   Put,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -15,7 +13,6 @@ import { CustomerEntity } from '../../schemas/customer.entity';
 import { TermService } from '../application/terms.service';
 import { CustomerTermDto } from './customer-terms.dto';
 import { TermDto } from './terms.dto';
-import { Term } from '../terms.domain';
 
 @ApiTags('약관 관련 API')
 @Controller('/v1/terms')
@@ -30,7 +27,7 @@ export class TermController {
   @Get('/term')
   async findAllTerms(): Promise<TermDto[]> {
     const terms = await this.termService.findAll();
-    return terms.map(domain => domain.toDto());
+    return terms.map(TermDto.from);
   }
 
   @ApiOperation({
@@ -44,7 +41,7 @@ export class TermController {
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<CustomerTermDto[]> {
     const customerTerms = await this.termService.saveCustomerTerms(terms, customer);
-    return customerTerms.map(domain => domain.toDto());
+    return customerTerms.map(CustomerTermDto.from);
   }
 
   @ApiOperation({
@@ -58,7 +55,7 @@ export class TermController {
   ): Promise<TermDto | null> {
     // TODO: null 가능여부 확인
     const term = await this.termService.findById(termId);
-    return term ? term.toDto() : null;
+    return term ? TermDto.from(term) : null;
   }
 
   @ApiOperation({
@@ -71,7 +68,7 @@ export class TermController {
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<TermDto[]> {
     const terms = await this.termService.findPendingTerms(customer);
-    return terms.map(domain => domain.toDto());
+    return terms.map(TermDto.from);
   }
 
   @ApiOperation({
@@ -98,7 +95,7 @@ export class TermController {
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<TermDto[]> {
     const customerTerms = await this.termService.findPendingMandatoryTerms(customer);
-    return customerTerms.map(domain => domain.toDto());
+    return customerTerms.map(TermDto.from);
   }
 
   @ApiOperation({
