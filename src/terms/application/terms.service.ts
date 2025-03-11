@@ -7,7 +7,7 @@ import {
 import { CustomerTermEntity } from '../../schemas/customer-terms.entity';
 import { CustomerEntity } from '../../schemas/customer.entity';
 import { TermEntity } from '../../schemas/terms.entity';
-import { ICustomerTermRepository } from '../port/customer-terms.repository';
+import { CUSTOMER_TERM_REPOSITORY, ICustomerTermRepository } from '../port/customer-terms.repository';
 import { ITermRepository, TERM_REPOSITORY } from '../port/terms.repository';
 import { CustomerTermDto } from '../presentation/customer-terms.dto';
 import { BaseTermDto, TermDto } from '../presentation/terms.dto';
@@ -22,7 +22,7 @@ export class TermService {
     private customerRepository: ICustomerRepository,
     @Inject(TERM_REPOSITORY)
     private termRepository: ITermRepository,
-    @Inject(TERM_REPOSITORY)
+    @Inject(CUSTOMER_TERM_REPOSITORY)
     private customerTermRepository: ICustomerTermRepository,
     @Inject(DATE_HOLDER)
     private readonly dateHolder: IDateHolder,
@@ -43,7 +43,7 @@ export class TermService {
     customer: ICustomer,
   ): Promise<CustomerTermDto[]> {
     const termDomains = await Promise.all(customerTerms.map(async (dto) => Term.from(await this.termRepository.getOne(dto.termId))));
-    const customerTermsDomains = customerTerms.map((dto, i) => CustomerTerm.create(dto, customer, termDomains[i], this.dateHolder));
+    const customerTermsDomains = customerTerms.map((dto, i) => dto.toModel(customer, termDomains[i], this.dateHolder));
     const entities = await this.customerTermRepository.saveAll(customerTermsDomains.map((domain) => domain.toEntity()));
     return entities.map((entity: CustomerTermEntity) => CustomerTerm.from(entity).toDto());
   }
@@ -82,27 +82,4 @@ export class TermService {
       customer.customerId ? customer.customerId : 0,
     );
   }
-
-  // async toCustomerTermEntity(
-  //   // Customer, Term 엔티티 추출 후 Entity의 create 메소드 호출
-  //   dto: CustomerTermDto,
-  //   customer: ICustomer,
-  // ): Promise<CustomerTermEntity> {
-  //   const [customerDomain, term] = await Promise.all([
-  //     this.customerRepository.getOne(customer),
-  //     this.termRepository.getOne(dto.termId),
-  //   ]);
-  //   const customerEntity = CustomerEntity.from(customerDomain);
-
-  //   // 중복 생성 방지 (CONSTRAINT unique_customer_term UNIQUE (customer_id, term_id))
-  //   const existingTerm =
-  //     await this.customerTermRepository.findByCustomerAndTerm(
-  //       customerEntity,
-  //       term,
-  //     );
-
-  //   return existingTerm
-  //     ? existingTerm
-  //     : CustomerTermEntity.create(dto, customerEntity, term);
-  // }
 }

@@ -7,7 +7,6 @@ import { CustomerTerm } from '../customer-terms.domain';
 import { Customer } from 'src/customer/customer.domain';
 import { Term } from '../terms.domain';
 import { DateHolder } from 'src/common/holder/date.holder';
-import { BadRequestException } from '@nestjs/common';
 
 type CustomerTermType = {
   get termId(): number;
@@ -85,7 +84,7 @@ export class BaseCustomerTermDto implements CustomerTermType {
   }
 
   // DTO → Domain
-  toModel(dateHolder: DateHolder, customer: Customer, term: Term): CustomerTerm {
+  toModel(customer: Customer, term: Term, dateHolder: DateHolder): CustomerTerm {
     return Builder(CustomerTerm)
       .version(this.version)
       .agreedAt(this.agreedAt || dateHolder.now()) // 날짜 설정

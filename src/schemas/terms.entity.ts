@@ -57,15 +57,4 @@ export class TermEntity {
   toModel(): Term {
     return Term.from(this);
   }
-
-  // static create(dto: CreateTermDto): TermEntity {
-  //   // TypeORM) Builder가 아닌 new Entity()를 사용하여 자동 생성 필드 termId, date 처리 보장
-  //   const entity = new TermEntity();
-  //   entity.title = dto.title;
-  //   entity.description = dto.description;
-  //   entity.version = dto.version;
-  //   entity.termCategory = dto.termCategory;
-  //   entity.isMandatory = dto.isMandatory;
-  //   return entity;
-  // }
 }

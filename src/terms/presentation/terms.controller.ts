@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentCustomer } from '../../auth/decorator/auth.decorator';
@@ -35,8 +36,7 @@ export class TermController {
     description: '특정 고객의 약관 동의 내역을 등록합니다.',
   })
   @ApiOkResponse({ type: [CustomerTermDto] })
-  @Post('/term') // 신규 등록
-  @Patch('/term') // 기존 수정 //TODO: POST & PATCH 처리를 이런 식으로 해도 되나
+  @Put('/term')
   async saveCustomerTerms(
     @Body() terms: CustomerTermDto[],
     @CurrentCustomer() customer: CustomerEntity,
