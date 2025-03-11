@@ -15,6 +15,7 @@ import { CustomerEntity } from '../../schemas/customer.entity';
 import { TermService } from '../application/terms.service';
 import { CustomerTermDto } from './customer-terms.dto';
 import { TermDto } from './terms.dto';
+import { Term } from '../terms.domain';
 
 @ApiTags('약관 관련 API')
 @Controller('/v1/terms')
@@ -28,7 +29,8 @@ export class TermController {
   @ApiOkResponse({ type: [TermDto] })
   @Get('/term')
   async findAllTerms(): Promise<TermDto[]> {
-    return await this.termService.findAll();
+    const terms = await this.termService.findAll();
+    return terms.map(domain => domain.toDto());
   }
 
   @ApiOperation({
@@ -41,7 +43,8 @@ export class TermController {
     @Body() terms: CustomerTermDto[],
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<CustomerTermDto[]> {
-    return await this.termService.saveCustomerTerms(terms, customer);
+    const customerTerms = await this.termService.saveCustomerTerms(terms, customer);
+    return customerTerms.map(domain => domain.toDto());
   }
 
   @ApiOperation({
@@ -54,7 +57,8 @@ export class TermController {
     @Param('termId') termId: number,
   ): Promise<TermDto | null> {
     // TODO: null 가능여부 확인
-    return await this.termService.findById(termId);
+    const term = await this.termService.findById(termId);
+    return term ? term.toDto() : null;
   }
 
   @ApiOperation({
@@ -66,7 +70,8 @@ export class TermController {
   async findPendingTerms(
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<TermDto[]> {
-    return await this.termService.findPendingTerms(customer);
+    const terms = await this.termService.findPendingTerms(customer);
+    return terms.map(domain => domain.toDto());
   }
 
   @ApiOperation({
@@ -92,7 +97,8 @@ export class TermController {
   async findPendingMandatoryTerms(
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<TermDto[]> {
-    return await this.termService.findPendingMandatoryTerms(customer);
+    const customerTerms = await this.termService.findPendingMandatoryTerms(customer);
+    return customerTerms.map(domain => domain.toDto());
   }
 
   @ApiOperation({
