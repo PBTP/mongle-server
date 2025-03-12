@@ -10,6 +10,7 @@ import {
 import { CustomerEntity } from './customer.entity';
 import { TermEntity } from './terms.entity';
 import { CustomerTerm } from 'src/terms/customer-terms.domain';
+import { Builder } from 'builder-pattern';
 
 @Entity({ name: 'customer_terms' })
 export class CustomerTermEntity {
@@ -35,6 +36,18 @@ export class CustomerTermEntity {
 
   toModel(): CustomerTerm {
     return CustomerTerm.from(this);
+  }
+
+  // Domain → Entity
+  static from(domain: CustomerTerm): CustomerTermEntity {
+    return Builder(CustomerTermEntity)
+      .customerId(domain.customer.customerId ? domain.customer.customerId : 0) // TODO: customerId 해결
+      .termId(domain.term.termId)
+      .customer(CustomerEntity.from(domain.customer))
+      .term(TermEntity.from(domain.term))
+      .version(domain.version)
+      .agreedAt(domain.agreedAt)
+      .build();
   }
 }
 

@@ -10,6 +10,8 @@ import {
 import { CreateTermDto, TermDto } from '../terms/presentation/terms.dto';
 import { CustomerTermEntity } from './customer-terms.entity';
 import { Term } from 'src/terms/terms.domain';
+import { Builder } from 'builder-pattern';
+import { title } from 'process';
 
 export enum TermCategory {
   SERVICE = 'SERVICE', // 서비스 이용
@@ -46,15 +48,27 @@ export class TermEntity {
   public createdAt: Date;
 
   @UpdateDateColumn()
-  public modifiedAt?: Date;
+  public modifiedAt: Date;
 
   @DeleteDateColumn()
-  public deletedAt?: Date;
+  public deletedAt: Date;
 
   @OneToMany(() => CustomerTermEntity, (customerTerm) => customerTerm.term)
   public customerTerms: CustomerTermEntity[];
 
   toModel(): Term {
     return Term.from(this);
+  }
+
+  // Domain → Entity
+  static from(domain: Term): TermEntity {
+    return Builder(TermEntity)
+      .termId(domain.termId)
+      .version(domain.version)
+      .title(domain.title)
+      .description(domain.description)
+      .isMandatory(domain.isMandatory)
+      .termCategory(domain.termCategory)
+      .build();
   }
 }

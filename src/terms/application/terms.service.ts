@@ -7,6 +7,7 @@ import { CustomerTermDto } from '../presentation/customer-terms.dto';
 import { Term } from '../terms.domain';
 import { CustomerTerm } from '../customer-terms.domain';
 import { DATE_HOLDER, IDateHolder } from 'src/common/holder/date.holder';
+import { CustomerTermEntity } from 'src/schemas/customer-terms.entity';
 
 @Injectable()
 export class TermService {
@@ -35,7 +36,7 @@ export class TermService {
   ): Promise<CustomerTerm[]> {
     const termDomains = await Promise.all(customerTerms.map(async (dto) => Term.from(await this.termRepository.getOne(dto.termId))));
     const customerTermsDomains = customerTerms.map((dto, i) => dto.toModel(customer, termDomains[i], this.dateHolder));
-    const entities = await this.customerTermRepository.saveAll(customerTermsDomains.map((domain) => domain.toEntity()));
+    const entities = await this.customerTermRepository.saveAll(customerTermsDomains.map((domain) => CustomerTermEntity.from(domain)));
     return entities.map(CustomerTerm.from);
   }
 

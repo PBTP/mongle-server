@@ -6,6 +6,7 @@ import { DateHolder, IDateHolder } from "src/common/holder/date.holder";
 import { CustomerEntity } from "src/schemas/customer.entity";
 import { BadRequestException } from "@nestjs/common";
 import { CustomerTermDto } from "./presentation/customer-terms.dto";
+import { TermEntity } from "src/schemas/terms.entity";
 
 export class CustomerTerm {
     version: number;
@@ -21,19 +22,6 @@ export class CustomerTerm {
             .customer(entity.customer)
             .term(Term.from(entity.term))
             .build();
-    }
-
-    // Domain → Entity
-    toEntity(): CustomerTermEntity {
-        const entity = Builder(CustomerTermEntity)
-            .customerId(this.customer.customerId ? this.customer.customerId : 0) // TODO: customerId undefined 해결
-            .termId(this.term.termId)
-            .version(this.version)
-            .agreedAt(this.agreedAt)
-            .customer(CustomerEntity.from(this.customer))
-            .term(this.term.toEntity())
-            .build();
-        return entity;
     }
 
     // Domain → DTO

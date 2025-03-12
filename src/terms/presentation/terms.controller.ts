@@ -25,9 +25,9 @@ export class TermController {
   })
   @ApiOkResponse({ type: [TermDto] })
   @Get('/term')
-  async findAllTerms(): Promise<TermDto[]> {
+  async findAllTerms(): Promise<ResponseEntity<TermDto[]>> {
     const terms = await this.termService.findAll();
-    return terms.map(TermDto.from);
+    return ResponseEntity.OK(terms.map(TermDto.from));
   }
 
   @ApiOperation({
@@ -39,9 +39,9 @@ export class TermController {
   async saveCustomerTerms(
     @Body() terms: CustomerTermDto[],
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<CustomerTermDto[]> {
+  ): Promise<ResponseEntity<CustomerTermDto[]>> {
     const customerTerms = await this.termService.saveCustomerTerms(terms, customer);
-    return customerTerms.map(CustomerTermDto.from);
+    return ResponseEntity.OK(customerTerms.map(CustomerTermDto.from));
   }
 
   @ApiOperation({
@@ -52,10 +52,10 @@ export class TermController {
   @Get('/term/:termId')
   async findTermsById(
     @Param('termId') termId: number,
-  ): Promise<TermDto | null> {
+  ): Promise<ResponseEntity<TermDto | null>> {
     // TODO: null 가능여부 확인
     const term = await this.termService.findById(termId);
-    return term ? TermDto.from(term) : null;
+    return ResponseEntity.OK(term ? TermDto.from(term) : null);
   }
 
   @ApiOperation({
@@ -66,9 +66,9 @@ export class TermController {
   @Get('/term/pending')
   async findPendingTerms(
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<TermDto[]> {
+  ): Promise<ResponseEntity<TermDto[]>> {
     const terms = await this.termService.findPendingTerms(customer);
-    return terms.map(TermDto.from);
+    return ResponseEntity.OK(terms.map(TermDto.from));
   }
 
   @ApiOperation({
@@ -81,8 +81,8 @@ export class TermController {
   async checkTerm(
     @CurrentCustomer() customer: CustomerEntity,
     @Param('termId') termId: number,
-  ): Promise<boolean> {
-    return await this.termService.checkTerm(customer, termId);
+  ): Promise<ResponseEntity<boolean>> {
+    return ResponseEntity.OK(await this.termService.checkTerm(customer, termId));
   }
 
   @ApiOperation({
@@ -93,9 +93,9 @@ export class TermController {
   @Get('/term/pending/mandatory')
   async findPendingMandatoryTerms(
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<TermDto[]> {
+  ): Promise<ResponseEntity<TermDto[]>> {
     const customerTerms = await this.termService.findPendingMandatoryTerms(customer);
-    return customerTerms.map(TermDto.from);
+    return ResponseEntity.OK(customerTerms.map(TermDto.from));
   }
 
   @ApiOperation({
