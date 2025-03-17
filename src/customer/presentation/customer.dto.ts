@@ -73,7 +73,7 @@ export class BaseCustomerDto extends AuthDto implements CustomerType {
   @Matches(/^(01[016789]{1})-[0-9]{3,4}-[0-9]{4}$/, {
     message: 'This is not Phone number ex) xxx-xxxx-xxxx',
   })
-  protected _customerPhoneNumber?: string;
+  protected _customerPhoneNumber?: string; // TODO: UserDto의 phoneNumber override로 변경하기
 
   @ApiProperty({
     description: '고객 위치',
