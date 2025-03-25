@@ -12,8 +12,6 @@ export interface ITermRepository {
   findOne(termId: number): Promise<TermEntity | null>;
   findAll(): Promise<TermEntity[]>;
   findPendingTerms(customerId: number): Promise<TermEntity[]>; // 동의가 필요한 약관 (1 & 2)
-  findPendingMandatoryTerms(customerId: number): Promise<TermEntity[]>; // 동의가 필요한 약관 (1 & 2) - 필수
-  findPendingOptionalTerms(customerId: number): Promise<TermEntity[]>; // 동의가 필요한 약관 (1 & 2) - 선택
   findUnAgreedTerms(customerId: number): Promise<TermEntity[]>; // (1) 고객이 미동의한 약관
   findOutdatedTerms(customerId: number): Promise<TermEntity[]>; // (2) 갱신된 고객 동의 약관
 }
@@ -61,16 +59,6 @@ export class TermRepository implements ITermRepository {
       .where('ct.term_id IS NULL') // 미동의 약관
       .orWhere('ct.version != t.version') // 갱신된 약관
       .getMany();
-  }
-
-  async findPendingMandatoryTerms(customerId: number): Promise<TermEntity[]> {
-    const pending = await this.findPendingTerms(customerId);
-    return pending.filter(term => term.isMandatory);
-  }
-
-  async findPendingOptionalTerms(customerId: number): Promise<TermEntity[]> {
-    const pending = await this.findPendingTerms(customerId);
-    return pending.filter(term => !term.isMandatory);
   }
 
   async findUnAgreedTerms(customerId: number): Promise<TermEntity[]> {

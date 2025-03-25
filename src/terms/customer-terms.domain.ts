@@ -33,4 +33,21 @@ export class CustomerTerm {
             .termId(this.term.termId)
             .build();
     }
+
+    static create(
+        customer: Customer,
+        term: Term,
+        dateHolder: IDateHolder,
+    ): CustomerTerm {
+        if (!customer.customerId) {
+            throw new BadRequestException('고객 ID가 누락되었습니다.');
+        }
+
+        return Builder(CustomerTerm)
+            .version(term.version)
+            .agreedAt(dateHolder.now())
+            .customer(customer)
+            .term(term)
+            .build();
+    }
 }

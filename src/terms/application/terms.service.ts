@@ -34,10 +34,28 @@ export class TermService {
     customerTerms: CustomerTermDto[],
     customer: ICustomer,
   ): Promise<CustomerTerm[]> {
-    const termDomains = await Promise.all(customerTerms.map(async (dto) => Term.from(await this.termRepository.getOne(dto.termId))));
-    const customerTermsDomains = customerTerms.map((dto, i) => dto.toModel(customer, termDomains[i], this.dateHolder));
-    const entities = await this.customerTermRepository.saveAll(customerTermsDomains.map((domain) => CustomerTermEntity.from(domain)));
+    const termDomains = await Promise.all(
+      customerTerms.map(async (dto) =>
+        Term.from(await this.termRepository.getOne(dto.termId)),
+      ),
+    );
+    const customerTermsDomains = customerTerms.map((dto, i) =>
+      dto.toModel(customer, termDomains[i], this.dateHolder),
+    );
+    const entities = await this.customerTermRepository.saveAll(
+      customerTermsDomains.map((domain) => CustomerTermEntity.from(domain)),
+    );
     return entities.map(CustomerTerm.from);
+  }
+
+  async saveCustomerTerm(
+    dto: CustomerTermDto,
+    customer: ICustomer,
+  ): Promise<CustomerTerm> {
+    const term = Term.from(await this.termRepository.getOne(dto.termId));
+    const domain = dto.toModel(customer, term, this.dateHolder);
+    const entity = await this.customerTermRepository.save(CustomerTermEntity.from(domain));
+    return CustomerTerm.from(entity);
   }
 
   async checkTerm(customer: ICustomer, termId: number): Promise<boolean> {
@@ -52,6 +70,14 @@ export class TermService {
     return customerTerm.version === customerTerm.term.version;
   }
 
+  async findAgreedTerms(customer: ICustomer): Promise<CustomerTerm[]> {
+    // TODO: customerId?: number; 해결 필요
+    const customerTerms: CustomerTermEntity[] = await this.customerTermRepository.findByCustomer(
+      customer.customerId ? customer.customerId : 0,
+    );
+    return customerTerms.map(CustomerTerm.from);
+  }
+
   async findPendingTerms(customer: ICustomer): Promise<Term[]> {
     // TODO: customerId?: number; 해결 필요
     const terms: TermEntity[] = await this.termRepository.findPendingTerms(
@@ -62,10 +88,22 @@ export class TermService {
 
   async findPendingMandatoryTerms(customer: ICustomer): Promise<Term[]> {
     // TODO: customerId?: number; 해결 필요
-    const terms = await this.termRepository.findPendingMandatoryTerms(
+    const allPendingTerms = await this.termRepository.findPendingTerms(
       customer.customerId ? customer.customerId : 0,
     );
-    return terms.map(Term.from);
+    return allPendingTerms
+      .filter((term) => term.isMandatory)
+      .map(Term.from);
+  }
+
+  async findPendingOptionalTerms(customer: ICustomer): Promise<Term[]> {
+    // TODO: customerId?: number; 해결 필요
+    const allPendingTerms = await this.termRepository.findPendingTerms(
+      customer.customerId ? customer.customerId : 0,
+    );
+    return allPendingTerms
+      .filter((term) => !term.isMandatory)
+      .map(Term.from);
   }
 
   async deleteCustomerTerms(customer: ICustomer): Promise<void> {

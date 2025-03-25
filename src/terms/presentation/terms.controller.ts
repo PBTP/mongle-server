@@ -4,7 +4,9 @@ import {
   Delete,
   Get,
   Param,
-  Put,
+  Patch,
+  Post,
+  Query,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentCustomer } from '../../auth/decorator/auth.decorator';
@@ -13,29 +15,64 @@ import { CustomerEntity } from '../../schemas/customer.entity';
 import { TermService } from '../application/terms.service';
 import { CustomerTermDto } from './customer-terms.dto';
 import { TermDto } from './terms.dto';
+import { CustomerTerm } from '../customer-terms.domain';
+import { Term } from '../terms.domain';
 
 @ApiTags('약관 관련 API')
-@Controller('/v1/terms')
+@Controller('/v1/')
 export class TermController {
   constructor(private readonly termService: TermService) { }
 
-  @ApiOperation({
-    summary: '전체 약관 목록 조회',
-    description: '전체 약관 목록을 불러옵니다.',
-  })
+  @ApiOperation({ summary: '전체 약관 목록 조회' })
   @ApiOkResponse({ type: [TermDto] })
-  @Get('/term')
+  @Get('/terms')
   async findAllTerms(): Promise<ResponseEntity<TermDto[]>> {
     const terms = await this.termService.findAll();
     return ResponseEntity.OK(terms.map(TermDto.from));
   }
 
-  @ApiOperation({
-    summary: '고객 약관 동의 내역 등록',
-    description: '특정 고객의 약관 동의 내역을 등록합니다.',
-  })
+  @ApiOperation({ summary: '특정 약관 조회' })
+  @ApiOkResponse({ type: TermDto })
+  @Get('/terms/:termId')
+  async findTermsById(
+    @Param('termId') termId: number,
+  ): Promise<ResponseEntity<TermDto | null>> {
+    const term = await this.termService.findById(termId);
+    return ResponseEntity.OK(term ? TermDto.from(term) : null);
+  }
+
+  @ApiOperation({ summary: '특정 고객의 동의 약관 조회' })
+  @ApiOkResponse({ type: [TermDto] })
+  @Get('/customer/terms/agreed')
+  async findCustomerAgreedTerms(
+    @CurrentCustomer() customer: CustomerEntity,
+  ): Promise<ResponseEntity<CustomerTermDto[]>> {
+    let terms: CustomerTerm[] = await this.termService.findAgreedTerms(customer);
+    return ResponseEntity.OK(terms.map(CustomerTermDto.from));
+  }
+
+  @ApiOperation({ summary: '특정 고객의 동의가 필요한 약관 조회' })
+  @ApiOkResponse({ type: [TermDto] })
+  @Get('/customer/terms/pending')
+  async findCustomerTerms(
+    @CurrentCustomer() customer: CustomerEntity,
+    @Query('status') status?: 'optional' | 'mandatory',
+  ): Promise<ResponseEntity<TermDto[]>> {
+    let terms: Term[] = [];
+
+    if (status === 'mandatory') {
+      terms = await this.termService.findPendingMandatoryTerms(customer);
+    } else if (status === 'optional') {
+      terms = await this.termService.findPendingOptionalTerms(customer);
+    } else {
+      terms = await this.termService.findPendingTerms(customer);
+    }
+    return ResponseEntity.OK(terms.map(TermDto.from));
+  }
+
+  @ApiOperation({ summary: '특정 고객의 약관 동의 저장' })
   @ApiOkResponse({ type: [CustomerTermDto] })
-  @Put('/term')
+  @Post('/customer/terms')
   async saveCustomerTerms(
     @Body() terms: CustomerTermDto[],
     @CurrentCustomer() customer: CustomerEntity,
@@ -44,58 +81,26 @@ export class TermController {
     return ResponseEntity.OK(customerTerms.map(CustomerTermDto.from));
   }
 
-  @ApiOperation({
-    summary: '특정 약관 조회',
-    description: '약관 ID를 기반으로 특정 약관 정보를 조회합니다.',
-  })
-  @ApiOkResponse({ type: TermDto })
-  @Get('/term/:termId')
-  async findTermsById(
-    @Param('termId') termId: number,
-  ): Promise<ResponseEntity<TermDto | null>> {
-    // TODO: null 가능여부 확인
-    const term = await this.termService.findById(termId);
-    return ResponseEntity.OK(term ? TermDto.from(term) : null);
+  @ApiOperation({ summary: '특정 고객의 특정 약관 동의 저장' })
+  @ApiOkResponse({ type: CustomerTermDto })
+  @Post('/customer/terms/:termId')
+  async saveSpecificCustomerTerm(
+    @Body() dto: CustomerTermDto,
+    @CurrentCustomer() customer: CustomerEntity,
+  ): Promise<ResponseEntity<CustomerTermDto>> {
+    const result = await this.termService.saveCustomerTerm(dto, customer);
+    return ResponseEntity.OK(CustomerTermDto.from(result));
   }
 
-  @ApiOperation({
-    summary: '동의가 필요한 약관 조회',
-    description: '특정 고객이 미동의한 약관 목록을 불러옵니다.',
-  })
-  @ApiOkResponse({ type: [TermDto] })
-  @Get('/term/pending')
-  async findPendingTerms(
+  @ApiOperation({ summary: '특정 고객의 특정 약관 동의 수정' })
+  @ApiOkResponse({ type: CustomerTermDto })
+  @Patch('/customer/terms')
+  async updateCustomerTerm(
+    @Body() dto: CustomerTermDto,
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<ResponseEntity<TermDto[]>> {
-    const terms = await this.termService.findPendingTerms(customer);
-    return ResponseEntity.OK(terms.map(TermDto.from));
-  }
-
-  @ApiOperation({
-    summary: '특정 약관 동의 여부 조회',
-    description:
-      '고객이 특정 약관을 새로 동의할 필요가 있는지 확인합니다. (최신 버전 약관 동의 여부 확인)',
-  })
-  @ApiOkResponse({ type: Boolean })
-  @Get('/term/:termId/agreed')
-  async checkTerm(
-    @CurrentCustomer() customer: CustomerEntity,
-    @Param('termId') termId: number,
-  ): Promise<ResponseEntity<boolean>> {
-    return ResponseEntity.OK(await this.termService.checkTerm(customer, termId));
-  }
-
-  @ApiOperation({
-    summary: '동의가 필요한 필수 약관 조회',
-    description: '특정 고객이 미동의한 **필수** 약관 목록을 불러옵니다.',
-  })
-  @ApiOkResponse({ type: [CustomerTermDto] })
-  @Get('/term/pending/mandatory')
-  async findPendingMandatoryTerms(
-    @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<ResponseEntity<TermDto[]>> {
-    const customerTerms = await this.termService.findPendingMandatoryTerms(customer);
-    return ResponseEntity.OK(customerTerms.map(TermDto.from));
+  ): Promise<ResponseEntity<CustomerTermDto>> {
+    const result = await this.termService.saveCustomerTerm(dto, customer);
+    return ResponseEntity.OK(CustomerTermDto.from(result));
   }
 
   @ApiOperation({
