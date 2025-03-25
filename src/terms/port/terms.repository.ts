@@ -17,6 +17,7 @@ export interface ITermRepository {
   findUnAgreedTerms(customerId: number): Promise<TermEntity[]>; // (1) 고객이 미동의한 약관
   findOutdatedTerms(customerId: number): Promise<TermEntity[]>; // (2) 갱신된 고객 동의 약관
 }
+
 @Injectable()
 export class TermRepository implements ITermRepository {
   constructor(
@@ -44,10 +45,7 @@ export class TermRepository implements ITermRepository {
 
   async findAll(): Promise<TermEntity[]> {
     return this.termDB.find({
-      order: {
-        isMandatory: 'DESC',
-        termId: 'ASC',
-      },
+      order: { isMandatory: 'DESC' },
     });
   }
 
@@ -66,31 +64,13 @@ export class TermRepository implements ITermRepository {
   }
 
   async findPendingMandatoryTerms(customerId: number): Promise<TermEntity[]> {
-    return this.termDB
-      .createQueryBuilder('t')
-      .leftJoin(
-        'customer_terms',
-        'ct',
-        't.termId = ct.term_id AND ct.customer_id = :customerId AND t.isMandatory = true',
-        { customerId },
-      )
-      .where('ct.term_id IS NULL') // 미동의 약관
-      .orWhere('ct.version != t.version') // 갱신된 약관
-      .getMany();
+    const pending = await this.findPendingTerms(customerId);
+    return pending.filter(term => term.isMandatory);
   }
 
   async findPendingOptionalTerms(customerId: number): Promise<TermEntity[]> {
-    return this.termDB
-      .createQueryBuilder('t')
-      .leftJoin(
-        'customer_terms',
-        'ct',
-        't.termId = ct.term_id AND ct.customer_id = :customerId AND t.isMandatory = false',
-        { customerId },
-      )
-      .where('ct.term_id IS NULL') // 미동의 약관
-      .orWhere('ct.version != t.version') // 갱신된 약관
-      .getMany();
+    const pending = await this.findPendingTerms(customerId);
+    return pending.filter(term => !term.isMandatory);
   }
 
   async findUnAgreedTerms(customerId: number): Promise<TermEntity[]> {

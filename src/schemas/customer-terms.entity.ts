@@ -5,7 +5,6 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
-  Unique,
 } from 'typeorm';
 import { CustomerEntity } from './customer.entity';
 import { TermEntity } from './terms.entity';

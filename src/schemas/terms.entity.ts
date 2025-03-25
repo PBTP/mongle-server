@@ -7,11 +7,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { CreateTermDto, TermDto } from '../terms/presentation/terms.dto';
 import { CustomerTermEntity } from './customer-terms.entity';
 import { Term } from 'src/terms/terms.domain';
 import { Builder } from 'builder-pattern';
-import { title } from 'process';
 
 export enum TermCategory {
   SERVICE = 'SERVICE', // 서비스 이용

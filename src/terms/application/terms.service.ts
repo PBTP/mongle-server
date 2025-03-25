@@ -70,7 +70,7 @@ export class TermService {
 
   async deleteCustomerTerms(customer: ICustomer): Promise<void> {
     // TODO: customerId?: number; 해결 필요
-    const terms = await this.customerTermRepository.deleteCustomerTerms(
+    await this.customerTermRepository.deleteCustomerTerms(
       customer.customerId ? customer.customerId : 0,
     );
   }

@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CustomerTermEntity } from '../../schemas/customer-terms.entity';
 import { CustomerEntity } from '../../schemas/customer.entity';
-import { TermEntity } from '../../schemas/terms.entity';
 
 export const CUSTOMER_TERM_REPOSITORY = Symbol('CustomerTermRepository');
 
@@ -33,11 +32,18 @@ export class CustomerTermRepository implements ICustomerTermRepository {
     customerId: number,
     termId: number,
   ): Promise<CustomerTermEntity | null> {
-    return await this.customerTermDB
-      .createQueryBuilder('ct')
-      .where('ct.customer_id = :customerId', { customerId })
-      .andWhere('ct.term_id = :termId', { termId })
-      .getOne();
+    return await this.customerTermDB.findOneBy({
+      customerId: customerId,
+      termId: termId,
+    });
+    // customer, term 객체 필요한 경우
+    // return await this.customerTermDB.findOne({
+    //   where: {
+    //     customer: { customerId: customerId },
+    //     term: { termId: termId }
+    //   },
+    //   relations: ['customer', 'term']
+    // })
   }
 
   async findByCustomer(
@@ -47,12 +53,7 @@ export class CustomerTermRepository implements ICustomerTermRepository {
   }
 
   async deleteCustomerTerms(customerId: number): Promise<void> {
-    await this.customerTermDB
-      .createQueryBuilder()
-      .delete()
-      .from(CustomerTermEntity)
-      .where('customer_id = :customerId', { customerId })
-      .execute();
+    await this.customerTermDB.delete({ customerId });
   }
 
   async saveAll(entities: CustomerTermEntity[]): Promise<CustomerTermEntity[]> {
