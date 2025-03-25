@@ -20,7 +20,7 @@ import { FakePetChecklistChoiceAnswerRepository } from '../../../mock/pet/fake.p
 import { FakePetChecklistChoiceRepository } from '../../../mock/pet/fake.pet.checklist-choice.repository';
 import { FakePetChecklistRepository } from '../../../mock/pet/fake.pet.checklist.repository';
 import { FakePetRepository } from '../../../mock/pet/fake.pet.repository';
-import { setupInitialData } from '../../../mock/pet/pet.setup-data';
+import { setupInitialPetData } from '../../../mock/pet/pet.setup-data';
 
 describe('PetService', () => {
   let service: PetService;
@@ -53,7 +53,7 @@ describe('PetService', () => {
     fakeUuidHolder = new FakeUuidHolder();
     fakeDateHolder = new FakeDateHolder(date);
 
-    await setupInitialData(
+    await setupInitialPetData(
       fakeCustomerRepository,
       fakeBreedRepository,
       fakePetRepository,

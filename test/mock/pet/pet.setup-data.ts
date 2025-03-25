@@ -21,7 +21,7 @@ import { FakePetChecklistChoiceRepository } from './fake.pet.checklist-choice.re
 import { FakePetChecklistRepository } from './fake.pet.checklist.repository';
 import { FakePetRepository } from './fake.pet.repository';
 
-export async function setupInitialData(
+export async function setupInitialPetData(
   fakeCustomerRepository: FakeCustomerRepository,
   fakeBreedRepository: FakeBreedRepository,
   fakePetRepository: FakePetRepository,

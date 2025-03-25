@@ -19,7 +19,7 @@ import { FakePetChecklistChoiceRepository } from '../../../mock/pet/fake.pet.che
 import { FakePetChecklistRepository } from '../../../mock/pet/fake.pet.checklist.repository';
 import { FakePetRepository } from '../../../mock/pet/fake.pet.repository';
 import createPetDto, {
-  setupInitialData,
+  setupInitialPetData,
 } from '../../../mock/pet/pet.setup-data';
 
 describe('PetController', () => {
@@ -47,7 +47,7 @@ describe('PetController', () => {
     fakeUuidHolder = new FakeUuidHolder();
     fakeDateHolder = new FakeDateHolder(date);
 
-    await setupInitialData(
+    await setupInitialPetData(
       fakeCustomerRepository,
       fakeBreedRepository,
       fakePetRepository,

@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { CustomerTermEntity } from './customer-terms.entity';
-import { Term } from 'src/terms/terms.domain';
+import { Term } from '../../src/terms/terms.domain';
 import { Builder } from 'builder-pattern';
 
 export enum TermCategory {
@@ -49,10 +49,10 @@ export class TermEntity {
   public modifiedAt: Date;
 
   @DeleteDateColumn()
-  public deletedAt: Date;
+  public deletedAt?: Date;
 
   @OneToMany(() => CustomerTermEntity, (customerTerm) => customerTerm.term)
-  public customerTerms: CustomerTermEntity[];
+  public customerTerms?: CustomerTermEntity[];
 
   toModel(): Term {
     return Term.from(this);
