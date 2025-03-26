@@ -6,8 +6,8 @@ import { ITermRepository, TERM_REPOSITORY } from '../port/terms.repository';
 import { CustomerTermDto } from '../presentation/customer-terms.dto';
 import { Term } from '../terms.domain';
 import { CustomerTerm } from '../customer-terms.domain';
-import { DATE_HOLDER, IDateHolder } from 'src/common/holder/date.holder';
-import { CustomerTermEntity } from 'src/schemas/customer-terms.entity';
+import { DATE_HOLDER, IDateHolder } from '../../../src/common/holder/date.holder';
+import { CustomerTermEntity } from '../../../src/schemas/customer-terms.entity';
 
 @Injectable()
 export class TermService {

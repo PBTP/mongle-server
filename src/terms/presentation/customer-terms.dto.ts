@@ -76,7 +76,9 @@ export class BaseCustomerTermDto implements CustomerTermType {
   static fromEntity<T extends BaseCustomerTermDto>(customerTerm: CustomerTermEntity, dtoType: new () => T): T {
     const dto = Object.assign(new dtoType(), {
       term: customerTerm.term,
+      termId: customerTerm.termId,
       customer: customerTerm.customer,
+      customerId: customerTerm.customerId,
       version: customerTerm.version,
       agreedAt: customerTerm.agreedAt
     })

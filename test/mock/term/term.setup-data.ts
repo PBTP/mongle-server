@@ -13,7 +13,7 @@ export async function setupInitialTermData(
     fakeCustomerRepository: FakeCustomerRepository,
     fakeTermRepository: FakeTermRepository,
     fakeCustomerTermRepository: FakeCustomerTermRepository,
-) {
+): Promise<CustomerEntity> {
     const now = new Date();
 
     // 1. 고객 생성
@@ -132,4 +132,9 @@ export async function setupInitialTermData(
         customer,
         term: terms[4],
     }));
+
+    fakeTermRepository.syncCustomerTerms(fakeCustomerTermRepository.getAll());
+
+
+    return customer;
 }

@@ -1,10 +1,11 @@
 import { BadRequestException } from '@nestjs/common';
 import { ITermRepository } from '../../../src/terms/port/terms.repository';
-import { TermCategory, TermEntity } from '../../../src/schemas/terms.entity';
+import { TermEntity } from '../../../src/schemas/terms.entity';
+import { CustomerTermEntity } from '../../../src/schemas/customer-terms.entity';
 
 export class FakeTermRepository implements ITermRepository {
     private terms: TermEntity[] = [];
-    private customerTermMap: Map<number, { termId: number; version: number }[]> = new Map();
+    private customerTerms: CustomerTermEntity[] = [];
 
     create(term: TermEntity): TermEntity {
         term.termId = this.terms.length + 1;
@@ -36,30 +37,37 @@ export class FakeTermRepository implements ITermRepository {
     }
 
     async findAll(): Promise<TermEntity[]> {
-        return this.terms.sort((a, b) => Number(b.isMandatory) - Number(a.isMandatory)); // 필수 약관 먼저
+        return this.terms.sort((a, b) => Number(b.isMandatory) - Number(a.isMandatory));
     }
 
     async findPendingTerms(customerId: number): Promise<TermEntity[]> {
-        const agreedTerms = this.customerTermMap.get(customerId) || [];
-
         return this.terms.filter((term) => {
-            const agreed = agreedTerms.find((t) => t.termId === term.termId);
-            return !agreed || agreed.version !== term.version;
+            const matched = this.customerTerms.find(
+                (ct) => ct.customerId === customerId && ct.termId === term.termId
+            );
+            return !matched || matched.version !== term.version;
         });
     }
 
     async findUnAgreedTerms(customerId: number): Promise<TermEntity[]> {
-        const agreedTerms = this.customerTermMap.get(customerId) || [];
         return this.terms.filter(
-            (term) => !agreedTerms.some((a) => a.termId === term.termId),
+            (term) =>
+                !this.customerTerms.some(
+                    (ct) => ct.customerId === customerId && ct.termId === term.termId
+                )
         );
     }
 
     async findOutdatedTerms(customerId: number): Promise<TermEntity[]> {
-        const agreedTerms = this.customerTermMap.get(customerId) || [];
         return this.terms.filter((term) => {
-            const agreed = agreedTerms.find((a) => a.termId === term.termId);
-            return agreed && agreed.version !== term.version;
+            const matched = this.customerTerms.find(
+                (ct) => ct.customerId === customerId && ct.termId === term.termId
+            );
+            return matched && matched.version !== term.version;
         });
+    }
+
+    syncCustomerTerms(customerTerms: CustomerTermEntity[]) {
+        this.customerTerms = customerTerms;
     }
 }
