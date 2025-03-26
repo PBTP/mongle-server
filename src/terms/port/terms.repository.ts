@@ -2,18 +2,19 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TermEntity } from '../../schemas/terms.entity';
+import { Term } from '../terms.domain';
 
 export const TERM_REPOSITORY = Symbol('TermRepository');
 
 export interface ITermRepository {
-  create(term: TermEntity): TermEntity;
-  save(term: TermEntity): Promise<TermEntity>;
-  getOne(termId: number): Promise<TermEntity>;
-  findOne(termId: number): Promise<TermEntity | null>;
-  findAll(): Promise<TermEntity[]>;
-  findPendingTerms(customerId: number): Promise<TermEntity[]>; // 동의가 필요한 약관 (1 & 2)
-  findUnAgreedTerms(customerId: number): Promise<TermEntity[]>; // (1) 고객이 미동의한 약관
-  findOutdatedTerms(customerId: number): Promise<TermEntity[]>; // (2) 갱신된 고객 동의 약관
+  create(term: TermEntity): Term;
+  save(term: TermEntity): Promise<Term>;
+  getOne(termId: number): Promise<Term>;
+  findOne(termId: number): Promise<Term | null>;
+  findAll(): Promise<Term[]>;
+  findPendingTerms(customerId: number): Promise<Term[]>; // 동의가 필요한 약관 (1 & 2)
+  findUnAgreedTerms(customerId: number): Promise<Term[]>; // (1) 고객이 미동의한 약관
+  findOutdatedTerms(customerId: number): Promise<Term[]>; // (2) 갱신된 고객 동의 약관
 }
 
 @Injectable()
@@ -23,32 +24,36 @@ export class TermRepository implements ITermRepository {
     private readonly termDB: Repository<TermEntity>,
   ) { }
 
-  create(term: TermEntity): TermEntity {
-    return this.termDB.create(term);
+  create(term: TermEntity): Term {
+    return Term.from(this.termDB.create(term));
   }
 
-  async save(term: TermEntity): Promise<TermEntity> {
-    return await this.termDB.save(term);
+  async save(term: TermEntity): Promise<Term> {
+    const entity = await this.termDB.save(term);
+    return Term.from(entity);
   }
 
-  async getOne(termId: number): Promise<TermEntity> {
+  async getOne(termId: number): Promise<Term> {
     if (!termId) throw new BadRequestException('약관 ID가 필요합니다.');
-    return await this.termDB.findOneOrFail({ where: { termId } });
+    const entity = await this.termDB.findOneOrFail({ where: { termId } });
+    return Term.from(entity);
   }
 
-  async findOne(termId: number): Promise<TermEntity | null> {
-    if (!termId) throw new BadRequestException('약관 ID가 필요합니다.');
-    return this.termDB.findOne({ where: { termId } });
+  async findOne(termId: number): Promise<Term | null> {
+    const entity = await this.termDB.findOne({ where: { termId } });
+    if (!entity) return null;
+    return Term.from(entity);
   }
 
-  async findAll(): Promise<TermEntity[]> {
-    return this.termDB.find({
+  async findAll(): Promise<Term[]> {
+    const entities = await this.termDB.find({
       order: { isMandatory: 'DESC' },
     });
+    return entities.map(Term.from);
   }
 
-  async findPendingTerms(customerId: number): Promise<TermEntity[]> {
-    return this.termDB
+  async findPendingTerms(customerId: number): Promise<Term[]> {
+    const entities = await this.termDB
       .createQueryBuilder('t')
       .leftJoin(
         'customer_terms',
@@ -59,10 +64,11 @@ export class TermRepository implements ITermRepository {
       .where('ct.term_id IS NULL') // 미동의 약관
       .orWhere('ct.version != t.version') // 갱신된 약관
       .getMany();
+    return entities.map(Term.from);
   }
 
-  async findUnAgreedTerms(customerId: number): Promise<TermEntity[]> {
-    return this.termDB
+  async findUnAgreedTerms(customerId: number): Promise<Term[]> {
+    const entities = await this.termDB
       .createQueryBuilder('t')
       .leftJoinAndSelect(
         't.customer_terms',
@@ -72,15 +78,17 @@ export class TermRepository implements ITermRepository {
       )
       .where('ct.term IS NULL')
       .getMany();
+    return entities.map(Term.from);
   }
 
-  async findOutdatedTerms(customerId: number): Promise<TermEntity[]> {
-    return this.termDB
+  async findOutdatedTerms(customerId: number): Promise<Term[]> {
+    const entities = await this.termDB
       .createQueryBuilder('t')
       .innerJoin('t.customerTerms', 'ct', 'ct.customerId = :customerId', {
         customerId,
       })
       .where('ct.version != t.version')
       .getMany();
+    return entities.map(Term.from);
   }
 }
