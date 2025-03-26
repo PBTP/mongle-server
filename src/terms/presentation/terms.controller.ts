@@ -84,7 +84,7 @@ export class TermController {
   @ApiOperation({ summary: '특정 고객의 특정 약관 동의 저장' })
   @ApiOkResponse({ type: CustomerTermDto })
   @Post('/customer/terms/:termId')
-  async saveSpecificCustomerTerm(
+  async saveCustomerTerm(
     @Body() dto: CustomerTermDto,
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<ResponseEntity<CustomerTermDto>> {
