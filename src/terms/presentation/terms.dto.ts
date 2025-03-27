@@ -156,7 +156,7 @@ export class TermDto extends BaseTermDto {
 
   static override from(term: Term): TermDto {
     return Builder(TermDto)
-      .termId(term.termId)
+      .termId(term.termId!)
       .version(term.version)
       .title(term.title)
       .description(term.description)

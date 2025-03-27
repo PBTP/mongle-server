@@ -1,12 +1,10 @@
 import { Customer } from "src/customer/customer.domain";
 import { Term } from "./terms.domain";
 import { CustomerTermEntity } from "src/schemas/customer-terms.entity";
-import { Builder } from "builder-pattern";
-import { DateHolder, IDateHolder } from "src/common/holder/date.holder";
-import { CustomerEntity } from "src/schemas/customer.entity";
+import { IDateHolder } from "src/common/holder/date.holder";
 import { BadRequestException } from "@nestjs/common";
 import { CustomerTermDto } from "./presentation/customer-terms.dto";
-import { TermEntity } from "src/schemas/terms.entity";
+import { Builder } from "builder-pattern";
 
 export class CustomerTerm {
     version: number;
@@ -30,7 +28,7 @@ export class CustomerTerm {
             .version(this.version)
             .agreedAt(this.agreedAt)
             .customerId(this.customer.customerId ? this.customer.customerId : 0) // TODO: customerId 해결
-            .termId(this.term.termId)
+            .termId(this.term.termId!)
             .build();
     }
 

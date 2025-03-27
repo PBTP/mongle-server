@@ -3,7 +3,7 @@ import { TermCategory, TermEntity } from 'src/schemas/terms.entity';
 import { TermDto } from './presentation/terms.dto';
 
 export class Term {
-    termId: number;
+    termId?: number;
     version: number;
     title: string;
     description: string;
@@ -25,7 +25,7 @@ export class Term {
     // Domain → DTO
     toDto(): TermDto {
         return Builder(TermDto)
-            .termId(this.termId)
+            .termId(this.termId!)
             .version(this.version)
             .title(this.title)
             .description(this.description)
