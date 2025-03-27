@@ -1,32 +1,22 @@
 
 import { ICustomerTermRepository } from '../../../src/terms/port/customer-terms.repository';
 import { CustomerTermEntity } from '../../../src/schemas/customer-terms.entity';
-import { BadRequestException } from '@nestjs/common';
+import { CustomerTerm } from '../../../src/terms/customer-terms.domain';
 
 export class FakeCustomerTermRepository implements ICustomerTermRepository {
     private customerTerms: CustomerTermEntity[] = [];
 
-    async create(entity: CustomerTermEntity): Promise<CustomerTermEntity> {
-        this.customerTerms.push(entity);
-        return entity;
-    }
-
     async findByCustomerIdAndTermId(
         customerId: number,
         termId: number,
-    ): Promise<CustomerTermEntity | null> {
-        return (
-            this.customerTerms.find(
-                (ct) => ct.customerId === customerId && ct.termId === termId,
-            ) || null
-        );
+    ): Promise<CustomerTerm | null> {
+        const entity = (this.customerTerms.find((ct) => ct.customerId === customerId && ct.termId === termId) || null);
+        return entity ? CustomerTerm.from(entity) : null;
     }
 
-    async findByCustomer(customerId: number): Promise<CustomerTermEntity[]> {
-        return this.customerTerms.filter(
-            (ct) =>
-                ct.customer?.customerId === customerId || ct.customerId === customerId,
-        );
+    async findByCustomer(customerId: number): Promise<CustomerTerm[]> {
+        const entities = this.customerTerms.filter((ct) => ct.customer?.customerId === customerId || ct.customerId === customerId);
+        return entities.map(CustomerTerm.from);
     }
 
     async deleteCustomerTerms(customerId: number): Promise<void> {
@@ -35,25 +25,25 @@ export class FakeCustomerTermRepository implements ICustomerTermRepository {
         );
     }
 
-    async save(entity: CustomerTermEntity): Promise<CustomerTermEntity> {
+    async save(domain: CustomerTerm): Promise<CustomerTerm> {
         const i = this.customerTerms.findIndex(
-            (ct) => ct.termId === entity.termId && ct.customerId === entity.customerId,
+            (ct) => ct.termId === domain.term.termId && ct.customerId === domain.customer.customerId,
         );
         if (i === -1) {
-            this.customerTerms.push(entity);
+            this.customerTerms.push(CustomerTermEntity.from(domain));
         } else {
-            this.customerTerms[i] = entity;
+            this.customerTerms[i] = CustomerTermEntity.from(domain);
         }
-        return entity;
+        return domain;
     }
 
     async saveAll(
-        entities: CustomerTermEntity[],
-    ): Promise<CustomerTermEntity[]> {
+        entities: CustomerTerm[],
+    ): Promise<CustomerTerm[]> {
         return Promise.all(entities.map((entity) => this.save(entity)));
     }
 
-    getAll(): CustomerTermEntity[] {
-        return this.customerTerms;
+    getAll(): CustomerTerm[] {
+        return this.customerTerms.map(CustomerTerm.from);
     }
 }

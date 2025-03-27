@@ -41,7 +41,7 @@ export class CustomerTermEntity {
   static from(domain: CustomerTerm): CustomerTermEntity {
     return Builder(CustomerTermEntity)
       .customerId(domain.customer.customerId ? domain.customer.customerId : 0) // TODO: customerId 해결
-      .termId(domain.term.termId)
+      .termId(domain.term.termId!)
       .customer(CustomerEntity.from(domain.customer))
       .term(TermEntity.from(domain.term))
       .version(domain.version)

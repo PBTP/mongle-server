@@ -60,13 +60,18 @@ export class TermEntity {
 
   // Domain → Entity
   static from(domain: Term): TermEntity {
-    return Builder(TermEntity)
-      .termId(domain.termId)
+    const builder = Builder(TermEntity)
       .version(domain.version)
       .title(domain.title)
       .description(domain.description)
       .isMandatory(domain.isMandatory)
-      .termCategory(domain.termCategory)
-      .build();
+      .termCategory(domain.termCategory);
+
+    if (domain.termId !== undefined) {
+      builder.termId(domain.termId);
+    }
+
+    return builder.build();
+
   }
 }

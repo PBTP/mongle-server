@@ -101,7 +101,7 @@ export class BaseCustomerTermDto implements CustomerTermType {
       .version(domain.version)
       .agreedAt(domain.agreedAt)
       .customerId(domain.customer.customerId ? domain.customer.customerId : 0)
-      .termId(domain.term.termId)
+      .termId(domain.term.termId!)
       .build();
   }
 }
