@@ -43,7 +43,7 @@ export class TermController {
 
   @ApiOperation({ summary: '특정 고객의 동의 약관 조회' })
   @ApiOkResponse({ type: [TermDto] })
-  @Get('/customer/terms/agreed')
+  @Get('/customer/terms')
   async findCustomerAgreedTerms(
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<ResponseEntity<CustomerTermDto[]>> {
@@ -108,7 +108,7 @@ export class TermController {
     description: '특정 고객 탈퇴 시 해당 고객의 약관 데이터를 삭제합니다.',
   })
   @ApiOkResponse({ description: '고객 약관 정보 삭제 성공' })
-  @Delete('/term')
+  @Delete('customer/terms')
   async deleteCustomerTerms(
     @CurrentCustomer() customer: CustomerEntity,
   ): Promise<ResponseEntity<void>> {
