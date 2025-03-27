@@ -1,13 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ICustomer } from '../../customer/customer.domain';
-import { TermEntity } from '../../schemas/terms.entity';
 import { CUSTOMER_TERM_REPOSITORY, ICustomerTermRepository } from '../port/customer-terms.repository';
 import { ITermRepository, TERM_REPOSITORY } from '../port/terms.repository';
 import { CustomerTermDto } from '../presentation/customer-terms.dto';
 import { Term } from '../terms.domain';
 import { CustomerTerm } from '../customer-terms.domain';
 import { DATE_HOLDER, IDateHolder } from '../../../src/common/holder/date.holder';
-import { CustomerTermEntity } from '../../../src/schemas/customer-terms.entity';
 
 @Injectable()
 export class TermService {
@@ -39,10 +37,8 @@ export class TermService {
     const customerTermsDomains = customerTerms.map((dto, i) =>
       dto.toModel(customer, termDomains[i], this.dateHolder),
     );
-    const entities = await this.customerTermRepository.saveAll(
-      customerTermsDomains.map((domain) => CustomerTermEntity.from(domain)),
-    );
-    return entities.map(CustomerTerm.from);
+    await this.customerTermRepository.saveAll(customerTermsDomains);
+    return customerTermsDomains;
   }
 
   async saveCustomerTerm(
@@ -51,28 +47,27 @@ export class TermService {
   ): Promise<CustomerTerm> {
     const term = await this.termRepository.getOne(dto.termId);
     const domain = dto.toModel(customer, term, this.dateHolder);
-    const entity = await this.customerTermRepository.save(CustomerTermEntity.from(domain));
-    return CustomerTerm.from(entity);
+    await this.customerTermRepository.save(domain);
+    return domain;
   }
 
   async checkTerm(customer: ICustomer, termId: number): Promise<boolean> {
     // TODO: customerId?: number; 해결 필요
-    const entity =
+    const customerTerm =
       await this.customerTermRepository.findByCustomerIdAndTermId(
         customer.customerId ? customer.customerId : 0,
         termId,
       );
-    if (!entity) return false;
-    const customerTerm = CustomerTerm.from(entity);
+    if (!customerTerm) return false;
     return customerTerm.version === customerTerm.term.version;
   }
 
   async findAgreedTerms(customer: ICustomer): Promise<CustomerTerm[]> {
     // TODO: customerId?: number; 해결 필요
-    const customerTerms: CustomerTermEntity[] = await this.customerTermRepository.findByCustomer(
+    const customerTerms: CustomerTerm[] = await this.customerTermRepository.findByCustomer(
       customer.customerId ? customer.customerId : 0,
     );
-    return customerTerms.map(CustomerTerm.from);
+    return customerTerms;
   }
 
   async findPendingTerms(customer: ICustomer): Promise<Term[]> {
