@@ -27,7 +27,7 @@ export class CustomerTerm {
         return Builder(CustomerTermDto)
             .version(this.version)
             .agreedAt(this.agreedAt)
-            .customerId(this.customer.customerId ? this.customer.customerId : 0) // TODO: customerId 해결
+            .customerId(this.customer.customerId ?? 0) // TODO: customerId 해결
             .termId(this.term.termId!)
             .build();
     }

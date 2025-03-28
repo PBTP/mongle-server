@@ -55,7 +55,7 @@ export class TermService {
     // TODO: customerId?: number; 해결 필요
     const customerTerm =
       await this.customerTermRepository.findByCustomerIdAndTermId(
-        customer.customerId ? customer.customerId : 0,
+        customer.customerId ?? 0,
         termId,
       );
     if (!customerTerm) return false;
@@ -65,7 +65,7 @@ export class TermService {
   async findAgreedTerms(customer: ICustomer): Promise<CustomerTerm[]> {
     // TODO: customerId?: number; 해결 필요
     const customerTerms: CustomerTerm[] = await this.customerTermRepository.findByCustomer(
-      customer.customerId ? customer.customerId : 0,
+      customer.customerId ?? 0,
     );
     return customerTerms;
   }
@@ -73,14 +73,14 @@ export class TermService {
   async findPendingTerms(customer: ICustomer): Promise<Term[]> {
     // TODO: customerId?: number; 해결 필요
     return this.termRepository.findPendingTerms(
-      customer.customerId ? customer.customerId : 0,
+      customer.customerId ?? 0,
     );
   }
 
   async findPendingMandatoryTerms(customer: ICustomer): Promise<Term[]> {
     // TODO: customerId?: number; 해결 필요
     const allPendingTerms = await this.termRepository.findPendingTerms(
-      customer.customerId ? customer.customerId : 0,
+      customer.customerId ?? 0,
     );
     return allPendingTerms
       .filter((term) => term.isMandatory);
@@ -89,7 +89,7 @@ export class TermService {
   async findPendingOptionalTerms(customer: ICustomer): Promise<Term[]> {
     // TODO: customerId?: number; 해결 필요
     const allPendingTerms = await this.termRepository.findPendingTerms(
-      customer.customerId ? customer.customerId : 0,
+      customer.customerId ?? 0,
     );
     return allPendingTerms
       .filter((term) => !term.isMandatory);
@@ -98,7 +98,7 @@ export class TermService {
   async deleteCustomerTerms(customer: ICustomer): Promise<void> {
     // TODO: customerId?: number; 해결 필요
     await this.customerTermRepository.deleteCustomerTerms(
-      customer.customerId ? customer.customerId : 0,
+      customer.customerId ?? 0,
     );
   }
 }
