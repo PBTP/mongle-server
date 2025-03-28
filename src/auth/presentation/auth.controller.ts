@@ -89,10 +89,6 @@ export class AuthController {
     type: OtpResponseDto,
     description: 'OTP 발급 성공',
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Unauthorized / 요청한 고객이 없습니다.',
-  })
   @ApiQuery({
     name: 'sendType',
     description: 'OTP 전송 방법 ex) sms, email',
