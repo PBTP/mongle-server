@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { CustomerEntity } from './customer.entity';
 import { TermEntity } from './terms.entity';
-import { CustomerTerm } from '../../src/terms/customer-terms.domain';
+import { CustomerTerm } from '../terms/customer-terms.domain';
 import { Builder } from 'builder-pattern';
 
 @Entity({ name: 'customer_terms' })
