@@ -30,6 +30,7 @@ import {
   PetChecklistDto,
   PetDto,
 } from '../presentation/pet.dto';
+import { PetChecklist } from "../pet.checklist.domain";
 
 @Injectable()
 export class PetService {
@@ -61,11 +62,11 @@ export class PetService {
     );
   }
 
-  async findAll(customer: ICustomer): Promise<PetEntity[]> {
+  async findAll(customer: ICustomer): Promise<Pet[]> {
     return await this.petRepository.findAllByCustomer(customer);
   }
 
-  async getOne(id: number, customer: ICustomer): Promise<PetEntity> {
+  async getOne(id: number, customer: ICustomer): Promise<Pet> {
     const pet = await this.petRepository.getOne(id);
 
     if (pet.customer.customerId !== customer.customerId) {

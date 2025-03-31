@@ -28,6 +28,7 @@ import { PetEntity } from '../../schemas/pets.entity';
 import { PetService } from '../application/pet.service';
 import { Pet } from '../pet.domain';
 import { PetChecklistAnswerDto, PetChecklistDto, PetDto } from './pet.dto';
+import { PetChecklist } from "../pet.checklist.domain";
 
 @ApiTags('반려동물 관련 API')
 @Controller('/v1/pet')
@@ -42,8 +43,11 @@ export class PetController {
   async findChecklist(
     @Query('category') category: PetChecklistCategory,
     @Query('type') type: ChecklistType,
-  ): Promise<PetChecklistDto[]> {
-    return await this.petService.findCheckList(category, type, null);
+  ): Promise<ResponseEntity<PetChecklistDto[]>> {
+    // const checklists:PetChecklist[] = await this.petService.findCheckList(category, type, null);
+    // return ResponseEntity.OK(checklists.map(PetChecklistDto.from));
+    const checklists:PetChecklistDto[] = await this.petService.findCheckList(category, type, null);
+    return ResponseEntity.OK(checklists);
   }
 
   @ApiOkResponse({
@@ -55,8 +59,11 @@ export class PetController {
     @Param('petId') petId: number,
     @Query('category') category: PetChecklistCategory,
     @Query('type') type: ChecklistType,
-  ): Promise<PetChecklistDto[]> {
-    return await this.petService.findCheckList(category, type, petId);
+  ): Promise<ResponseEntity<PetChecklistDto[]>> {
+    // const checklists:PetChecklist[] = await this.petService.findCheckList(category, type, petId);
+    // return ResponseEntity.OK(checklists.map(PetChecklistDto.from));
+    const checklists:PetChecklistDto[] = await this.petService.findCheckList(category, type, petId);
+    return ResponseEntity.OK(checklists);
   }
 
   @ApiOperation({
@@ -75,10 +82,11 @@ export class PetController {
     @Param('petId') petId: number,
     @Body() dto: PetChecklistAnswerDto[],
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<PetChecklistAnswerDto[]> {
-    return await this.petService
+  ): Promise<ResponseEntity<PetChecklistAnswerDto[]>> {
+    const answers:PetChecklistAnswerDto[] = await this.petService
       .answerChecklist(petId, dto, customer)
       .then(() => dto);
+    return ResponseEntity.OK(answers); // TODO: dto로 어케하지
   }
 
   @ApiOperation({
@@ -95,8 +103,9 @@ export class PetController {
   async create(
     @Body() dto: PetDto,
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<Pet> {
-    return await this.petService.create(dto, customer);
+  ): Promise<ResponseEntity<PetDto>> {
+    const pet:Pet = await this.petService.create(dto, customer);
+    return ResponseEntity.OK(PetDto.from(pet));
   }
 
   @ApiOperation({
@@ -111,8 +120,9 @@ export class PetController {
   @Get('/my')
   async findAll(
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<PetEntity[]> {
-    return await this.petService.findAll(customer);
+  ): Promise<ResponseEntity<PetDto[]>> {
+    const pets:Pet[] = await this.petService.findAll(customer);
+    return ResponseEntity.OK(pets.map(PetDto.from));
   }
 
   @ApiOperation({
@@ -128,8 +138,9 @@ export class PetController {
   async getOne(
     @Param('id') id: number,
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<PetEntity> {
-    return await this.petService.getOne(id, customer);
+  ): Promise<ResponseEntity<PetDto>> {
+    const pet:Pet = await this.petService.getOne(id, customer);
+    return ResponseEntity.OK(PetDto.from(pet));
   }
 
   @ApiOperation({
@@ -146,8 +157,9 @@ export class PetController {
     @Param('id') id: number,
     @Body() dto: Omit<PetDto, 'petId'>,
     @CurrentCustomer() customer: CustomerEntity,
-  ): Promise<Pet> {
-    return await this.petService.update(id, dto, customer);
+  ): Promise<ResponseEntity<PetDto>> {
+    const pet:Pet = await this.petService.update(id, dto, customer);
+    return ResponseEntity.OK(PetDto.from(pet));
   }
 
   @ApiOperation({

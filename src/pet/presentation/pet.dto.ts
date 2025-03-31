@@ -19,6 +19,8 @@ import {
 import { Builder } from 'builder-pattern';
 import { ApiProperty } from '@nestjs/swagger';
 import { Pet } from '../pet.domain';
+import { PetChecklist } from "../pet.checklist.domain";
+import { PetChecklistAnswerEntity } from "../../schemas/pet-checklist-answer.entity";
 
 export class PetDto {
   @ApiProperty({
@@ -185,6 +187,17 @@ export class PetChecklistDto {
     required: false,
   })
   petChecklistAnswer?: string | null;
+
+  static from(petChecklist: PetChecklist): PetChecklistDto {
+    return Builder(PetChecklistDto)
+      .petChecklistId(petChecklist.petChecklistId)
+      .petChecklistType(petChecklist.petChecklistType)
+      .petChecklistCategory(petChecklist.petChecklistCategory)
+      .petChecklistContent(petChecklist.petChecklistContent)
+      // .petChecklistChoices() TODO
+      // .petChecklistAnswer()
+      .build()
+  }
 }
 
 export class PetChecklistAnswerDto {
