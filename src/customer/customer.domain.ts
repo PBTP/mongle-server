@@ -13,7 +13,7 @@ import { IDateHolder } from '../common/holder/date.holder';
 import { PresignedUrlDto } from '../common/cloud/aws/s3/presentation/presigned-url.dto';
 import { ImageDto } from '../common/image/presentation/image.dto';
 
-export interface ICustomer extends AuthDto {
+export interface ICustomer extends AuthDto { // TODO: 도메인이 dto implement 중 (getter 가져오고 있음)
   customerId?: number;
   customerName: string;
   customerPhoneNumber?: string;

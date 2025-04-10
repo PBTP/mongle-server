@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional } from 'class-validator';
 import { UserDto } from './user.dto';
 import { CrudGroup } from '../../common/validation/validation.data';
+import { Expose } from "class-transformer";
 
 export class AuthDto extends UserDto {
   @ApiProperty({
@@ -9,14 +10,32 @@ export class AuthDto extends UserDto {
     type: String,
   })
   @IsOptional()
-  accessToken?: string;
+  private _accessToken?: string;
 
   @ApiProperty({
     description: 'Refresh Token',
     type: String,
   })
   @IsOptional()
-  refreshToken?: string;
+  private _refreshToken?: string;
+
+  @Expose()
+  get accessToken(): string | undefined {
+    return this._accessToken;
+  }
+
+  set accessToken(value: string) {
+    this._accessToken = value;
+  }
+
+  @Expose()
+  get refreshToken(): string | undefined {
+    return this._refreshToken;
+  }
+
+  set refreshToken(value: string) {
+    this._refreshToken = value;
+  }
 }
 
 export interface OtpRequest {
