@@ -20,6 +20,7 @@ import { PetModule } from './pet/pet.module';
 import { MetricsModule } from './system/matrics/metrics.module';
 import * as process from 'node:process';
 import { TestModule } from './test/test.module';
+import { TermModule } from "./terms/terms.module";
 
 const appModules = [
   ConfigModule.forRoot({
@@ -69,6 +70,7 @@ const appModules = [
   CloudModule,
   ChatModule,
   PetModule,
+  TermModule
 ];
 
 // 환경별 모듈 추가
