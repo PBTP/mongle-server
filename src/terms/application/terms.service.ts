@@ -5,7 +5,7 @@ import { ITermRepository, TERM_REPOSITORY } from '../port/terms.repository';
 import { CustomerTermDto } from '../presentation/customer-terms.dto';
 import { Term } from '../terms.domain';
 import { CustomerTerm } from '../customer-terms.domain';
-import { DATE_HOLDER, IDateHolder } from '../../../src/common/holder/date.holder';
+import { DATE_HOLDER, IDateHolder } from "../../common/holder/date.holder";
 
 @Injectable()
 export class TermService {
