@@ -1,4 +1,4 @@
-import { ImageEntity } from '../../../schemas/image.entity';
+import { ImageEntity } from "@schemas/image.entity";
 import { ImageDto } from '../presentation/image.dto';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';

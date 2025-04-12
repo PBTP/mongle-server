@@ -1,10 +1,10 @@
-import { PetChecklist } from '../../../src/pet/pet.checklist.domain';
-import { IPetChecklistRepository } from '../../../src/pet/port/pet.checklist.repository';
+import { PetChecklist } from "@pet/pet.checklist.domain";
+import { IPetChecklistRepository } from "@pet/port/pet.checklist.repository";
 import {
   ChecklistType,
   PetChecklistCategory,
   PetChecklistEntity,
-} from '../../../src/schemas/pet-checklist.entity';
+} from "@schemas/pet-checklist.entity";
 
 export class FakePetChecklistRepository implements IPetChecklistRepository {
   private readonly checkLists: PetChecklistEntity[] = [];

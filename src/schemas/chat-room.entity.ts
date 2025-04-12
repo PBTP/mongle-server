@@ -9,7 +9,7 @@ import { CustomerChatRoom } from './customer-chat-room.entity';
 import { DriverChatRoom } from './driver-chat-room.entity';
 import { BusinessChatRoom } from './business-chat-room.entity';
 import { ChatMessage } from './chat-message.entity';
-import { HasTsid } from '../common/entity/parent.entity';
+import { HasTsid } from "@common/entity/parent.entity";
 
 @Entity('chat_rooms')
 export class ChatRoom extends HasTsid {

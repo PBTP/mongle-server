@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TermEntity } from '../../schemas/terms.entity';
+import { TermEntity } from "@schemas/terms.entity";
 import { Term } from '../terms.domain';
 
 export const TERM_REPOSITORY = Symbol('TermRepository');

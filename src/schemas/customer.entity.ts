@@ -9,9 +9,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { AuthProvider } from '../auth/presentation/user.dto';
-import { HasUuid } from '../common/entity/parent.entity';
-import { Customer } from '../customer/customer.domain';
+import { AuthProvider } from "@auth/presentation/user.dto";
+import { HasUuid } from "@common/entity/parent.entity";
+import { Customer } from "@customer/customer.domain";
 import { Appointment } from './appointments.entity';
 import { CustomerChatRoom } from './customer-chat-room.entity';
 import { CustomerTermEntity } from './customer-terms.entity';

@@ -1,7 +1,7 @@
 import { Builder } from 'builder-pattern';
 import { PetChecklistChoiceDto } from './presentation/pet.dto';
 import { BadRequestException } from '@nestjs/common/exceptions';
-import { PetChecklistChoiceEntity } from '../schemas/pet-checklist-chocie.entity';
+import { PetChecklistChoiceEntity } from "@schemas/pet-checklist-chocie.entity";
 
 export class PetChecklistChoice {
   petChecklistChoiceId: number;

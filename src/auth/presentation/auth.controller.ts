@@ -11,11 +11,11 @@ import {
 } from '@nestjs/swagger';
 import { ApiKey, Auth, CurrentUser } from '../decorator/auth.decorator';
 import { UserDto, UserGroup } from './user.dto';
-import { GroupValidation } from '../../common/validation/validation.decorator';
+import { GroupValidation } from "@common/validation/validation.decorator";
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { Builder } from 'builder-pattern';
-import { CrudGroup } from '../../common/validation/validation.data';
-import { ResponseEntity } from '../../common/dto/response.entity';
+import { CrudGroup } from "@common/validation/validation.data";
+import { ResponseEntity } from "@common/dto/response.entity";
 
 @ApiTags('인증 관련 API')
 @Controller('/v1/auth')

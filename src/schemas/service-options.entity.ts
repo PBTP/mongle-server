@@ -11,7 +11,7 @@ import {
 } from 'typeorm';
 import { Appointment } from './appointments.entity';
 import { BusinessEntity } from './business.entity';
-import { HasUuid } from "../common/entity/parent.entity";
+import { HasUuid } from "@common/entity/parent.entity";
 
 export enum PetSize {
   SMALL = 'SMALL',

@@ -1,5 +1,5 @@
 import { Builder } from 'builder-pattern';
-import { TermCategory, TermEntity } from 'src/schemas/terms.entity';
+import { TermCategory, TermEntity } from '@schemas/terms.entity';
 import { TermDto } from './presentation/terms.dto';
 
 export class Term {

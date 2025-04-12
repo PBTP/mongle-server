@@ -7,7 +7,7 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import { CustomerEntity } from '../../schemas/customer.entity';
+import { CustomerEntity } from "@schemas/customer.entity";
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
@@ -15,10 +15,10 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { BusinessEntity } from '../../schemas/business.entity';
-import { DriverEntity } from '../../schemas/drivers.entity';
+import { BusinessEntity } from "@schemas/business.entity";
+import { DriverEntity } from "@schemas/drivers.entity";
 import { UserDto } from '../presentation/user.dto';
-import { ApiKeyGuard } from '../../common/guard/api-key.guard';
+import { ApiKeyGuard } from "@common/guard/api-key.guard";
 
 export const CurrentUser = createParamDecorator(
   (data: unknown, context: ExecutionContext) => {

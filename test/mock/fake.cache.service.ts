@@ -1,4 +1,4 @@
-import { ICacheService } from '../../src/common/cache/cache.service';
+import { ICacheService } from "@common/cache/cache.service";
 
 export class FakeCacheService implements ICacheService {
   private readonly cache: Map<string, any> = new Map<string, any>();

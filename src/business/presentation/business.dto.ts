@@ -8,9 +8,9 @@ import {
 } from 'class-validator';
 import { Point } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { AuthDto } from '../../auth/presentation/auth.dto';
-import { AuthProvider, UserGroup } from '../../auth/presentation/user.dto';
-import { CRUD } from '../../common/validation/validation.data';
+import { AuthDto } from "@auth/presentation/auth.dto";
+import { AuthProvider, UserGroup } from "@auth/presentation/user.dto";
+import { CRUD } from "@common/validation/validation.data";
 
 export class BusinessDto extends AuthDto {
   @ApiProperty({

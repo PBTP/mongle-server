@@ -1,5 +1,5 @@
-import { BusinessEntity } from '../../schemas/business.entity';
-import { AuthDto } from '../../auth/presentation/auth.dto';
+import { BusinessEntity } from "@schemas/business.entity";
+import { AuthDto } from "@auth/presentation/auth.dto";
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';

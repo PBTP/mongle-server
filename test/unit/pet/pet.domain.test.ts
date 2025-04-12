@@ -1,7 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 import { Builder } from 'builder-pattern';
-import { IDateHolder } from 'src/common/holder/date.holder';
-import { IUUIDHolder } from 'src/common/holder/uuid.holders';
+import { IDateHolder } from '../../../src/common/holder/date.holder';
+import { IUUIDHolder } from '../../../src/common/holder/uuid.holders';
 import { Pet } from '../../../src/pet/pet.domain';
 import { PetDto } from '../../../src/pet/presentation/pet.dto';
 import { BreedEntity } from '../../../src/schemas/breed.entity';

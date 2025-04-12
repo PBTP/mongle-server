@@ -1,7 +1,7 @@
-import { Customer } from "src/customer/customer.domain";
+import { Customer } from "@customer/customer.domain";
 import { Term } from "./terms.domain";
-import { CustomerTermEntity } from "src/schemas/customer-terms.entity";
-import { IDateHolder } from "src/common/holder/date.holder";
+import { CustomerTermEntity } from "@schemas/customer-terms.entity";
+import { IDateHolder } from "@common/holder/date.holder";
 import { BadRequestException } from "@nestjs/common";
 import { CustomerTermDto } from "./presentation/customer-terms.dto";
 import { Builder } from "builder-pattern";

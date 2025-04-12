@@ -18,7 +18,7 @@ import {
   HttpExceptionFilter,
   NotFoundExceptionFilter,
   UnauthorizedExceptionFilter,
-} from '../../../../src/common/filters/exception.filters';
+} from "@common/filters/exception.filters";
 
 describe('ExceptionFilter 테스트', () => {
   describe('AllExceptionFilter 테스트', () => {

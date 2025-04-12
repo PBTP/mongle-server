@@ -1,8 +1,8 @@
 import { BadRequestException } from '@nestjs/common/exceptions';
-import { IBreedRepository } from 'src/pet/port/bree.repository';
-import { Breed } from '../../../src/pet/bred.domain';
-import { BreedEntity } from '../../../src/schemas/breed.entity';
+import { Breed } from "@pet/bred.domain";
+import { BreedEntity } from "@schemas/breed.entity";
 import { FakeUuidHolder } from '../fake.holder';
+import { IBreedRepository } from "@pet/port/bree.repository";
 
 export class FakeBreedRepository implements IBreedRepository {
   private breeds: BreedEntity[] = [];

@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { CustomerTermEntity } from './customer-terms.entity';
-import { Term } from '../terms/terms.domain';
+import { Term } from "@terms/terms.domain";
 import { Builder } from 'builder-pattern';
 
 export enum TermCategory {

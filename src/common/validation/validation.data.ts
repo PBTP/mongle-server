@@ -1,4 +1,4 @@
-import { UserGroup } from '../../auth/presentation/user.dto';
+import { UserGroup } from "@auth/presentation/user.dto";
 import { ValidationError } from 'class-validator';
 import { BadRequestException } from '@nestjs/common/exceptions';
 

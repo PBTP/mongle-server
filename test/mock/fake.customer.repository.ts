@@ -1,10 +1,10 @@
 import { BadRequestException } from '@nestjs/common/exceptions';
 import { Builder } from 'builder-pattern';
 import { getTsid } from 'tsid-ts';
-import { Customer, ICustomer } from '../../src/customer/customer.domain';
-import { ICustomerRepository } from '../../src/customer/port/customer.repository';
-import { CustomerDto } from '../../src/customer/presentation/customer.dto';
-import { CustomerEntity } from '../../src/schemas/customer.entity';
+import { Customer, ICustomer } from "@customer/customer.domain";
+import { ICustomerRepository } from "@customer/port/customer.repository";
+import { CustomerDto } from "@customer/presentation/customer.dto";
+import { CustomerEntity } from "@schemas/customer.entity";
 
 export class FakeCustomerRepository implements ICustomerRepository {
   customers: Customer[] = [];

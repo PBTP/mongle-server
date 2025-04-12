@@ -12,8 +12,8 @@ import {
 import { Appointment } from './appointments.entity';
 import { BusinessEntity } from './business.entity';
 import { DriverChatRoom } from './driver-chat-room.entity';
-import { HasUuid } from '../common/entity/parent.entity';
-import { AuthProvider } from '../auth/presentation/user.dto';
+import { HasUuid } from "@common/entity/parent.entity";
+import { AuthProvider } from "@auth/presentation/user.dto";
 
 @Entity({ name: 'drivers' })
 export class DriverEntity extends HasUuid {

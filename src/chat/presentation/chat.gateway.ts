@@ -9,11 +9,11 @@ import {
 import { Server, Socket } from 'socket.io';
 import { ForbiddenException, Logger, NotFoundException } from '@nestjs/common';
 import { ChatMessageDto, ChatRoomDto } from './chat.dto';
-import { AuthService } from '../../auth/application/auth.service';
+import { AuthService } from "@auth/application/auth.service";
 import { Subscribe } from '../decorator/socket.decorator';
 import { UnauthorizedException } from '@nestjs/common/exceptions';
 import { ChatService } from '../application/chat.service';
-import { UserDto } from '../../auth/presentation/user.dto';
+import { UserDto } from "@auth/presentation/user.dto";
 import { serviceWebUrls } from '../../main';
 
 export class UserSocket extends Socket {

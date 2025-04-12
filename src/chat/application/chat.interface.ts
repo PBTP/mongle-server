@@ -1,4 +1,4 @@
-import { UserDto } from '../../auth/presentation/user.dto';
+import { UserDto } from "@auth/presentation/user.dto";
 import { ChatRoomDto } from '../presentation/chat.dto';
 
 export interface IChatService {

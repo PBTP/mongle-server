@@ -3,7 +3,7 @@ import { S3 } from 'aws-sdk';
 import { ConfigService } from '@nestjs/config';
 import { BadRequestException } from '@nestjs/common/exceptions';
 import { ICloudStorage } from '../../../cloud-storage.interface';
-import { ImageMetaDataDto } from '../../../../image/presentation/image.dto';
+import { ImageMetaDataDto } from "@common/image/presentation/image.dto";
 import {
   defaultExpiredTime,
   PresignedUrlDto,

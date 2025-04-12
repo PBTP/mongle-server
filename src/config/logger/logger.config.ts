@@ -1,5 +1,5 @@
 import { ConsoleLogger, Injectable } from '@nestjs/common';
-import { SystemAlarmService } from '../../system/system.alarm.service';
+import { SystemAlarmService } from "@system/system.alarm.service";
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

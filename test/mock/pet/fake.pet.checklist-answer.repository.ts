@@ -1,6 +1,6 @@
-import { PetChecklistAnswer } from '../../../src/pet/pet.checklist-answer.domain';
-import { IPetChecklistAnswerRepository } from '../../../src/pet/port/pet.checklist-answer.repository';
-import { PetChecklistAnswerEntity } from '../../../src/schemas/pet-checklist-answer.entity';
+import { PetChecklistAnswer } from "@pet/pet.checklist-answer.domain";
+import { IPetChecklistAnswerRepository } from "@pet/port/pet.checklist-answer.repository";
+import { PetChecklistAnswerEntity } from "@schemas/pet-checklist-answer.entity";
 
 export class FakePetChecklistAnswerRepository
   implements IPetChecklistAnswerRepository

@@ -17,8 +17,8 @@ import { Favorite } from './favorites.entity';
 import { Review } from './reviews.entity';
 import { ServiceOption } from './service-options.entity';
 import { BusinessChatRoom } from './business-chat-room.entity';
-import { HasUuid } from '../common/entity/parent.entity';
-import { AuthProvider } from '../auth/presentation/user.dto';
+import { HasUuid } from "@common/entity/parent.entity";
+import { AuthProvider } from "@auth/presentation/user.dto";
 
 @Entity({ name: 'business' })
 export class BusinessEntity extends HasUuid {

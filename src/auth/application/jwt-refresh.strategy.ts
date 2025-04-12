@@ -6,7 +6,7 @@ import {
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt } from 'passport-jwt';
-import { CustomerService } from 'src/customer/application/customer.service';
+import { CustomerService } from '@customer/application/customer.service';
 import { BusinessService } from '../../business/application/business.service';
 import { DriverService } from '../../driver/application/driver.service';
 import { IUserService } from '../user.interface';

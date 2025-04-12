@@ -4,7 +4,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { PreRegistrationSurveyBody } from './pre-registration-survey-body';
 import { PreRegistrationSurveyRequest } from '../application/pre-registration-survey-request';
 import { PreRegistrationSurveyUseCase } from '../application/pre-registration-survey-use-case';
-import { ResponseEntity } from '../../common/dto/response.entity';
+import { ResponseEntity } from "@common/dto/response.entity";
 
 @ApiTags('사전 등록 설문')
 @Controller('pre-registration-survey')

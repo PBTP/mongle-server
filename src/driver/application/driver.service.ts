@@ -1,8 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { DriverEntity } from '../../schemas/drivers.entity';
-import { IUserService } from '../../auth/user.interface';
-import { UserDto, UserType } from '../../auth/presentation/user.dto';
-import { AuthDto } from '../../auth/presentation/auth.dto';
+import { DriverEntity } from "@schemas/drivers.entity";
+import { IUserService } from "@auth/user.interface";
+import { UserDto, UserType } from "@auth/presentation/user.dto";
+import { AuthDto } from "@auth/presentation/auth.dto";
 import {
   DRIVER_REPOSITORY,
   IDriverRepository,

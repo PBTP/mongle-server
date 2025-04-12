@@ -1,17 +1,17 @@
 import { Builder } from 'builder-pattern';
-import { AuthProvider } from '../../../src/auth/presentation/user.dto';
-import { Pet } from '../../../src/pet/pet.domain';
-import { PetDto } from '../../../src/pet/presentation/pet.dto';
-import { BreedEntity } from '../../../src/schemas/breed.entity';
-import { CustomerEntity } from '../../../src/schemas/customer.entity';
-import { PetChecklistAnswerEntity } from '../../../src/schemas/pet-checklist-answer.entity';
-import { PetChecklistChoiceEntity } from '../../../src/schemas/pet-checklist-chocie.entity';
+import { AuthProvider } from "@auth/presentation/user.dto";
+import { Pet } from "@pet/pet.domain";
+import { PetDto } from "@pet/presentation/pet.dto";
+import { BreedEntity } from "@schemas/breed.entity";
+import { CustomerEntity } from "@schemas/customer.entity";
+import { PetChecklistAnswerEntity } from "@schemas/pet-checklist-answer.entity";
+import { PetChecklistChoiceEntity } from "@schemas/pet-checklist-chocie.entity";
 import {
   ChecklistType,
   PetChecklistCategory,
   PetChecklistEntity,
-} from '../../../src/schemas/pet-checklist.entity';
-import { Gender } from '../../../src/schemas/pets.entity';
+} from "@schemas/pet-checklist.entity";
+import { Gender } from "@schemas/pets.entity";
 import { FakeCustomerRepository } from '../fake.customer.repository';
 import { FakeDateHolder, FakeUuidHolder } from '../fake.holder';
 import { FakeBreedRepository } from './fake.breed.repository';

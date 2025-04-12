@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ICustomer } from '../../customer/customer.domain';
+import { ICustomer } from "@customer/customer.domain";
 import { CUSTOMER_TERM_REPOSITORY, ICustomerTermRepository } from '../port/customer-terms.repository';
 import { ITermRepository, TERM_REPOSITORY } from '../port/terms.repository';
 import { CustomerTermDto } from '../presentation/customer-terms.dto';
 import { Term } from '../terms.domain';
 import { CustomerTerm } from '../customer-terms.domain';
-import { DATE_HOLDER, IDateHolder } from '../../../src/common/holder/date.holder';
+import { DATE_HOLDER, IDateHolder } from "@common/holder/date.holder";
 
 @Injectable()
 export class TermService {

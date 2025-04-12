@@ -2,11 +2,11 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Builder } from 'builder-pattern';
 import { IsDate, IsNumber } from 'class-validator';
 import { Expose } from 'class-transformer';
-import { CustomerTermEntity } from '../../schemas/customer-terms.entity';
+import { CustomerTermEntity } from "@schemas/customer-terms.entity";
 import { CustomerTerm } from '../customer-terms.domain';
-import { Customer } from 'src/customer/customer.domain';
+import { Customer } from '@customer/customer.domain';
 import { Term } from '../terms.domain';
-import { DateHolder } from 'src/common/holder/date.holder';
+import { DateHolder } from '@common/holder/date.holder';
 
 type CustomerTermType = {
   get termId(): number;

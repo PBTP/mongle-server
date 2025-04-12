@@ -1,11 +1,11 @@
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Controller, Get } from '@nestjs/common';
-import { CustomerDto } from '../../customer/presentation/customer.dto';
-import { Auth, CurrentBusiness } from '../../auth/decorator/auth.decorator';
-import { BusinessEntity } from '../../schemas/business.entity';
+import { CustomerDto } from "@customer/presentation/customer.dto";
+import { Auth, CurrentBusiness } from "@auth/decorator/auth.decorator";
+import { BusinessEntity } from "@schemas/business.entity";
 import { BusinessService } from '../application/business.service';
 import { BusinessDto } from './business.dto';
-import { ResponseEntity } from '../../common/dto/response.entity';
+import { ResponseEntity } from "@common/dto/response.entity";
 import { Builder } from 'builder-pattern';
 
 @ApiTags('업체 관련 API')

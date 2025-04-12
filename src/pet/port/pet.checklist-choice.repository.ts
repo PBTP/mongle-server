@@ -1,5 +1,5 @@
 import { PetChecklistChoice } from '../pet.checklist-choice.domain';
-import { PetChecklistChoiceEntity } from '../../schemas/pet-checklist-chocie.entity';
+import { PetChecklistChoiceEntity } from "@schemas/pet-checklist-chocie.entity";
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 

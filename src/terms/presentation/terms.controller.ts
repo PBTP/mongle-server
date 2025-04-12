@@ -9,9 +9,9 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { CurrentCustomer } from '../../auth/decorator/auth.decorator';
-import { ResponseEntity } from '../../common/dto/response.entity';
-import { CustomerEntity } from '../../schemas/customer.entity';
+import { CurrentCustomer } from '@auth/decorator/auth.decorator';
+import { ResponseEntity } from '@common/dto/response.entity';
+import { CustomerEntity } from '@schemas/customer.entity';
 import { TermService } from '../application/terms.service';
 import { CustomerTermDto } from './customer-terms.dto';
 import { TermDto } from './terms.dto';
