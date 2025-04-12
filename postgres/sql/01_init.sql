@@ -1038,6 +1038,54 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE TYPE term_category AS ENUM ('SERVICE', 'PRIVACY', 'MARKETING', 'LOCATION');
+ALTER TYPE term_category OWNER TO postgres;
+
+CREATE TABLE IF NOT EXISTS terms
+(
+    term_id  SERIAL PRIMARY KEY,
+    version  INTEGER  NOT NULL,
+    title  TEXT  NOT NULL,
+    description  TEXT  NOT NULL,
+    is_mandatory  BOOLEAN DEFAULT FALSE  NOT NULL,
+    term_category term_category  NOT NULL DEFAULT 'SERVICE',
+    created_at  TIMESTAMP DEFAULT NOW()  NOT NULL,
+    modified_at  TIMESTAMP DEFAULT NOW()  NOT NULL,
+    deleted_at  TIMESTAMP
+);
+
+COMMENT ON TABLE terms IS '약관';
+
+COMMENT ON COLUMN terms.term_id IS '약관 ID';
+COMMENT ON COLUMN terms.version IS '약관 버전';
+COMMENT ON COLUMN terms.title IS '약관 제목';
+COMMENT ON COLUMN terms.description IS '약관 설명';
+COMMENT ON COLUMN terms.is_mandatory IS '필수 여부';
+COMMENT ON COLUMN terms.term_category IS '약관 카테고리';
+COMMENT ON COLUMN terms.created_at IS '생성 일시';
+COMMENT ON COLUMN terms.modified_at IS '수정 일시';
+COMMENT ON COLUMN terms.deleted_at IS '삭제 일시';
+
+ALTER TABLE terms OWNER TO postgres;
+GRANT DELETE, INSERT, SELECT, UPDATE ON terms TO postgres;
+
+CREATE TABLE IF NOT EXISTS customer_terms (
+    customer_id INTEGER NOT NULL REFERENCES customers(customer_id),
+    term_id     INTEGER NOT NULL REFERENCES terms(term_id),
+    version     INTEGER NOT NULL,
+    agreed_at   TIMESTAMP DEFAULT NOW() NOT NULL,
+    PRIMARY KEY (customer_id, term_id)
+);
+
+COMMENT ON TABLE customer_terms IS '고객 약관 동의';
+
+COMMENT ON COLUMN customer_terms.customer_id IS '고객ID';
+COMMENT ON COLUMN customer_terms.term_id IS '약관ID';
+COMMENT ON COLUMN customer_terms.version IS '동의한 약관 버전';
+COMMENT ON COLUMN customer_terms.agreed_at IS '동의 시각';
+
+ALTER TABLE customer_terms OWNER TO postgres;
+GRANT DELETE, INSERT, SELECT, UPDATE ON customer_terms TO postgres;
 
 CREATE OR REPLACE FUNCTION customer_dummy_data_insert(add_row INT) RETURNS VOID AS
 $$
@@ -1103,3 +1151,24 @@ BEGIN
     FROM GENERATE_SERIES(1, add_row);
 END;
 $$ LANGUAGE plpgsql;
+
+INSERT INTO terms (version, title, description, is_mandatory, term_category)
+VALUES
+    (1, '서비스 이용 약관', '서비스 이용과 관련된 약관입니다.', true, 'SERVICE'),
+    (1, '개인정보 처리방침', '개인정보 수집 및 이용 동의에 대한 내용입니다.', true, 'PRIVACY'),
+    (1, '마케팅 수신 동의', '마케팅 및 프로모션 알림 수신에 대한 동의입니다.', false, 'MARKETING'),
+    (1, '위치 정보 이용 동의', '위치 정보 수집 및 이용에 대한 약관입니다.', false, 'LOCATION'),
+    (2, '개정 서비스 이용 약관', '서비스 이용 약관 개정 버전입니다.', true, 'SERVICE'),
+    (2, '개정 개인정보 처리방침', '개인정보 처리방침 개정 버전입니다.', true, 'PRIVACY');
+
+INSERT INTO customer_terms (customer_id, term_id, version, agreed_at)
+SELECT
+    c.customer_id,
+    t.term_id,
+    1 AS version,
+    NOW() AS agreed_at
+FROM
+    (SELECT customer_id FROM customers ORDER BY customer_id LIMIT 50) AS c,
+    (SELECT term_id FROM terms WHERE version = 1) AS t;
+
+
