@@ -9,6 +9,8 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "baseUrl": "./src",
     "paths": {
       "@auth/*": [
