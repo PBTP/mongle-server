@@ -5,53 +5,5 @@
     "test",
     "dist",
     "**/*spec.ts"
-  ],
-  "baseUrl": "./src",
-  "paths": {
-    "@auth/*": [
-      "auth/*"
-    ],
-    "@business/*": [
-      "business/*"
-    ],
-    "@chat/*": [
-      "chat/*"
-    ],
-    "@common/*": [
-      "common/*"
-    ],
-    "@config/*": [
-      "config/*"
-    ],
-    "@customer/*": [
-      "customer/*"
-    ],
-    "@driver/*": [
-      "driver/*"
-    ],
-    "@email/*": [
-      "email/*"
-    ],
-    "@env/*": [
-      "env/*"
-    ],
-    "@pet/*": [
-      "pet/*"
-    ],
-    "@pre-registration-servey/*": [
-      "pre-registration-servey/*"
-    ],
-    "@schemas/*": [
-      "schemas/*"
-    ],
-    "@system/*": [
-      "system/*"
-    ],
-    "@terms/*": [
-      "terms/*"
-    ],
-    "@mock/*": [
-      "../test/mock/*"
-    ]
-  },
+  ]
 }
