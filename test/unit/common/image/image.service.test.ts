@@ -1,6 +1,6 @@
-import { ImageService } from '../../../../src/common/image/application/image.service';
-import { FakeCloudStorage } from '../../../mock/fake.cloud-storage';
-import { FakeImageRepository } from '../../../mock/fake.image.repository';
+import { FakeCloudStorage } from "@mock/fake.cloud-storage";
+import { ImageService } from "@common/image/application/image.service";
+import { FakeImageRepository } from "@mock/fake.image.repository";
 
 describe('ImageService', () => {
   let service: ImageService;

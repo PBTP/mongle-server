@@ -1,11 +1,11 @@
-import { TermService } from '../../../../src/terms/application/terms.service';
-import { FakeTermRepository } from '../../../mock/term/fake.term.repository';
-import { FakeCustomerTermRepository } from '../../../mock/term/fake.customer-term.repository';
-import { FakeDateHolder } from '../../../mock/fake.holder';
-import { setupInitialTermData } from '../../../mock/term/term.setup-data';
-import { CustomerTermDto } from '../../../../src/terms/presentation/customer-terms.dto';
-import { FakeCustomerRepository } from '../../../mock/fake.customer.repository';
-import { CustomerEntity } from '../../../../src/schemas/customer.entity';
+import { TermService } from "@terms/application/terms.service";
+import { FakeTermRepository } from "@mock/term/fake.term.repository";
+import { FakeCustomerTermRepository } from "@mock/term/fake.customer-term.repository";
+import { FakeDateHolder } from "@mock/fake.holder";
+import { setupInitialTermData } from "@mock/term/term.setup-data";
+import { CustomerTermDto } from "@terms/presentation/customer-terms.dto";
+import { FakeCustomerRepository } from "@mock/fake.customer.repository";
+import { CustomerEntity } from "@schemas/customer.entity";
 
 describe('TermService', () => {
 

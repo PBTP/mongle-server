@@ -1,14 +1,14 @@
-import { CustomerController } from '../../../../src/customer/presentation/customer.controller';
-import { CustomerService } from '../../../../src/customer/application/customer.service';
-import { FakeCustomerRepository } from '../../../mock/fake.customer.repository';
-import { FakeSecurityService } from '../../../mock/fake.security.service';
-import { ImageService } from '../../../../src/common/image/application/image.service';
-import { FakeCloudStorage } from '../../../mock/fake.cloud-storage';
-import { FakeImageRepository } from '../../../mock/fake.image.repository';
-import { FakeDateHolder, FakeUuidHolder } from '../../../mock/fake.holder';
-import { Builder } from 'builder-pattern';
-import { CustomerDto } from '../../../../src/customer/presentation/customer.dto';
-import { AuthProvider } from '../../../../src/auth/presentation/user.dto';
+import { CustomerService } from "@customer/application/customer.service";
+import { CustomerController } from "@customer/presentation/customer.controller";
+import { FakeCustomerRepository } from "@mock/fake.customer.repository";
+import { FakeSecurityService } from "@mock/fake.security.service";
+import { ImageService } from "@common/image/application/image.service";
+import { FakeCloudStorage } from "@mock/fake.cloud-storage";
+import { FakeImageRepository } from "@mock/fake.image.repository";
+import { FakeDateHolder, FakeUuidHolder } from "@mock/fake.holder";
+import { Builder } from "builder-pattern";
+import { CustomerDto } from "@customer/presentation/customer.dto";
+import { AuthProvider } from "@auth/presentation/user.dto";
 
 describe('CustomerController', () => {
   let customerController: CustomerController;

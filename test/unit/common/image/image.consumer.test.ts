@@ -1,10 +1,10 @@
-import { ImageConsumer } from '../../../../src/common/image/application/image.consumer';
-import { ImageService } from '../../../../src/common/image/application/image.service';
-import { Message } from 'aws-sdk/clients/sqs';
-import { BadRequestException } from '@nestjs/common/exceptions';
-import { FakeConfigService } from '../../../mock/fake.config.service';
-import { FakeCloudStorage } from '../../../mock/fake.cloud-storage';
-import { FakeImageRepository } from '../../../mock/fake.image.repository';
+import { FakeImageRepository } from "@mock/fake.image.repository";
+import { ImageConsumer } from "@common/image/application/image.consumer";
+import { ImageService } from "@common/image/application/image.service";
+import { FakeCloudStorage } from "@mock/fake.cloud-storage";
+import { FakeConfigService } from "@mock/fake.config.service";
+import { Message } from "aws-sdk/clients/sqs";
+import { BadRequestException } from "@nestjs/common/exceptions";
 
 describe('ImageConsumer', () => {
   let consumer: ImageConsumer;

@@ -1,14 +1,15 @@
 import { BadRequestException } from '@nestjs/common';
 import { Builder } from 'builder-pattern';
-import { IDateHolder } from '../../../src/common/holder/date.holder';
-import { IUUIDHolder } from '../../../src/common/holder/uuid.holders';
-import { Pet } from '../../../src/pet/pet.domain';
-import { PetDto } from '../../../src/pet/presentation/pet.dto';
-import { BreedEntity } from '../../../src/schemas/breed.entity';
-import { CustomerEntity } from '../../../src/schemas/customer.entity';
-import { PetChecklistAnswerEntity } from '../../../src/schemas/pet-checklist-answer.entity';
-import { Gender, PetEntity } from '../../../src/schemas/pets.entity';
-import { FakeDateHolder, FakeUuidHolder } from '../../mock/fake.holder';
+import { PetChecklistAnswerEntity } from "@schemas/pet-checklist-answer.entity";
+import { IUUIDHolder } from "@common/holder/uuid.holders";
+import { IDateHolder } from "@common/holder/date.holder";
+import { CustomerEntity } from "@schemas/customer.entity";
+import { BreedEntity } from "@schemas/breed.entity";
+import { FakeDateHolder, FakeUuidHolder } from "@mock/fake.holder";
+import { PetDto } from "@pet/presentation/pet.dto";
+import { Gender, PetEntity } from "@schemas/pets.entity";
+import { Pet } from "@pet/pet.domain";
+
 
 describe('Pet Domain', () => {
   let uuidHolder: IUUIDHolder;
