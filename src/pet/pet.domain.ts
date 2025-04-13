@@ -1,14 +1,14 @@
 import { BadRequestException } from '@nestjs/common/exceptions';
 import { Builder } from 'builder-pattern';
-import { DateHolder } from '../common/holder/date.holder';
-import { UUIDHolder } from '../common/holder/uuid.holders';
-import { Customer } from '../customer/customer.domain';
-import { Appointment } from '../schemas/appointments.entity';
-import { BreedEntity } from '../schemas/breed.entity';
-import { CustomerEntity } from '../schemas/customer.entity';
-import { PetChecklistAnswerEntity } from '../schemas/pet-checklist-answer.entity';
-import { PetEntity } from '../schemas/pets.entity';
-import { Review } from '../schemas/reviews.entity';
+import { DateHolder } from "@common/holder/date.holder";
+import { UUIDHolder } from "@common/holder/uuid.holders";
+import { Customer } from "@customer/customer.domain";
+import { Appointment } from "@schemas/appointments.entity";
+import { BreedEntity } from "@schemas/breed.entity";
+import { CustomerEntity } from "@schemas/customer.entity";
+import { PetChecklistAnswerEntity } from "@schemas/pet-checklist-answer.entity";
+import { PetEntity } from "@schemas/pets.entity";
+import { Review } from "@schemas/reviews.entity";
 import { PetDto } from './presentation/pet.dto';
 
 export class Pet {

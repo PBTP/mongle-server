@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { IUserService } from '../user.interface';
-import { CustomerService } from '../../customer/application/customer.service';
-import { DriverService } from '../../driver/application/driver.service';
-import { BusinessService } from '../../business/application/business.service';
+import { CustomerService } from "@customer/application/customer.service";
+import { DriverService } from "@driver/application/driver.service";
+import { BusinessService } from "@business/application/business.service";
 import { UserDto } from '../presentation/user.dto';
 import { AuthDto } from '../presentation/auth.dto';
 

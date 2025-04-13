@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Builder } from 'builder-pattern';
 import { IsIn, IsNotEmpty, IsOptional } from 'class-validator';
-import { CrudGroup } from '../../common/validation/validation.data';
-import { Customer } from '../../customer/customer.domain';
+import { CrudGroup } from "@common/validation/validation.data";
+import { Customer } from "@customer/customer.domain";
 
 // 고객, 업체, 기사 공통 사용 DTO
 export type UserType = 'customer' | 'driver' | 'business';

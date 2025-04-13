@@ -8,11 +8,11 @@ import {
   Query,
 } from '@nestjs/common';
 import { ChatService } from '../application/chat.service';
-import { Auth, CurrentCustomer } from '../../auth/decorator/auth.decorator';
-import { CustomerEntity } from '../../schemas/customer.entity';
-import { CrudGroup } from '../../common/validation/validation.data';
-import { GroupValidation } from '../../common/validation/validation.decorator';
-import { CursorDto } from '../../common/dto/cursor.dto';
+import { Auth, CurrentCustomer } from "@auth/decorator/auth.decorator";
+import { CustomerEntity } from "@schemas/customer.entity";
+import { CrudGroup } from "@common/validation/validation.data";
+import { GroupValidation } from "@common/validation/validation.decorator";
+import { CursorDto } from "@common/dto/cursor.dto";
 import { ChatMessageDto, ChatRoomDto } from './chat.dto';
 import {
   ApiCreatedResponse,
@@ -20,7 +20,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { ResponseEntity } from '../../common/dto/response.entity';
+import { ResponseEntity } from "@common/dto/response.entity";
 
 @ApiTags('채팅방 API')
 @Controller('v1/chat/room')

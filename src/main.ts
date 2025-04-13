@@ -3,9 +3,9 @@ import { AppModule } from './app.module';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerDocumentOptions, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { LoggerService } from './config/logger/logger.config';
-import { ValidationDefaultOption } from './common/validation/validation.data';
-import { RedisIoAdapter } from './config/socket/socket.adapter';
+import { LoggerService } from "@config/logger/logger.config";
+import { ValidationDefaultOption } from "@common/validation/validation.data";
+import { RedisIoAdapter } from "@config/socket/socket.adapter";
 import { RedisService } from '@liaoliaots/nestjs-redis';
 
 import {
@@ -16,7 +16,7 @@ import {
   HttpExceptionFilter,
   NotFoundExceptionFilter,
   UnauthorizedExceptionFilter
-} from './common/filters/exception.filters';
+} from "@common/filters/exception.filters";
 
 export const serviceWebUrls = [
   'https://mgmg.life',

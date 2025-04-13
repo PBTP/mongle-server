@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { BusinessEntity } from './business.entity';
-import { HasUuid } from '../common/entity/parent.entity';
+import { HasUuid } from "@common/entity/parent.entity";
 
 @Entity({ name: 'business_notices', orderBy: { createdAt: 'ASC' } })
 export class BusinessNotice extends HasUuid {

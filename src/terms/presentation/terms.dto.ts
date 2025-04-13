@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNumber } from 'class-validator';
-import { TermCategory, TermEntity } from '../../schemas/terms.entity';
+import { TermCategory, TermEntity } from "@schemas/terms.entity";
 import { Expose } from 'class-transformer';
 import { Builder } from 'builder-pattern';
 import { Term } from '../terms.domain';

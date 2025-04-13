@@ -1,9 +1,9 @@
-import { ICloudStorage } from '../../src/common/cloud/cloud-storage.interface';
-import { ImageMetaDataDto } from '../../src/common/image/presentation/image.dto';
+import { ICloudStorage } from "@common/cloud/cloud-storage.interface";
+import { ImageMetaDataDto } from "@common/image/presentation/image.dto";
 import {
   defaultExpiredTime,
   PresignedUrlDto,
-} from '../../src/common/cloud/aws/s3/presentation/presigned-url.dto';
+} from "@common/cloud/aws/s3/presentation/presigned-url.dto";
 
 export class FakeCloudStorage implements ICloudStorage {
   async generatePreSignedUrl(

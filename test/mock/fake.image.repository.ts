@@ -1,5 +1,5 @@
-import { Image } from '../../src/common/image/image.domain';
-import { IImageRepository } from '../../src/common/image/port/image.repository';
+import { Image } from "@common/image/image.domain";
+import { IImageRepository } from "@common/image/port/image.repository";
 
 export class FakeImageRepository implements IImageRepository {
   images: Image[] = [];

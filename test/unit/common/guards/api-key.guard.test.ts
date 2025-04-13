@@ -1,5 +1,6 @@
-import { ApiKeyGuard } from '../../../../src/common/guard/api-key.guard';
-import { FakeConfigService } from '../../../mock/fake.config.service';
+import { FakeConfigService } from "@mock/fake.config.service";
+import { ApiKeyGuard } from "@common/guard/api-key.guard";
+
 describe('ApiKeyGuard', () => {
   let guard: ApiKeyGuard;
 

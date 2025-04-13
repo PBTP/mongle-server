@@ -1,11 +1,11 @@
 import { BadRequestException } from '@nestjs/common/exceptions';
-import { DateHolder } from 'src/common/holder/date.holder';
-import { UUIDHolder } from 'src/common/holder/uuid.holders';
-import { Customer } from 'src/customer/customer.domain';
-import { Pet } from 'src/pet/pet.domain';
-import { IPetRepository } from '../../../src/pet/port/pet.repository';
-import { CustomerEntity } from '../../../src/schemas/customer.entity';
-import { PetEntity } from '../../../src/schemas/pets.entity';
+import { DateHolder } from '@common/holder/date.holder';
+import { UUIDHolder } from '@common/holder/uuid.holders';
+import { Customer } from '@customer/customer.domain';
+import { Pet } from '@pet/pet.domain';
+import { IPetRepository } from '@pet/port/pet.repository';
+import { CustomerEntity } from '@schemas/customer.entity';
+import { PetEntity } from '@schemas/pets.entity';
 
 export class FakePetRepository implements IPetRepository {
   private pets: PetEntity[] = [];

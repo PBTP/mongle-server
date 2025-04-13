@@ -1,4 +1,4 @@
-import { ApiKeyGuard } from '../../../../src/common/guard/api-key.guard';
+import { ApiKeyGuard } from "@common/guard/api-key.guard";
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 describe('ApiKeyGuard', () => {

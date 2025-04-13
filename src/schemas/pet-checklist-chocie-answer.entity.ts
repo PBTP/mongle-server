@@ -7,7 +7,7 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { PetChecklistChoiceAnswer } from '../pet/pet.checklist-choice-answer.domain';
+import { PetChecklistChoiceAnswer } from "@pet/pet.checklist-choice-answer.domain";
 import { PetChecklistChoiceEntity } from './pet-checklist-chocie.entity';
 
 @Entity('pet_checklist_choices_answers')

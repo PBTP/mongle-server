@@ -9,9 +9,9 @@ import {
 } from 'class-validator';
 import { Point } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { AuthDto } from '../../auth/presentation/auth.dto';
-import { AuthProvider } from '../../auth/presentation/user.dto';
-import { PresignedUrlDto } from '../../common/cloud/aws/s3/presentation/presigned-url.dto';
+import { AuthDto } from "@auth/presentation/auth.dto";
+import { AuthProvider } from "@auth/presentation/user.dto";
+import { PresignedUrlDto } from "@common/cloud/aws/s3/presentation/presigned-url.dto";
 
 export class CustomerDto extends AuthDto {
   @ApiProperty({

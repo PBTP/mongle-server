@@ -1,4 +1,4 @@
-import { ISmsService } from '../../src/common/sender/sms/application/sms.service';
+import { ISmsService } from "@common/sender/sms/application/sms.service";
 
 export class FakeSmsService implements ISmsService {
   constructor() {}

@@ -1,7 +1,7 @@
 import { Builder } from 'builder-pattern';
-import { TermDto } from '../../../src/terms/presentation/terms.dto';
-import { TermCategory, TermEntity } from '../../../src/schemas/terms.entity';
-import { Term } from '../../../src/terms/terms.domain';
+import { TermCategory, TermEntity } from '@schemas/terms.entity';
+import { Term } from '@terms/terms.domain';
+import { TermDto } from '@terms/presentation/terms.dto';
 
 describe('Term Domain', () => {
     describe('from', () => {

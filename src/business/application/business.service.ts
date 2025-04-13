@@ -1,8 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { IUserService } from '../../auth/user.interface';
-import { UserDto, UserType } from '../../auth/presentation/user.dto';
-import { BusinessEntity } from '../../schemas/business.entity';
-import { AuthDto } from '../../auth/presentation/auth.dto';
+import { IUserService } from "@auth/user.interface";
+import { UserDto, UserType } from "@auth/presentation/user.dto";
+import { BusinessEntity } from "@schemas/business.entity";
+import { AuthDto } from "@auth/presentation/auth.dto";
 import { Builder } from 'builder-pattern';
 import {
   BUSINESS_REPOSITORY,

@@ -9,7 +9,7 @@ import {
 import { PetChecklistEntity } from './pet-checklist.entity';
 import { Builder } from 'builder-pattern';
 import { PetChecklistChoiceAnswerEntity } from './pet-checklist-chocie-answer.entity';
-import { PetChecklistChoice } from '../pet/pet.checklist-choice.domain';
+import { PetChecklistChoice } from "@pet/pet.checklist-choice.domain";
 
 @Entity('pet_checklist_choices')
 export class PetChecklistChoiceEntity {

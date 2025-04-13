@@ -1,14 +1,14 @@
 import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { BadRequestException } from '@nestjs/common/exceptions';
 import { Builder } from 'builder-pattern';
-import { DATE_HOLDER, DateHolder } from '../../common/holder/date.holder';
-import { UUID_HOLDER, UUIDHolder } from '../../common/holder/uuid.holders';
-import { ICustomer } from '../../customer/customer.domain';
+import { DATE_HOLDER, DateHolder } from "@common/holder/date.holder";
+import { UUID_HOLDER, UUIDHolder } from "@common/holder/uuid.holders";
+import { ICustomer } from "@customer/customer.domain";
 import {
   ChecklistType,
   PetChecklistCategory,
-} from '../../schemas/pet-checklist.entity';
-import { PetEntity } from '../../schemas/pets.entity';
+} from "@schemas/pet-checklist.entity";
+import { PetEntity } from "@schemas/pets.entity";
 import { PetChecklistAnswer } from '../pet.checklist-answer.domain';
 import { PetChecklistChoiceAnswer } from '../pet.checklist-choice-answer.domain';
 import { Pet } from '../pet.domain';

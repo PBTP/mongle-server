@@ -1,4 +1,4 @@
-import { UserDto } from '../../auth/presentation/user.dto';
+import { UserDto } from "@auth/presentation/user.dto";
 import {
   IsEnum,
   IsNotEmpty,
@@ -8,8 +8,8 @@ import {
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
-import { MessageType } from '../../schemas/chat-message.entity';
-import { CrudGroup, RUD } from '../../common/validation/validation.data';
+import { MessageType } from "@schemas/chat-message.entity";
+import { CrudGroup, RUD } from "@common/validation/validation.data";
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ChatMessageDto {

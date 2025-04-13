@@ -1,26 +1,26 @@
 import { BadRequestException, ForbiddenException } from '@nestjs/common';
 import { Builder } from 'builder-pattern';
-import { AuthProvider } from '../../../../src/auth/presentation/user.dto';
-import { PetService } from '../../../../src/pet/application/pet.service';
-import { PetController } from '../../../../src/pet/presentation/pet.controller';
-import { PetDto } from '../../../../src/pet/presentation/pet.dto';
-import { CustomerEntity } from '../../../../src/schemas/customer.entity';
+import { AuthProvider } from "@auth/presentation/user.dto";
+import { PetService } from "@pet/application/pet.service";
+import { PetController } from "@pet/presentation/pet.controller";
+import { PetDto } from "@pet/presentation/pet.dto";
+import { CustomerEntity } from "@schemas/customer.entity";
 import {
   ChecklistType,
   PetChecklistCategory,
-} from '../../../../src/schemas/pet-checklist.entity';
-import { Gender } from '../../../../src/schemas/pets.entity';
-import { FakeCustomerRepository } from '../../../mock/fake.customer.repository';
-import { FakeDateHolder, FakeUuidHolder } from '../../../mock/fake.holder';
-import { FakeBreedRepository } from '../../../mock/pet/fake.breed.repository';
-import { FakePetChecklistAnswerRepository } from '../../../mock/pet/fake.pet.checklist-answer.repository';
-import { FakePetChecklistChoiceAnswerRepository } from '../../../mock/pet/fake.pet.checklist-choice-answer.repository';
-import { FakePetChecklistChoiceRepository } from '../../../mock/pet/fake.pet.checklist-choice.repository';
-import { FakePetChecklistRepository } from '../../../mock/pet/fake.pet.checklist.repository';
-import { FakePetRepository } from '../../../mock/pet/fake.pet.repository';
+} from "@schemas/pet-checklist.entity";
+import { Gender } from "@schemas/pets.entity";
+import { FakeCustomerRepository } from "@mock/fake.customer.repository";
+import { FakeDateHolder, FakeUuidHolder } from "@mock/fake.holder";
+import { FakeBreedRepository } from "@mock/pet/fake.breed.repository";
+import { FakePetChecklistAnswerRepository } from "@mock/pet/fake.pet.checklist-answer.repository";
+import { FakePetChecklistChoiceAnswerRepository } from "@mock/pet/fake.pet.checklist-choice-answer.repository";
+import { FakePetChecklistChoiceRepository } from "@mock/pet/fake.pet.checklist-choice.repository";
+import { FakePetChecklistRepository } from "@mock/pet/fake.pet.checklist.repository";
+import { FakePetRepository } from "@mock/pet/fake.pet.repository";
 import createPetDto, {
   setupInitialPetData,
-} from '../../../mock/pet/pet.setup-data';
+} from '@mock/pet/pet.setup-data';
 
 describe('PetController', () => {
   let petController: PetController;

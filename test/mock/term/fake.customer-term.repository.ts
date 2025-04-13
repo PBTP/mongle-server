@@ -1,7 +1,7 @@
 
-import { ICustomerTermRepository } from '../../../src/terms/port/customer-terms.repository';
-import { CustomerTermEntity } from '../../../src/schemas/customer-terms.entity';
-import { CustomerTerm } from '../../../src/terms/customer-terms.domain';
+import { ICustomerTermRepository } from "@terms/port/customer-terms.repository";
+import { CustomerTermEntity } from '@schemas/customer-terms.entity';
+import { CustomerTerm } from '@terms/customer-terms.domain';
 
 export class FakeCustomerTermRepository implements ICustomerTermRepository {
     private customerTerms: CustomerTermEntity[] = [];

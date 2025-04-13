@@ -1,14 +1,14 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { CustomerChatRoom } from "../../schemas/customer-chat-room.entity";
+import { CustomerChatRoom } from "@schemas/customer-chat-room.entity";
 import { Repository } from "typeorm";
 import { IChatService } from "./chat.interface";
-import { CustomerService } from "../../customer/application/customer.service";
-import { UserDto } from "../../auth/presentation/user.dto";
+import { CustomerService } from "@customer/application/customer.service";
+import { UserDto } from "@auth/presentation/user.dto";
 import { ChatRoomDto } from "../presentation/chat.dto";
-import { ChatRoom } from "../../schemas/chat-room.entity";
-import { ChatMessage } from "../../schemas/chat-message.entity";
-import { toDto } from "../../common/function/util.function";
+import { ChatRoom } from "@schemas/chat-room.entity";
+import { ChatMessage } from "@schemas/chat-message.entity";
+import { toDto } from "@common/function/util.function";
 
 @Injectable()
 export class CustomerChatService implements IChatService {

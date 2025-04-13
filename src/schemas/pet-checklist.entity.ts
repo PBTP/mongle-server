@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { PetChecklistChoiceEntity } from './pet-checklist-chocie.entity';
 import { PetChecklistAnswerEntity } from './pet-checklist-answer.entity';
-import { PetChecklist } from '../pet/pet.checklist.domain';
+import { PetChecklist } from "@pet/pet.checklist.domain";
 import { Builder } from 'builder-pattern';
 import { BadRequestException } from '@nestjs/common/exceptions';
 

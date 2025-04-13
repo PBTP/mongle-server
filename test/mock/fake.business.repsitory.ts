@@ -1,6 +1,6 @@
-import { AuthDto } from 'src/auth/presentation/auth.dto';
-import { IBusinessRepository } from '../../src/business/port/business.repository';
-import { BusinessEntity } from '../../src/schemas/business.entity';
+import { IBusinessRepository } from "@business/port/business.repository";
+import { BusinessEntity } from "@schemas/business.entity";
+import { AuthDto } from "@auth/presentation/auth.dto";
 
 export class FakeBusinessRepository implements IBusinessRepository {
   private readonly businesses: BusinessEntity[] = [];

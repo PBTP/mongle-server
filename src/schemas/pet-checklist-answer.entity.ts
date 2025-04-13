@@ -8,7 +8,7 @@ import {
   PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { PetChecklistAnswer } from '../pet/pet.checklist-answer.domain';
+import { PetChecklistAnswer } from "@pet/pet.checklist-answer.domain";
 import { PetChecklistEntity } from './pet-checklist.entity';
 import { PetEntity } from './pets.entity';
 

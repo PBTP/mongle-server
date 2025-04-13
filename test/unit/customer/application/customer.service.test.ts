@@ -1,16 +1,16 @@
-import { CustomerService } from '../../../../src/customer/application/customer.service';
-import { ConfigService } from '@nestjs/config';
-import { FakeConfigService } from '../../../mock/fake.config.service';
-import { FakeCustomerRepository } from '../../../mock/fake.customer.repository';
-import { SecurityService } from '../../../../src/auth/application/security.service';
-import { ImageService } from '../../../../src/common/image/application/image.service';
-import { FakeCloudStorage } from '../../../mock/fake.cloud-storage';
-import { FakeImageRepository } from '../../../mock/fake.image.repository';
-import { CustomerDto } from '../../../../src/customer/presentation/customer.dto';
-import { Builder } from 'builder-pattern';
-import { AuthProvider } from '../../../../src/auth/presentation/user.dto';
-import { FakeDateHolder, FakeUuidHolder } from '../../../mock/fake.holder';
-import { PresignedUrlDto } from '../../../../src/common/cloud/aws/s3/presentation/presigned-url.dto';
+import { ConfigService } from "@nestjs/config";
+import { CustomerService } from "@customer/application/customer.service";
+import { FakeConfigService } from "@mock/fake.config.service";
+import { FakeCustomerRepository } from "@mock/fake.customer.repository";
+import { SecurityService } from "@auth/application/security.service";
+import { ImageService } from "@common/image/application/image.service";
+import { FakeCloudStorage } from "@mock/fake.cloud-storage";
+import { FakeImageRepository } from "@mock/fake.image.repository";
+import { FakeDateHolder, FakeUuidHolder } from "@mock/fake.holder";
+import { CustomerDto } from "@customer/presentation/customer.dto";
+import { Builder } from "builder-pattern";
+import { AuthProvider } from "@auth/presentation/user.dto";
+import { PresignedUrlDto } from "@common/cloud/aws/s3/presentation/presigned-url.dto";
 
 describe('CustomerService', () => {
   let service: CustomerService;

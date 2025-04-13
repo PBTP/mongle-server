@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CustomerTermEntity } from '../../schemas/customer-terms.entity';
+import { CustomerTermEntity } from "@schemas/customer-terms.entity";
 import { CustomerTerm } from '../customer-terms.domain';
 
 export const CUSTOMER_TERM_REPOSITORY = Symbol('CustomerTermRepository');

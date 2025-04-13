@@ -1,4 +1,4 @@
-import { PetChecklistAnswerEntity } from '../../schemas/pet-checklist-answer.entity';
+import { PetChecklistAnswerEntity } from "@schemas/pet-checklist-answer.entity";
 import { PetChecklistAnswer } from '../pet.checklist-answer.domain';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
