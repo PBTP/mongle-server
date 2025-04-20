@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mgmg
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mgmg
+  template:
+    metadata:
+      labels:
+        app: mgmg
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/worker: "true"
+      containers:
+      - name: mgmg
+        image: {{env.AWS_ACCOUNT_ID}}.dkr.ecr.ap-northeast-2.amazonaws.com/mgmg:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "dev"
+        - name: LOG_LEVEL
+          value: "info"
+      volumes:
+      - name: env-config
+        configMap:
+          name: mgmg-env
+      imagePullSecrets:
+      - name: ecr-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mgmg
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: mgmg
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mgmg
+  namespace: default
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  rules:
+  - host: api.mgmg.life
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mgmg
+            port:
+              number: 80
+  tls:
+  - secretName: cert-wildcard
+    hosts:
+    - api.mgmg.life 
