@@ -1,0 +1,19 @@
+Thank you for installing {{ .Chart.Name }}.
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }}
+  $ helm get all {{ .Release.Name }}
+
+{{- if .Values.ingress.enabled }}
+The application can be accessed via:
+{{- range .Values.ingress.hosts }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ .host }}
+{{- end }}
+{{- else }}
+The application can be accessed via port-forwarding:
+  kubectl port-forward svc/{{ include "mgmg.fullname" . }} 8080:{{ .Values.service.port }} -n {{ .Release.Namespace }}
+  Then access: http://localhost:8080
+{{- end }} 
