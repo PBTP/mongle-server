@@ -26,6 +26,9 @@ spec:
           value: "dev"
         - name: LOG_LEVEL
           value: "info"
+        volumeMounts:
+        - name: env-config
+          mountPath: /app/config
       volumes:
       - name: env-config
         configMap:
