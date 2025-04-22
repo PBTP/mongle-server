@@ -22,6 +22,7 @@ service:
   targetPort: 3000
 
 ingress:
+  name: traefik
   enabled: true
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
