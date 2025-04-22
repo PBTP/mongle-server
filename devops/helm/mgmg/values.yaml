@@ -40,6 +40,10 @@ ingress:
 env:
   - name: LOG_LEVEL
     value: "info"
+    name: POD_IP
+    valueFrom:
+      fieldRef:
+        fieldPath: status.podIP
 
 configMap:
   name: mgmg-env

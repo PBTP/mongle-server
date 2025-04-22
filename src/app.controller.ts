@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import * as ip from 'ip';
+import * as process from 'node:process';
 
 @Controller()
 export class AppController {
@@ -8,6 +8,6 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return `${this.appService.getHello()} (${ip.address()})`;
+    return `${this.appService.getHello()} (${process.env.POD_IP || '알 수 없음'})`;
   }
 }
