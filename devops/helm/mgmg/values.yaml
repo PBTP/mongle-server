@@ -5,7 +5,7 @@ namespace: default
 image:
   repository: AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com/mgmg
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 imagePullSecrets:
   - name: ecr-secret
