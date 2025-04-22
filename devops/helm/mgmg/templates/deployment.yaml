@@ -31,6 +31,7 @@ spec:
         volumeMounts:
         - name: env-config
           mountPath: {{ .Values.configMap.mountPath }}
+          subPath: .env 
         {{- end }}
       {{- if .Values.configMap }}
       volumes:

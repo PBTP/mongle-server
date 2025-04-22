@@ -2,11 +2,11 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mgmg-env
-  namespace: {{ .Values.namespace }}
+  namespace: {{ .Values.namespace | default "default" }} 
 data:
   .env: |
-    NODE_ENV={{ .Values.config.NODE_ENV | quote }}
-    PORT={{ .Values.config.PORT | quote }}
-    AWS_REGION={{ .Values.config.AWS_REGION | quote }}
-    AWS_IAM_ACCESS_KEY_ID={{ .Values.config.AWS_IAM_ACCESS_KEY_ID | quote }}
-    AWS_IAM_SECRET_ACCESS_KEY={{ .Values.config.AWS_IAM_SECRET_ACCESS_KEY | quote }}
+    NODE_ENV={{ .Values.config.NODE_ENV }}
+    PORT={{ .Values.config.PORT }}
+    AWS_REGION={{ .Values.config.AWS_REGION }}
+    AWS_IAM_ACCESS_KEY_ID={{ .Values.config.AWS_IAM_ACCESS_KEY_ID }}
+    AWS_IAM_SECRET_ACCESS_KEY={{ .Values.config.AWS_IAM_SECRET_ACCESS_KEY }}
