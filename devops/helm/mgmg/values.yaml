@@ -3,7 +3,7 @@ replicaCount: 1
 namespace: default
 
 image:
-  repository: ${AWS_ACCOUNT_ID}.dkr.ecr.ap-northeast-2.amazonaws.com/mgmg
+  repository: AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com/mgmg
   tag: latest
   pullPolicy: IfNotPresent
 
@@ -37,11 +37,17 @@ ingress:
         - api.mgmg.life
 
 env:
-  - name: NODE_ENV
-    value: "dev"
   - name: LOG_LEVEL
     value: "info"
 
 configMap:
   name: mgmg-env
   mountPath: /app/config 
+
+
+config:
+  NODE_ENV: dev
+  PORT: 3000
+  AWS_REGION: ap-northeast-2
+  AWS_IAM_ACCESS_KEY_ID: AWS_IAM_ACCESS_KEY_ID
+  AWS_IAM_SECRET_ACCESS_KEY: AWS_IAM_SECRET_ACCESS_KEY
