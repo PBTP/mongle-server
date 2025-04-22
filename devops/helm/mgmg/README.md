@@ -1,7 +1,7 @@
-# MGMG Helm Chart
+# Mongle Server Helm Chart
 
 ## 소개
-이 Helm Chart는 MGMG 애플리케이션을 Kubernetes 클러스터에 배포하기 위한 것입니다.
+이 Helm Chart는 mgmg 애플리케이션을 Kubernetes 클러스터에 배포하기 위한 것입니다.
 
 ## 설치 방법
 
@@ -17,7 +17,7 @@ helm install mgmg ./devops/helm/mgmg --set image.repository=<repository> --set i
 ```
 
 ## 구성 요소
-- Deployment: MGMG 애플리케이션 파드
+- Deployment: mgmg 애플리케이션 파드
 - Service: 애플리케이션에 대한 서비스
 - Ingress: 외부 접근을 위한 인그레스 설정
 
