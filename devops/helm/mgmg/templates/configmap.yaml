@@ -4,8 +4,9 @@ metadata:
   name: mgmg-env
   namespace: {{ .Values.namespace }}
 data:
-  NODE_ENV: {{ .Values.config.NODE_ENV | quote }}
-  PORT: {{ .Values.config.PORT | quote }}
-  AWS_REGION: {{ .Values.config.AWS_REGION | quote }}
-  AWS_IAM_ACCESS_KEY_ID: {{ .Values.config.AWS_IAM_ACCESS_KEY_ID | quote }}
-  AWS_IAM_SECRET_ACCESS_KEY: {{ .Values.config.AWS_IAM_SECRET_ACCESS_KEY | quote }}
+  .env: |
+    NODE_ENV={{ .Values.config.NODE_ENV | quote }}
+    PORT={{ .Values.config.PORT | quote }}
+    AWS_REGION={{ .Values.config.AWS_REGION | quote }}
+    AWS_IAM_ACCESS_KEY_ID={{ .Values.config.AWS_IAM_ACCESS_KEY_ID | quote }}
+    AWS_IAM_SECRET_ACCESS_KEY={{ .Values.config.AWS_IAM_SECRET_ACCESS_KEY | quote }}
