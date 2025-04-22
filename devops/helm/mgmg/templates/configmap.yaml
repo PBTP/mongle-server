@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mgmg-env
+  namespace: {{ .Values.namespace }}
 data:
   NODE_ENV: {{ .Values.config.NODE_ENV | quote }}
   PORT: {{ .Values.config.PORT | quote }}
