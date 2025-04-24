@@ -43,9 +43,6 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-  trigger-webhook:
-    runs-on: ubuntu-latest
-    steps:
     - name: Send Webhook and Capture Response
       run: |
         response=$(curl -s -o response.json -w "%{http_code}" -X POST ${{ secrets.WEB_HOOK_URL }} \
@@ -53,9 +50,3 @@ jobs:
           -d '{"event":"push"}')
 
         echo "HTTP Response: $response"
-        cat response.json
-
-      # 응답 코드가 200이 아니라면 실패 처리
-    - name: Fail if Webhook Failed
-      run: |
-        [ "$response" -eq 200 ] || (echo "Webhook failed" && exit 1)
