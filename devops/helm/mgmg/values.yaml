@@ -1,0 +1,70 @@
+
+# 복제 수
+replicaCount: 1
+
+# 네임스페이스
+namespace: default
+
+# 이미지
+image:
+  repository: AWS_ACCOUNT_ID.dkr.ecr.ap-northeast-2.amazonaws.com/mgmg
+  tag: latest
+  pullPolicy: Always
+
+# 이미지 풀 시크릿
+imagePullSecrets:
+  - name: ecr-secret
+
+# 레이블 오버라이드
+nameOverride: ""
+fullnameOverride: ""
+
+# 노드 선택
+nodeSelector:
+  node-role.kubernetes.io/worker: "true"
+
+# 서비스
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+# 인그레스
+ingress:
+  name: traefik
+  enabled: true
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+  hosts:
+    - host: api.mgmg.life
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: cert-wildcard
+      hosts:
+        - api.mgmg.life
+
+env:
+  - name: LOG_LEVEL
+    value: "info"
+  - name: NODE_NAME
+    valueFrom:
+      fieldRef:
+         fieldPath: spec.nodeName
+
+# 환경 변수
+configMap:
+  name: mgmg-env
+  mountPath: /app/config 
+
+config:
+  NODE_ENV: dev
+  PORT: 3000
+  AWS_REGION: ap-northeast-2
+  AWS_IAM_ACCESS_KEY_ID: AWS_IAM_ACCESS_KEY_ID
+  AWS_IAM_SECRET_ACCESS_KEY: AWS_IAM_SECRET_ACCESS_KEY
+
+# 배포 이력 제한
+revisionHistoryLimit: 10
