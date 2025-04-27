@@ -20,6 +20,7 @@ spec:
       labels:
         {{- include "mgmg.selectorLabels" . | nindent 8 }}
     spec:
+      revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
