@@ -8,6 +8,6 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return `${this.appService.getHello()} (${process.env.NODE_NAME || '알 수 없음'})`;
+    return `${this.appService.getHello()} (Node: ${process.env.NODE_NAME || '알 수 없음'})`;
   }
 }
