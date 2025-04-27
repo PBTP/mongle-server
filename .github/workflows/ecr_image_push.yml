@@ -43,10 +43,9 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-    - name: Send Webhook and Capture Response
+    - name: Trigger ArgoCD Webhook
       run: |
-        response=$(curl -s -o response.json -w "%{http_code}" -X POST ${{ secrets.WEB_HOOK_URL }} \
+        curl -X POST \
           -H "Content-Type: application/json" \
-          -d '{"event":"push"}')
-
-        echo "HTTP Response: $response"
+          -d '{"repository": {"clone_url": "'"$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"'"}, "push": {"ref": "'"$GITHUB_REF"'"}}' \
+          ${{ secrets.WEB_HOOK_URL }}
